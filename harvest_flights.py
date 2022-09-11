@@ -6,7 +6,6 @@ import pandas as pd
 from pandas import *
 import os
 from os.path import exists
-from time import sleep
 
 
 
@@ -30,8 +29,8 @@ def harvest_data(departure_location,file_output):
 
 #get user location
 user_location = "calgary"
-harvest_data(user_location,"C:/Users/melvi/Documents/Coding/practice/user_location_airport_timetable.csv")
-user_airport_timetable_data = read_csv("C:/Users/melvi/Documents/Coding/practice/user_location_airport_timetable.csv")
+harvest_data(user_location,"C:/Users/melvi/Documents/Coding/Github Projects/Comp370-FALL-2022/comp370fall2022/data/user_location_airport_timetable.csv")
+user_airport_timetable_data = read_csv("C:/Users/melvi/Documents/Coding/Github Projects/Comp370-FALL-2022/comp370fall2022/data/user_location_airport_timetable.csv")
 
 
 separator = '('
@@ -43,10 +42,8 @@ departures = list(set(departures))
 for i in range(len(departures)):
     departures[i] = departures[i].split(separator,1)[0]
     departures[i] = departures[i].rstrip()
-    print(departures[i])
-    #sleep(0.1)
     try:
-        harvest_data(departures[i],"C:/Users/melvi/Documents/Coding/practice/departures.csv")
+        harvest_data(departures[i],"C:/Users/melvi/Documents/Coding/Github Projects/Comp370-FALL-2022/comp370fall2022/data/departures.csv")
     except Exception as e:
         print("skipping url do to an exception",e)
     
