@@ -7,6 +7,12 @@ from pandas import *
 import os
 from os.path import exists
 
+# remove second time
+# remove flights with no flight number
+# remove loops in path
+# remove cargo flight
+# format times
+
 
 def harvest_data(departure_location):
     url = "https://www.airports-worldwide.info/search/"+departure_location+"/departures"
@@ -18,7 +24,9 @@ def harvest_data(departure_location):
     for i in range(len(dfs)):
         datable_list.append(dfs[i])
 
-    return pd.concat(datable_list)
+    df = pd.concat(datable_list)
+    df = df[df["Status"].isin(["scheduled", "scheduleddelayed"])]
+    return df
 
 
 if __name__ == "__main__":
@@ -34,7 +42,9 @@ if __name__ == "__main__":
     separator = '('
     departures = user_airport_timetable_data['Destination'].unique().tolist()
 
-    for i in range(len(departures)):
+
+
+    for i in range(5):
         departures[i] = departures[i].split(separator, 1)[0]
         departures[i] = departures[i].rstrip()
         departure = departures[i]
