@@ -42,4 +42,17 @@
 */*.sln
 */*.sw?
 
+# Data Files
+*.csv
+*.xlsx
+*.xls
 
+# Checkpoints
+.ipynb_checkpoints
+
+# Log files
+*.log
+
+# Python Specific
+__pycache__
+.idea
