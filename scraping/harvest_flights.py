@@ -31,13 +31,13 @@ def harvest_data(departure_location):
 
 if __name__ == "__main__":
     # file out
-    file_output="../__data/airport_departure.csv"
+    file_output="./comp370fall2022/__data/airport_destination.csv"
 
     # get user location
     user_location = "calgary"
     user_airport_timetable_data = harvest_data(user_location)
 
-    user_airport_timetable_data.to_csv("../__data/user_departure.csv", index=False)
+    user_airport_timetable_data.to_csv("./comp370fall2022/__data/user_destination.csv", index=False)
 
     separator = '('
     departures = user_airport_timetable_data['Destination'].unique().tolist()
@@ -56,7 +56,6 @@ if __name__ == "__main__":
                 ap_dep_df.to_csv(file_output, index=False)
             else:
                 ap_dep_df.to_csv(file_output, mode='a', header=False, index=False)
-
         except Exception as e:
             print(f"skipping url for {departure} do to an exception:",e)
     
