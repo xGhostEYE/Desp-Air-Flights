@@ -14,8 +14,9 @@ from os.path import exists
 # format times
 
 
-def harvest_data(departure_location):
-    url = "https://www.airports-worldwide.info/search/"+departure_location+"/departures"
+
+def harvest_data_arrivals(arrival_location):
+    url = "https://www.airports-worldwide.info/airport/"+arrival_location+"/arrivals"
     url = url.encode('ascii', errors='ignore')
     url = url.decode('ascii', errors='ignore')
     dfs = pd.read_html(url.replace(" ","%20"), header=0)
@@ -29,15 +30,46 @@ def harvest_data(departure_location):
     return df
 
 
+def harvest_data_departures(departure_location):
+    url = "https://www.airports-worldwide.info/search/"+departure_location+"/departures"
+    url = url.encode('ascii', errors='ignore')
+    url = url.decode('ascii', errors='ignore')
+    dfs = pd.read_html(url.replace(" ","%20"), header=0)
+    datable_list = []
+
+    for i in range(len(dfs)):
+        datable_list.append(dfs[i])
+
+    df = pd.concat(datable_list)
+    df = df[df["Status"].isin(["scheduled", "scheduleddelayed"])]
+    return df
+
+#currently only removes the second time
+def clean_data(file):
+    df = pd.read_csv(file)
+
+    for name, values in df[['Departure']].items():
+        data = values.str.split()
+        for i in range(len(data)):
+            # Clean the string
+            cleaned_string = str(data[i]).strip("[]'")
+            
+            # Count the string, and only parse longer results which have the extra data we're looking for
+            chrcount = len(cleaned_string)
+            if chrcount>9:
+                print(cleaned_string[round(chrcount/2):])
+                
+
 if __name__ == "__main__":
     # file out
-    file_output="./comp370fall2022/__data/airport_destination.csv"
+    file_output_origin_departures="C:/Users/melvi/OneDrive/Usask/Year 4/Term 1/CMPT 370/__data/origin_airport_departures.csv"
 
+    #forward scrape
     # get user location
     user_location = "calgary"
-    user_airport_timetable_data = harvest_data(user_location)
+    user_airport_timetable_data = harvest_data_departures(user_location)
 
-    user_airport_timetable_data.to_csv("./comp370fall2022/__data/user_destination.csv", index=False)
+    user_airport_timetable_data.to_csv("C:/Users/melvi/OneDrive/Usask/Year 4/Term 1/CMPT 370/__data/connecting_airport_departures.csv", index=False)
 
     separator = '('
     departures = user_airport_timetable_data['Destination'].unique().tolist()
@@ -50,13 +82,42 @@ if __name__ == "__main__":
         departure = departures[i]
 
         try:
-            ap_dep_df = harvest_data(departure)
+            ap_dep_df = harvest_data_departures(departure)
 
-            if not exists(file_output):
-                ap_dep_df.to_csv(file_output, index=False)
+            if not exists(file_output_origin_departures):
+                ap_dep_df.to_csv(file_output_origin_departures, index=False)
             else:
-                ap_dep_df.to_csv(file_output, mode='a', header=False, index=False)
+                ap_dep_df.to_csv(file_output_origin_departures, mode='a', header=False, index=False)
         except Exception as e:
             print(f"skipping url for {departure} do to an exception:",e)
     
+    
+    #backward scrape
+    file_output_arrival="C:/Users/melvi/OneDrive/Usask/Year 4/Term 1/CMPT 370/__data/origin_airport_departures.csv"
+    user_location = "los angeles"
+    user_airport_timetable_data = harvest_data_departures(user_location)
 
+    user_airport_timetable_data.to_csv("C:/Users/melvi/OneDrive/Usask/Year 4/Term 1/CMPT 370/__data/user_arrival.csv", index=False)
+
+    separator = '('
+    departures = user_airport_timetable_data['Origin'].unique().tolist()
+
+
+
+    for i in range(5):
+        departures[i] = departures[i].split(separator, 1)[0]
+        departures[i] = departures[i].rstrip()
+        departure = departures[i]
+
+        try:
+            ap_dep_df = harvest_data_departures(departure)
+
+            if not exists(file_output_arrival):
+                ap_dep_df.to_csv(file_output_arrival, index=False)
+            else:
+                ap_dep_df.to_csv(file_output_arrival, mode='a', header=False, index=False)
+        except Exception as e:
+            print(f"skipping url for {departure} do to an exception:",e)
+    
+    # clean the data for the Traveling salesman algo
+    clean_data("C:/Users/melvi/OneDrive/Usask/Year 4/Term 1/CMPT 370/__data/airport_destination.csv")
