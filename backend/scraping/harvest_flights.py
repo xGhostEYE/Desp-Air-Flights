@@ -8,8 +8,6 @@ import os
 from os.path import exists
 
 
-
-
 # remove flights with no flight number
 # remove loops in path
 # remove cargo flight
@@ -65,71 +63,68 @@ def clean_data(file):
                 
 
 if __name__ == "__main__":
+    
+
+    # scrape departures from airport
+    # user location
+    departure_airport = "calgary"
+
     # file out
-<<<<<<< HEAD
-    file_output="./backend/__data/airport_destination.csv"
-=======
-    file_output_origin_departures = os.path.abspath("origin_airport_departures.csv")
->>>>>>> melvin_lugo_backend
+    departures_file_out = f"./backend/__data/{departure_airport}_airport_departures.csv"
 
-    #forward scrape
-    # get user location
-    user_location = "calgary"
-    user_airport_timetable_data = harvest_data_departures(user_location)
+    # airport departures
+    airport_dep_df = harvest_data_departures(departure_airport)
 
-<<<<<<< HEAD
-    user_airport_timetable_data.to_csv("./backend/__data/user_destination.csv", index=False)
-=======
-    user_airport_timetable_data.to_csv(os.path.abspath("connecting_airport_departures.csv"), index=False)
->>>>>>> melvin_lugo_backend
+    # save airport departures to csv
+    airport_dep_df.to_csv(departures_file_out, index=False)
 
     separator = '('
-    departures = user_airport_timetable_data['Destination'].unique().tolist()
+    departure_airports = airport_dep_df['Destination'].unique().tolist()
 
 
 
-    for i in range(5):
-        departures[i] = departures[i].split(separator, 1)[0]
-        departures[i] = departures[i].rstrip()
-        departure = departures[i]
+    # for i in range(5):
+    #     departure_airports[i] = departure_airports[i].split(separator, 1)[0]
+    #     departure_airports[i] = departure_airports[i].rstrip()
+    #     departure_airport = departure_airports[i]
 
-        try:
-            ap_dep_df = harvest_data_departures(departure)
+    #     try:
+    #         ap_dep_df = harvest_data_departures(departure)
 
-            if not exists(file_output_origin_departures):
-                ap_dep_df.to_csv(file_output_origin_departures, index=False)
-            else:
-                ap_dep_df.to_csv(file_output_origin_departures, mode='a', header=False, index=False)
-        except Exception as e:
-            print(f"skipping url for {departure} do to an exception:",e)
+    #         if not exists(file_output_origin_departures):
+    #             ap_dep_df.to_csv(file_output_origin_departures, index=False)
+    #         else:
+    #             ap_dep_df.to_csv(file_output_origin_departures, mode='a', header=False, index=False)
+    #     except Exception as e:
+    #         print(f"skipping url for {departure} do to an exception:",e)
     
     
-    #backward scrape
-    file_output_arrival=os.path.abspath("origin_airport_departures.csv")
-    user_location = "los angeles"
-    user_airport_timetable_data = harvest_data_departures(user_location)
+    # #backward scrape
+    # file_output_arrival=os.path.abspath("origin_airport_departures.csv")
+    # user_location = "los angeles"
+    # user_airport_timetable_data = harvest_data_departures(user_location)
 
-    user_airport_timetable_data.to_csv(os.path.abspath("user_arrival.csv"), index=False)
+    # user_airport_timetable_data.to_csv(os.path.abspath("user_arrival.csv"), index=False)
 
-    separator = '('
-    departures = user_airport_timetable_data['Origin'].unique().tolist()
+    # separator = '('
+    # departures = user_airport_timetable_data['Origin'].unique().tolist()
 
 
 
-    for i in range(5):
-        departures[i] = departures[i].split(separator, 1)[0]
-        departures[i] = departures[i].rstrip()
-        departure = departures[i]
+    # for i in range(5):
+    #     departures[i] = departures[i].split(separator, 1)[0]
+    #     departures[i] = departures[i].rstrip()
+    #     departure = departures[i]
 
-        try:
-            ap_dep_df = harvest_data_departures(departure)
+    #     try:
+    #         ap_dep_df = harvest_data_departures(departure)
 
-            if not exists(file_output_arrival):
-                ap_dep_df.to_csv(file_output_arrival, index=False)
-            else:
-                ap_dep_df.to_csv(file_output_arrival, mode='a', header=False, index=False)
-        except Exception as e:
-            print(f"skipping url for {departure} do to an exception:",e)
+    #         if not exists(file_output_arrival):
+    #             ap_dep_df.to_csv(file_output_arrival, index=False)
+    #         else:
+    #             ap_dep_df.to_csv(file_output_arrival, mode='a', header=False, index=False)
+    #     except Exception as e:
+    #         print(f"skipping url for {departure} do to an exception:",e)
     
-    # clean the data for the Traveling salesman algo
-    clean_data(os.path.abspath("airport_destination.csv"))
+    # # clean the data for the Traveling salesman algo
+    # clean_data(os.path.abspath("airport_destination.csv"))
