@@ -1,5 +1,5 @@
 from __future__ import print_function
-from asyncio.windows_events import NULL
+# from asyncio.windows_events import NULL
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import pandas as pd
@@ -7,7 +7,9 @@ from pandas import *
 import os
 from os.path import exists
 
-# remove second time
+
+
+
 # remove flights with no flight number
 # remove loops in path
 # remove cargo flight
@@ -58,18 +60,20 @@ def clean_data(file):
             chrcount = len(cleaned_string)
             if chrcount>9:
                 print(cleaned_string[round(chrcount/2):])
+    for name, vlaues in df[['Flight']].items():
+        print(data)
                 
 
 if __name__ == "__main__":
     # file out
-    file_output_origin_departures="C:/Users/melvi/OneDrive/Usask/Year 4/Term 1/CMPT 370/__data/origin_airport_departures.csv"
+    file_output_origin_departures = os.path.abspath("origin_airport_departures.csv")
 
     #forward scrape
     # get user location
     user_location = "calgary"
     user_airport_timetable_data = harvest_data_departures(user_location)
 
-    user_airport_timetable_data.to_csv("C:/Users/melvi/OneDrive/Usask/Year 4/Term 1/CMPT 370/__data/connecting_airport_departures.csv", index=False)
+    user_airport_timetable_data.to_csv(os.path.abspath("connecting_airport_departures.csv"), index=False)
 
     separator = '('
     departures = user_airport_timetable_data['Destination'].unique().tolist()
@@ -93,11 +97,11 @@ if __name__ == "__main__":
     
     
     #backward scrape
-    file_output_arrival="C:/Users/melvi/OneDrive/Usask/Year 4/Term 1/CMPT 370/__data/origin_airport_departures.csv"
+    file_output_arrival=os.path.abspath("origin_airport_departures.csv")
     user_location = "los angeles"
     user_airport_timetable_data = harvest_data_departures(user_location)
 
-    user_airport_timetable_data.to_csv("C:/Users/melvi/OneDrive/Usask/Year 4/Term 1/CMPT 370/__data/user_arrival.csv", index=False)
+    user_airport_timetable_data.to_csv(os.path.abspath("user_arrival.csv"), index=False)
 
     separator = '('
     departures = user_airport_timetable_data['Origin'].unique().tolist()
@@ -120,4 +124,4 @@ if __name__ == "__main__":
             print(f"skipping url for {departure} do to an exception:",e)
     
     # clean the data for the Traveling salesman algo
-    clean_data("C:/Users/melvi/OneDrive/Usask/Year 4/Term 1/CMPT 370/__data/airport_destination.csv")
+    clean_data(os.path.abspath("airport_destination.csv"))
