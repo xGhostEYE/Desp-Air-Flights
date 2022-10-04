@@ -31,13 +31,13 @@ def harvest_data(departure_location):
 
 if __name__ == "__main__":
     # file out
-    file_output="./comp370fall2022/__data/airport_destination.csv"
+    file_output="./backend/__data/airport_destination.csv"
 
     # get user location
     user_location = "calgary"
     user_airport_timetable_data = harvest_data(user_location)
 
-    user_airport_timetable_data.to_csv("./comp370fall2022/__data/user_destination.csv", index=False)
+    user_airport_timetable_data.to_csv("./backend/__data/user_destination.csv", index=False)
 
     separator = '('
     departures = user_airport_timetable_data['Destination'].unique().tolist()
