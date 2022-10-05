@@ -1,51 +1,73 @@
-from __future__ import print_function
-# from asyncio.windows_events import NULL
+"""
+Purpose:
+    harvests fights departing and arriving from airports
+"""
+
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import pandas as pd
-from pandas import *
 import os
 from os.path import exists
 
 
 # remove flights with no flight number
-# remove loops in path
 # remove cargo flight
 # format times
 
-
-
-def harvest_data_arrivals(arrival_location):
-    url = "https://www.airports-worldwide.info/airport/"+arrival_location+"/arrivals"
-    url = url.encode('ascii', errors='ignore')
-    url = url.decode('ascii', errors='ignore')
-    dfs = pd.read_html(url.replace(" ","%20"), header=0)
-    datable_list = []
-
-    for i in range(len(dfs)):
-        datable_list.append(dfs[i])
-
-    df = pd.concat(datable_list)
-    df = df[df["Status"].isin(["scheduled", "scheduleddelayed"])]
-    return df
-
-
 def harvest_data_departures(departure_location):
+    """
+    Purpose:
+        scrapes flights departing from given airport
+    Params:
+        departure_location: airport we are scraping
+    Returns:
+        dataframe with departing flights from airport
+    
+    """
     url = "https://www.airports-worldwide.info/search/"+departure_location+"/departures"
     url = url.encode('ascii', errors='ignore')
     url = url.decode('ascii', errors='ignore')
     dfs = pd.read_html(url.replace(" ","%20"), header=0)
-    datable_list = []
 
-    for i in range(len(dfs)):
-        datable_list.append(dfs[i])
+    # combines dataframes
+    df = pd.concat(dfs)
 
-    df = pd.concat(datable_list)
-    df = df[df["Status"].isin(["scheduled", "scheduleddelayed"])]
+    # removes all flights that do not contain "scheduled" in "Status" column
+    df = df[df["Status"].str.contains('scheduled', regex=False)]
+
     return df
 
-#currently only removes the second time
+
+def harvest_data_arrivals(arrival_location):
+    """
+    Purpose:
+        scrapes flights arriving to the given airport
+    Params:
+        arrival_location: airport we are scraping
+    Returns:
+        dataframe with arriving flights to airport
+
+    """
+
+    "*** error with url, airport code may work ***"
+    url = "https://www.airports-worldwide.info/airport/"+arrival_location+"/arrivals"
+    url = url.encode('ascii', errors='ignore')
+    url = url.decode('ascii', errors='ignore')
+    dfs = pd.read_html(url.replace(" ","%20"), header=0)
+
+    # combines dataframes
+    df = pd.concat(dfs)
+
+    # removes all flights that do not contain "scheduled" in "Status" column
+    df = df[df["Status"].str.contains('scheduled', regex=False)]
+
+    return df
+
+
 def clean_data(file):
+    #currently only removes the second time
+
+
     df = pd.read_csv(file)
 
     for name, values in df[['Departure']].items():
@@ -64,24 +86,23 @@ def clean_data(file):
 
 if __name__ == "__main__":
     
-
     # scrape departures from airport
-    # user location
+    # airport flights depart from
     departure_airport = "calgary"
 
     # file out
     departures_file_out = f"./backend/__data/{departure_airport}_airport_departures.csv"
 
-    # airport departures
-    airport_dep_df = harvest_data_departures(departure_airport)
+    # scrape airport departures
+    airport_dept_df = harvest_data_departures(departure_airport)
 
     # save airport departures to csv
-    airport_dep_df.to_csv(departures_file_out, index=False)
-
-    separator = '('
-    departure_airports = airport_dep_df['Destination'].unique().tolist()
+    airport_dept_df.to_csv(departures_file_out, index=False)
 
 
+
+    # separator = '('
+    # departure_airports = airport_dept_df['Destination'].unique().tolist()
 
     # for i in range(5):
     #     departure_airports[i] = departure_airports[i].split(separator, 1)[0]
@@ -98,18 +119,23 @@ if __name__ == "__main__":
     #     except Exception as e:
     #         print(f"skipping url for {departure} do to an exception:",e)
     
-    
-    # #backward scrape
-    # file_output_arrival=os.path.abspath("origin_airport_departures.csv")
-    # user_location = "los angeles"
-    # user_airport_timetable_data = harvest_data_departures(user_location)
 
-    # user_airport_timetable_data.to_csv(os.path.abspath("user_arrival.csv"), index=False)
+    # scrape arrivals to airport
+    # airport flights arrive to
+    arrival_airport = "Saskatoon"
+
+    # file out
+    arrival_file_out = f"./backend/__data/{arrival_airport}_airport_arrivals.csv"
+    
+    # scrape airport arrivals
+    airport_arvl_df = harvest_data_arrivals(arrival_airport)
+
+    # save airport arrivals to csv
+    airport_arvl_df.to_csv(arrival_file_out, index=False)
+
 
     # separator = '('
     # departures = user_airport_timetable_data['Origin'].unique().tolist()
-
-
 
     # for i in range(5):
     #     departures[i] = departures[i].split(separator, 1)[0]
