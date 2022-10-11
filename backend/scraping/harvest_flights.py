@@ -14,59 +14,10 @@ from os.path import exists
 
 # format times
 
-
-
-def harvest_data_arrivals(arrival_location):
-    url = "https://www.airports-worldwide.info/search/"+arrival_location+"/arrivals"
-    url = url.encode('ascii', errors='ignore')
-    url = url.decode('ascii', errors='ignore')
-    dfs = pd.read_html(url.replace(" ","%20"), header=0)
-    datable_list = []
-
-    for i in range(len(dfs)):
-        datable_list.append(dfs[i])
-
-    df = pd.concat(datable_list)
-    df = df[df["Status"].isin(["scheduled", "scheduleddelayed"])]
-    #remove flights with no flight number
-    df = df.dropna(axis=0, subset=['Flight'])
-    #remove flight loop
-    discard = [arrival_location]
-    df = df[df["Origin"].str.contains('|'.join(discard))==False]
-    #remove cargo flights
-    # discard = ["cargo"]
-    # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
-    return df
-
-
-def harvest_data_departures(departure_location):
-    url = "https://www.airports-worldwide.info/search/"+departure_location+"/departures"
-    url = url.encode('ascii', errors='ignore')
-    url = url.decode('ascii', errors='ignore')
-    dfs = pd.read_html(url.replace(" ","%20"), header=0)
-    datable_list = []
-
-    for i in range(len(dfs)):
-        datable_list.append(dfs[i])
-
-    df = pd.concat(datable_list)
-    df = df[df["Status"].isin(["scheduled", "scheduleddelayed"])]
-    #remove flights with no flight number
-    df = df.dropna(axis=0, subset=['Flight'])
-    #remove flight loop
-    discard = [departure_location]
-    df = df[df["Destination"].str.contains('|'.join(discard))==False]
-    #remove cargo flights
-    # discard = ["cargo"]
-    # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
-    return df
-
-#currently only removes the second time
-def clean_data(file):
+def clean_data(df):
     cleanedflights_flightnumber = []
     cleanedflights_time = []
     flights = []
-    df = pd.read_csv(file,encoding='utf8')
 
     #remove second time
     for name, values in df[['Departure']].items():
@@ -93,6 +44,56 @@ def clean_data(file):
             continue
         else:
             cleanedflights_flightnumber.append(flights[i])
+    return (cleanedflights_flightnumber, cleanedflights_time)
+
+def harvest_data_arrivals(arrival_location):
+    url = "https://www.airports-worldwide.info/search/"+arrival_location+"/arrivals"
+    url = url.encode('ascii', errors='ignore')
+    url = url.decode('ascii', errors='ignore')
+    dfs = pd.read_html(url.replace(" ","%20"), header=0)
+    datable_list = []
+
+    for i in range(len(dfs)):
+        datable_list.append(dfs[i])
+    print(datable_list)
+    df = pd.concat(datable_list)
+    df = df[df["Status"].isin(["scheduled", "scheduleddelayed"])]
+    #remove flights with no flight number
+    df = df.dropna(axis=0, subset=['Flight'])
+    #remove flight loop
+    discard = [arrival_location]
+    df = df[df["Origin"].str.contains('|'.join(discard))==False]
+    #remove cargo flights
+    # discard = ["cargo"]
+    # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
+    
+    return df
+
+
+def harvest_data_departures(departure_location):
+    url = "https://www.airports-worldwide.info/search/"+departure_location+"/departures"
+    url = url.encode('ascii', errors='ignore')
+    url = url.decode('ascii', errors='ignore')
+    dfs = pd.read_html(url.replace(" ","%20"), header=0)
+    datable_list = []
+
+    for i in range(len(dfs)):
+        datable_list.append(dfs[i])
+
+    df = pd.concat(datable_list)
+    df = df[df["Status"].isin(["scheduled", "scheduleddelayed"])]
+    #remove flights with no flight number
+    df = df.dropna(axis=0, subset=['Flight'])
+    #remove flight loop
+    discard = [departure_location]
+    df = df[df["Destination"].str.contains('|'.join(discard))==False]
+    #remove cargo flights
+    # discard = ["cargo"]
+    # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
+    
+    return df
+
+
                 
 
 if __name__ == "__main__":
@@ -154,5 +155,3 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"skipping url for {departure} do to an exception:",e)
     
-    # clean the data for the Traveling salesman algo
-    clean_data(os.path.abspath(r"C:\Users\melvi\OneDrive\Usask\Year 4\Term 1\CMPT 370\comp370fall2022\connecting_airport_departures.csv"))
