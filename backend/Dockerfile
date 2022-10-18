@@ -1,7 +1,7 @@
 # Dockerfile References: https://docs.docker.com/engine/reference/builder/
 
 # Start from python:3.8-alpine base image
-FROM python:3.8-alpine
+FROM python:3-alpine
 
 # The latest alpine images don't have some tools like (`git` and `bash`).
 # Adding git, bash and openssh to the image
@@ -12,8 +12,8 @@ RUN apk update && apk upgrade && \
 RUN mkdir /app
 WORKDIR /app
 COPY requirements.txt requirements.txt
-
-RUN pip install -r requirements.txt
+RUN pip3 install --extra-index-url https://alpine-wheels.github.io/index -r requirements.txt
+#RUN pip3 install -r requirements.txt
 
 # Copy the source from the current directory to the Working Directory inside the container
 COPY . .
