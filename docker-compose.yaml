@@ -5,8 +5,6 @@ services:
     build: ./app #build the image from the dockerfile in the specified location
     ports:
     - "8080:8080" # Forward the exposed port 8080 on the container to port 80 on the host machine
-    volumes:
-    - ./app:/app
     restart: "unless-stopped"
     depends_on:
     - backend #app depends on the backend container so start that first
