@@ -7,17 +7,18 @@ RUN npm install -g http-server
 WORKDIR /app
 
 # copy both 'package.json' and 'package-lock.json' (if available)
-COPY package*.json ./
+COPY package*.json .
 
 # install project dependencies
-RUN npm install
+RUN npm install 
 
 # copy project files and folders to the current working directory (i.e. 'app' folder)
 COPY . .
-
 # build app for production with minification
 RUN npm run build
+#RUN npm run dev
+#CMD ["npm", "run", "serve"]
 
 EXPOSE 8080
-CMD [ "http-server", "dist" ]
-
+#CMD [ "http-server", "dist" ]
+CMD ["npm", "run", "dev"]

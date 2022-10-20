@@ -1,5 +1,6 @@
 import pandas as pd
 from py2neo import Graph
+import numpy as np
 
 
 gdb = Graph(scheme="http", host="172.19.0.3:7474", user="neo4j", password="password")
