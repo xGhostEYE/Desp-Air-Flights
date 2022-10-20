@@ -2,11 +2,10 @@ version: "3"
 services:
   app:
     container_name: app #define the name of the container
+    hostname: cmpt370-app
     build: ./app #build the image from the dockerfile in the specified location
     ports:
     - "8080:8080" # Forward the exposed port 8080 on the container to port 80 on the host machine
-    volumes:
-    - ./app:/app
     restart: "unless-stopped"
     depends_on:
     - backend #app depends on the backend container so start that first
@@ -14,6 +13,7 @@ services:
     - cmpt370 #define the docker network that the container is on so all containers can communicate
   backend:
     container_name: backend
+    hostname: cmpt370-api
     build: ./backend
     ports:
     - "5000:5000"
@@ -24,6 +24,7 @@ services:
     - neo4j
   neo4j:
     container_name: neo4j
+    hostname: cmpt370-db
     image: neo4j:latest
     ports: 
       - "7474:7474"
