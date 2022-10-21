@@ -2,3 +2,4 @@ Flask
 Numpy
 Pandas
 py2neo
+beautifulsoup4
