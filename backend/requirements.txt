@@ -1,4 +1,4 @@
 Flask
-numpy
-pandas
+Numpy
+Pandas
 py2neo
