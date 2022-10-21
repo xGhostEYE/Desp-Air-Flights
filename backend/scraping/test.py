@@ -1,5 +1,5 @@
 from __future__ import print_function
-from asyncio.windows_events import NULL
+# from asyncio.windows_events import NULL
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import pandas as pd
