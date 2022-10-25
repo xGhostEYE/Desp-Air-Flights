@@ -98,6 +98,9 @@ def harvest_data_arrivals(arrival_location):
     # removes all flights that do not contain "scheduled" in "Status" column
     df = df[df["Status"].str.contains('scheduled', regex=False)]
 
+    #remove unammed columns
+    df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+    
     #remove flights with no flight number
     df = df.dropna(axis=0, subset=['Flight'])
 
@@ -137,7 +140,10 @@ def harvest_data_departures(departure_location,initial_search):
 
     #remove flights with no flight number
     df = df.dropna(axis=0, subset=['Flight'])
-
+    
+    #remove unammed columns
+    df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+    
     #remove flight loop
     discard = [departure_location]
     df = df[df["Destination"].str.contains('|'.join(discard))==False]
