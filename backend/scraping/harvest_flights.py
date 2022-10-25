@@ -158,7 +158,7 @@ if __name__ == "__main__":
     departure_airport = "calgary"
 
     # file out
-    departures_file_out = f"./backend/__data/{departure_airport}_airport_departures.csv"
+    departures_file_out = f"./__data/{departure_airport}_airport_departures.csv"
 
     # scrape airport departures
     airport_dept_df = harvest_data_departures(departure_airport)
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     arrival_airport = "Saskatoon"
 
     # file out
-    arrival_file_out = f"./backend/__data/{arrival_airport}_airport_arrivals.csv"
+    arrival_file_out = f"./__data/{arrival_airport}_airport_arrivals.csv"
     
     # scrape airport arrivals
     airport_arvl_df = harvest_data_arrivals(arrival_airport)
