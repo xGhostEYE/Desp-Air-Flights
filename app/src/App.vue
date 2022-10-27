@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HomePage from './components/HomePage.vue'
+import FlightPage from './components/FlightPage.vue';
 </script>
 
 <template>
