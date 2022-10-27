@@ -11,7 +11,7 @@ import HelloWorld from './components/HelloWorld.vue'
       <HelloWorld msg="message!" />
       <div class="column">
         <p class="text-primary">Button</p>
-        <b-button variant="success">Button</b-button>
+        <button variant="success">Button</button>
 
       </div>
       <nav>
@@ -86,6 +86,5 @@ nav a:first-of-type {
     margin-top: 1rem;
   }
 }
-@import'~bootstrap/dist/css/bootstrap.css';
 
 </style>

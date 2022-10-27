@@ -10,8 +10,6 @@
 */.cache/
 */.pytest_cache/
 */docs/_build/
-*/package-lock.json
-
 # Coverage reports
 */htmlcov/
 */.coverage
