@@ -9,8 +9,12 @@ import FlightPage from './components/FlightPage.vue';
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
-      <HomePage msg="Big" />
+      <HelloWorld msg="message!" />
+      <div class="column">
+        <p class="text-primary">Button</p>
+        <b-button variant="success">Button</b-button>
 
+      </div>
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
@@ -83,4 +87,6 @@ nav a:first-of-type {
     margin-top: 1rem;
   }
 }
+@import'~bootstrap/dist/css/bootstrap.css';
+
 </style>
