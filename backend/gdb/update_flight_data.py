@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 
 import sys
 import os
@@ -9,13 +10,16 @@ import harvest_flights as harv
 import connect_gdb as conGDB
 
 
-def update_departing_flights(airport):
-    airport_dept_df = harv.harvest_data_departures(airport)
 
-    gdb = conGDB.connect_gdb()
 
-    airport_cypher = f"""MERGE (:Airport {{City: "{airport}"}})"""
-    gdb.run(airport_cypher)
+def update_airport_departures(city, airport_code, gdb=None):
+    airport_dept_df = harv.harvest_data_departures(airport_code)
+
+    if gdb==None:
+        gdb = conGDB.connect_gdb()
+
+    # airport_cypher = f"""MERGE (:Airport {{City: "{airport}"}})"""
+    # gdb.run(airport_cypher)
     
     flight_Nums = airport_dept_df["Flight"].unique().tolist()
 
@@ -46,6 +50,21 @@ def update_departing_flights(airport):
 
     print("Finished added departing flights from", airport)
 
+def update_departures():
+    gdb = conGDB.connect_gdb()
+
+    cypher = """
+             MATCH (a:Airport)
+             WHERE a.depUpdated < date()
+             RETURN a.Code as Code
+             """
+
+    airport_codes = gdb.run(cypher).to_ndarray()
+
+    # converts the array of airport_codes to a list
+    airport_codes = [x[0] for x in airport_codes]
+
 if __name__ == "__main__":
     dep_airport = "Calgary"
-    update_departing_flights(dep_airport)
+    # update_airport_departures(dep_airport)
+    update_departures()
