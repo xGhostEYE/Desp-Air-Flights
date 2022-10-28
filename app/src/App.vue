@@ -11,7 +11,7 @@ import HelloWorld from './components/HelloWorld.vue'
       <HelloWorld msg="message!" />
       <div class="column">
         <p class="text-primary">Button</p>
-        <button variant="success">Button</button>
+        <button variant="success">Butt</button>
 
       </div>
       <nav>
