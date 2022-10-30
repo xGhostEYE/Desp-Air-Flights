@@ -1,4 +1,11 @@
-<script setup>
+<script>
+export default{
+  data() {
+    return {
+      title: 'Desp-Air Flights'
+    }
+  }
+}
 
 </script>
 
@@ -6,6 +13,9 @@
 
 
 <template>
+  <div class = "title display-1 fixed-top">
+    <h1>{{title}}</h1>
+  </div>
   <div class = "search_box ">
     <p class = "mb-0">Starting</p>
     <input
@@ -16,9 +26,8 @@
       :value="destination"
       @input="event => destination = event.target.value">
       <div>
-        <button class="mt-5">Search</button>
+        <button class="mt-5 btn btn-info">Search</button>
       </div>
-
   </div>
 
  
