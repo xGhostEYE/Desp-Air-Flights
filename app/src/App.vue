@@ -6,15 +6,16 @@ export default{
     }
   }
 }
-
 </script>
 
 
 
 
 <template>
+
+
   <div class = "title display-1 fixed-top">
-    <h1>{{title}}</h1>
+    <h1 class="text-center">{{title}}</h1>
   </div>
   <div class = "search_box ">
     <p class = "mb-0">Starting</p>
@@ -42,5 +43,8 @@ export default{
 <style>
 .p{
   margin-top: 0px;
+}
+.title{
+  background-color: #5F9DF7;
 }
 </style>
