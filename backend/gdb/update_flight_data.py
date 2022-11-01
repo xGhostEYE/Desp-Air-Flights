@@ -55,8 +55,7 @@ def update_airport_departures(airport_code, gdb=None):
             "FlightNum": str(flight_Num),
             "Status": str(status),
             "Carrier": str(carrier),
-            "DepartTime": departTime,
-            
+            "DepartTime": departTime
         }
         # "Gate": str(gate)
         print(parameters)
@@ -96,8 +95,8 @@ def update_departures():
     numOfAirport=len(airport_codes)
     count=0
     for code in airport_codes:
-        # print(code)
-        update_airport_departures(airport_code=code, gdb=gdb)
+        print(code)
+        update_airport_departures(airport_code= str(code), gdb=gdb)
         count+=1
         print(count,"/", numOfAirport)
 
