@@ -10,15 +10,8 @@ defineProps({
 <template>
 
     <div class="search box">
-    <p>Starting</p>
-    <input
-      :value="starting"
-      @input="event => starting = event.target.value">
-    <p>Destination</p>
-    <input
-      :value="destination"
-      @input="event => destination = event.target.value">
-    <button>Search</button>
+    <p>{{msg}}</p>
+    <p>test stuf</p>
     
     </div>
 </template>

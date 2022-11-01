@@ -1,10 +1,13 @@
 <script>
+import HomePage from './components/HomePage.vue';
+
 export default{
-  data() {
-    return {
-      title: 'Desp-Air Flights'
-    }
-  }
+    data() {
+        return {
+            title: "Desp-Air Flights"
+        };
+    },
+    components: { HomePage }
 }
 </script>
 
@@ -12,21 +15,12 @@ export default{
 
 
 <template>
-
-<<<<<<< HEAD
-    <div class="wrapper">
-      <HelloWorld msg="message!" />
-      <div class="column">
-        <p class="text-primary">Button</p>
-        <button variant="success">Butt</button>
-=======
->>>>>>> ray-ma
-
-  <div class = "title display-1 fixed-top">
+  
+  <div class="title display-1 fixed-top">
     <h1 class="text-center">{{title}}</h1>
   </div>
-  <div class = "search_box ">
-    <p class = "mb-0">Starting</p>
+  <div class="search_box">
+    <p class="mb-0">Starting</p>
     <input
       :value="starting"
       @input="event => starting = event.target.value">
@@ -37,7 +31,7 @@ export default{
       <div>
         <button class="mt-5 btn btn-info">Search</button>
       </div>
-  </div>
+  </div> 
 
  
 </template>
