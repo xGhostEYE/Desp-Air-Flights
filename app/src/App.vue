@@ -36,8 +36,36 @@ export default{
  
 </template>
 
+<template>
+  <div id="flights">
+    <button @click="showFlights">Search</button>
+    <first-component
+        v-if="showComponentOne"
+    />
+  </div>
+</template>
 
 
+<script>
+import Flghts from './components/FlightPage'
+
+export default {
+  name: "App",
+  components: {
+    Flights
+  },
+  data() {
+    return {
+      myFlight: false
+    };
+  },
+  methods: {
+    showFlights () {
+      this.myFlight = true;
+    },
+  }
+};
+</script>
 
 
 
