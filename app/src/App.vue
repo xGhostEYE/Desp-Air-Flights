@@ -13,7 +13,7 @@ export default{
 
 <template>
 
-<div>
+
   <div class = "title display-1 fixed-top">
     <h1 class="text-center">{{title}}</h1>
   </div>
@@ -30,12 +30,40 @@ export default{
         <button class="mt-5 btn btn-info">Search</button>
       </div>
   </div>
-</div>
+
  
 </template>
 
+<template>
+  <div id="flights">
+    <button @click="showFlights">Search</button>
+    <first-component
+        v-if="showComponentOne"
+    />
+  </div>
+</template>
 
 
+<script>
+import Flghts from './components/FlightPage'
+
+export default {
+  name: "App",
+  components: {
+    Flights
+  },
+  data() {
+    return {
+      myFlight: false
+    };
+  },
+  methods: {
+    showFlights () {
+      this.myFlight = true;
+    },
+  }
+};
+</script>
 
 
 
