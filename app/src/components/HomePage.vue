@@ -8,14 +8,19 @@ defineProps({
 </script>
 
 <template>
-  <div class="greetings">
-    <h1 class="green">{{ msg }}</h1>
-    <h3>
-      You are a wut
-      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
-    </h3>
-  </div>
+
+    <div class="search box">
+    <p>Starting</p>
+    <input
+      :value="starting"
+      @input="event => starting = event.target.value">
+    <p>Destination</p>
+    <input
+      :value="destination"
+      @input="event => destination = event.target.value">
+    <button>Search</button>
+    
+    </div>
 </template>
 
 <style scoped>
