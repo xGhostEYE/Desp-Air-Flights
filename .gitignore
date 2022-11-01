@@ -10,7 +10,6 @@
 */.cache/
 */.pytest_cache/
 */docs/_build/
-
 # Coverage reports
 */htmlcov/
 */.coverage

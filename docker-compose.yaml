@@ -9,6 +9,7 @@ services:
     volumes:
         - ./app/:/app/
         - /app/node_modules
+        - ./app/src:/app/src
     restart: "unless-stopped"
     depends_on:
     - backend #app depends on the backend container so start that first
