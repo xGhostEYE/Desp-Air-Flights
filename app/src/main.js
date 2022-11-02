@@ -11,14 +11,9 @@ import 'bootstrap/dist/css/bootstrap.css'
 
 const app = createApp(App)
 
-new Vue({
-    el: "#app",
-    components: { App },
-    template: "<App/>"
-  });  
+
 
 app.use(createPinia())
 app.use(router)
 
 app.mount('#app')
-
