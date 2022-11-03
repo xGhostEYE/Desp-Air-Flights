@@ -1,7 +1,7 @@
 from __future__ import print_function
 from cmath import nan
 # from asyncio.windows_events import NULL
-from bs4 import BeautifulSoup as soup
+from bs4 import BeautifulSoup as BeautifulSoup
 import re
 from urllib.request import urlopen
 import pandas as pd

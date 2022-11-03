@@ -26,8 +26,8 @@ def update_airport_departures(airport_code, gdb=None):
     """
     try:
         airport_dept_df = harv.harvest_data_departures(airport_code, None)
-    except:
-        print("failed to get data for:", airport_code)
+    except Exception as e:
+        print("Failed to get data for:", airport_code, "\nDue to the exception:", e)
         return
 
     if gdb==None:
@@ -95,7 +95,6 @@ def update_departures():
     numOfAirport=len(airport_codes)
     count=0
     for code in airport_codes:
-        print(code)
         update_airport_departures(airport_code= str(code), gdb=gdb)
         count+=1
         print(count,"/", numOfAirport)
