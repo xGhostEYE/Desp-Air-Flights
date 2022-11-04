@@ -1,11 +1,7 @@
 from __future__ import print_function
 from cmath import nan
 # from asyncio.windows_events import NULL
-<<<<<<< HEAD
-from bs4 import BeautifulSoup
-=======
 from bs4 import BeautifulSoup as BeautifulSoup
->>>>>>> backend
 import re
 from urllib.request import urlopen
 import pandas as pd
