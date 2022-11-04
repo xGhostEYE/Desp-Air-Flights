@@ -1,7 +1,7 @@
 from __future__ import print_function
 from cmath import nan
 # from asyncio.windows_events import NULL
-from bs4 import BeautifulSoup as soup
+from bs4 import BeautifulSoup
 import re
 from urllib.request import urlopen
 import pandas as pd
@@ -21,13 +21,6 @@ def clean_data(df):
     Returns:
         lists of cleaned data
     """
-    # for index,item in df['Flight'].items():
-    #     item = str(item).replace(" ", "")
-    #     if len(item) > 1:
-    #         if (str(item[0]).isalpha() and str(item[1]).isalpha() and str(item[2]).isalpha()==False):
-    #             continue
-    #         else:
-    #             df.drop(index,inplace=True)
     cleanedflights_flightnumber = []
     cleanedflights_time = []
     flights = []
@@ -38,17 +31,6 @@ def clean_data(df):
             flights.append(str(item)[:6])
         else:
             df.drop(index,inplace=True)
-            # if (str(item[0]).isalpha() and str(item[1]).isalpha()):
-            #     if (len(item) <= 6):
-            #         flights.append(str(item))
-            #     else:
-            #         # flights.append(str(item)[:len(str(item))-6])
-            #         # changed here
-            #         for i in range(len(item)):
-            #             i+2  
-            #             if (str(item[i]).isalpha() and str(item[i+1]).isalpha()):
-            #                 flights.append(str(item).rsplit(item[i],1)[0])
-            #                 continue
     for i in range(len(flights)):
         if flights[i] == '':
             continue
@@ -103,9 +85,30 @@ def harvest_data_arrivals(arrival_location):
 
     """
     url = "https://www.airports-worldwide.info/search/"+arrival_location+"/arrivals"
-    url = url.encode('ascii', errors='ignore')
-    url = url.decode('ascii', errors='ignore')
-    list_of_dataframes = pd.read_html(url.replace(" ","%20"))
+    reqs = requests.get(url)
+    soup = BeautifulSoup(reqs.text, 'html.parser')
+    urls = []
+    list_of_dataframes = []
+    interval = soup.find_all("nav", {"id": "intervals"})
+    interval = soup.find_all("nav", {"id": "intervals"})
+    if (len(interval)<=0):
+        url = url.encode('ascii', errors='ignore')
+        url = url.decode('ascii', errors='ignore')
+        dataframes = pd.read_html(url.replace(" ","%20"))
+        for i in range(len(dataframes)):
+            list_of_dataframes.append(dataframes[i])
+    else:
+        data = re.findall(r'(https?://[^\s]+)', str(interval[0]))
+        for i in range(len(data)):
+            urls.append(data[i].split(">", 1)[0])
+
+        for i in range(len(urls)):
+            
+            urls[i] = urls[i].encode('ascii', errors='ignore')
+            urls[i] = urls[i].decode('ascii', errors='ignore')
+            dataframes = pd.read_html(urls[i].replace(" ","%20"))
+            for i in range(len(dataframes)):
+                list_of_dataframes.append(dataframes[i])
     
     # combines dataframes
     df = pd.concat(list_of_dataframes)
@@ -145,18 +148,28 @@ def harvest_data_departures(departure_location,initial_search):
     url = "https://www.airports-worldwide.info/search/"+departure_location+"/departures"
     reqs = requests.get(url)
     soup = BeautifulSoup(reqs.text, 'html.parser')
-    
     urls = []
+    list_of_dataframes = []
     interval = soup.find_all("nav", {"id": "intervals"})
-    data = re.findall(r'(https?://[^\s]+)', str(interval[0]))
-    for i in range(len(data)):
-        urls.append(data[i].split(">", 1)[0])
-    list_of_dataframes = None
-    for i in range(len(urls)):
-        
-        urls[i] = urls[i].encode('ascii', errors='ignore')
-        urls[i] = urls[i].decode('ascii', errors='ignore')
-        list_of_dataframes = pd.read_html(urls[i].replace(" ","%20"))
+    interval = soup.find_all("nav", {"id": "intervals"})
+    if (len(interval)<=0):
+        url = url.encode('ascii', errors='ignore')
+        url = url.decode('ascii', errors='ignore')
+        dataframes = pd.read_html(url.replace(" ","%20"))
+        for i in range(len(dataframes)):
+            list_of_dataframes.append(dataframes[i])
+    else:
+        data = re.findall(r'(https?://[^\s]+)', str(interval[0]))
+        for i in range(len(data)):
+            urls.append(data[i].split(">", 1)[0])
+
+        for i in range(len(urls)):
+            
+            urls[i] = urls[i].encode('ascii', errors='ignore')
+            urls[i] = urls[i].decode('ascii', errors='ignore')
+            dataframes = pd.read_html(urls[i].replace(" ","%20"))
+            for i in range(len(dataframes)):
+                list_of_dataframes.append(dataframes[i])
     
     # combines dataframes
     df = pd.concat(list_of_dataframes)
