@@ -9,6 +9,7 @@ from pandas import *
 import os
 import requests
 from os.path import exists
+import time
 
 
 
@@ -218,6 +219,7 @@ if __name__ == "__main__":
     file_output_origin_departures = os.path.abspath("connections_to_destination.csv")
     initial_search = False
     for i in range(len(departures)):
+        time.sleep(1)
         departures[i] = departures[i].split(separator, 1)[0]
         departures[i] = departures[i].rstrip()
         departure = departures[i]
