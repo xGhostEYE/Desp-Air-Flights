@@ -24,7 +24,7 @@ def drop_path_graph():
 
 
 
-def getPath(departure, destination):
+def get_path(departure, destination):
     gdb = conGDB.connect_gdb()
 
     cypher = """
@@ -48,6 +48,9 @@ def getPath(departure, destination):
     
     return paths
 
+# def check_path_validity():
+
+
 if __name__ == "__main__":
     # drop_path_graph()
     create_path_graph()
@@ -55,5 +58,5 @@ if __name__ == "__main__":
     depature = "Saskatoon"
     destination = "Calgary"
 
-    paths = getPath(depature, destination)
+    paths = get_path(depature, destination)
     print(paths)
