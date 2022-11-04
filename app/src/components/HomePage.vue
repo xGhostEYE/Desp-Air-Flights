@@ -4,37 +4,46 @@ defineProps({
     type: String,
     required: true
   }
-})
+});
 </script>
 
 <template>
-
-  <div class="greetings">
-    <div class="search box">
-
-    <p>Starting</p>
-    <input
-      :value="starting"
-      @input="event => starting = event.target.value">
-
-      <p>Destination</p>
-    <input
-      :value="destination"
-      @input="event => destination = event.target.value">
-      <button>Search</button>
-  </div>
-
-    <p>Destination</p>
-    <input
-      :value="destination"
-      @input="event => destination = event.target.value">
-    <button>Search</button>
-    <button class="mt-5 btn btn-info">Search</button>
-    
+    <div>
+      <div class="search_box">
+        <p class="mb-0">Starting</p>
+        <input
+          :value="starting"
+          @input="event => starting = event.target.value">
+          <p class = "mt-5 mb-0">Destination</p>
+        <input
+          :value="destination"
+          @input="event => destination = event.target.value">
+          <div>
+            <button @click="search()" class="mt-5 btn btn-info">Search</button>
+          </div>
+      </div> 
     </div>
-
 </template>
-
+<script>
+export default {
+    data() {
+      return {
+        starting: '',
+        destination: '',
+        flight_path: {
+          starting: '',
+          destination: '',
+        },
+      }
+    },
+    methods: {
+      search(){
+        this.flight_path.starting = this.starting;
+        this.flight_path.destination = this.destination;
+      }
+    },
+  };
+</script>
 <style scoped>
 h1 {
   font-weight: 500;
