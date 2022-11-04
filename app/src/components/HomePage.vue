@@ -29,6 +29,7 @@ defineProps({
       :value="destination"
       @input="event => destination = event.target.value">
     <button>Search</button>
+    <button class="mt-5 btn btn-info">Search</button>
     
     </div>
 
