@@ -1,7 +1,11 @@
 from __future__ import print_function
 from cmath import nan
 # from asyncio.windows_events import NULL
+<<<<<<< HEAD
 from bs4 import BeautifulSoup
+=======
+from bs4 import BeautifulSoup as BeautifulSoup
+>>>>>>> backend
 import re
 from urllib.request import urlopen
 import pandas as pd
@@ -191,9 +195,9 @@ def harvest_data_departures(departure_location,initial_search):
     # discard = ["cargo"]
     # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
     data = clean_data(df)
-    new_row = {"City Name":"above data from: "+departure_location}
-    #append row to the dataframe
-    data = data.append(new_row, ignore_index=True)
+    # new_row = {"City Name":"above data from: "+departure_location}
+    # #append row to the dataframe
+    # data = data.append(new_row, ignore_index=True)
     return data
 
 #currently only removes the second time

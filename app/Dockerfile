@@ -1,5 +1,8 @@
 FROM node:lts-alpine
 
+# bind your app to the gateway IP
+ENV HOST=0.0.0.0
+
 # install simple http server for serving static content
 RUN npm install -g http-server
 
@@ -21,4 +24,4 @@ RUN npm run build
 
 EXPOSE 8080
 #CMD [ "http-server", "dist" ]
-CMD ["npm", "run", "dev"]
+ENTRYPOINT [ "npm", "run", "dev" ]

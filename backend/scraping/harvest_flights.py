@@ -66,6 +66,9 @@ def clean_data(df):
     df_cleaned[departure_or_arrival] = cleanedflights_time
     df[departure_or_arrival] = df_cleaned[departure_or_arrival].values
     df['Flight'] = df_cleaned['Flight'].values
+<<<<<<< HEAD
+
+=======
     # seperating airport code and city name
     new = df[destination_or_origin].str.split("(", n = 1, expand = True)
     df["City Name"]= new[0]
@@ -73,6 +76,7 @@ def clean_data(df):
     df["Airport Code"] = df["Airport Code"].str.replace(r')', '')
     df.drop(columns =[destination_or_origin], axis=1,inplace = True)
     # df.drop(df.columns.difference(['a','b']), 1, inplace=True)
+>>>>>>> c30d6c0d23dbff0da13b5750f44992f2264d9183
     return (df)
 
 
@@ -132,6 +136,11 @@ def harvest_data_arrivals(arrival_location):
     #remove cargo flights
     # discard = ["cargo"]
     # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
+<<<<<<< HEAD
+
+    # return df
+=======
+>>>>>>> c30d6c0d23dbff0da13b5750f44992f2264d9183
     data = clean_data(df)
     return data
 

@@ -3,3 +3,5 @@ Numpy
 Pandas
 py2neo
 beautifulsoup4
+lxml
+html5lib
