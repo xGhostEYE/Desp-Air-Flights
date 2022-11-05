@@ -8,17 +8,30 @@ defineProps({
 </script>
 
 <template>
+
   <div class="greetings">
+    <div class="search box">
+
     <p>Starting</p>
     <input
       :value="starting"
       @input="event => starting = event.target.value">
+
       <p>Destination</p>
     <input
       :value="destination"
       @input="event => destination = event.target.value">
       <button>Search</button>
   </div>
+
+    <p>Destination</p>
+    <input
+      :value="destination"
+      @input="event => destination = event.target.value">
+    <button>Search</button>
+    
+    </div>
+
 </template>
 
 <style scoped>
