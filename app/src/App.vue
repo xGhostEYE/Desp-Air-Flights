@@ -43,9 +43,15 @@ export default {
   },
   data() {
     return {
+      airports: null,
       myFlight: false,
       title: "Desp-Air Flights"
     };
+  },
+  mounted () {
+    axios
+      .get('cmpt370-api:5000/airports')
+      .then(response => (this.airports = response));
   },
   methods: {
     showFlights () {
