@@ -6,8 +6,8 @@ import sys
 import os
 
 sys.path.append(os.path.abspath("./scraping/"))
-# import harvest_flights as harv
-import test as harv
+import harvest_flights as harv
+# import test as harv
 
 import connect_gdb as conGDB
 
@@ -30,6 +30,8 @@ def update_airport_departures(airport_code, gdb=None):
     except Exception as e:
         print("Failed to get data for:", airport_code, "\nDue to the exception:", e)
         return
+
+    print(airport_dept_df)
 
     if gdb==None:
         gdb = conGDB.connect_gdb()
@@ -158,7 +160,7 @@ def add_arrival_times():
     count=0
     for code in airport_codes:
         print(code)
-        add_airport_arrival_times(airport_code= str(code), gdb=gdb)
+        add_airport_arrival_times(airport_code=str(code), gdb=gdb)
         count+=1
         print(count,"/", numOfAirport)
 
@@ -172,5 +174,5 @@ def add_arrival_times():
 if __name__ == "__main__":
     # dep_airport = "YEG"
     # update_airport_departures(dep_airport)
-    # update_departures()
+    update_departures()
     add_arrival_times()

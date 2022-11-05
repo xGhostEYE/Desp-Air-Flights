@@ -47,6 +47,8 @@
 *.xlsx
 *.xls
 
+!/backend/__data/airports_in_gdb/Airports.csv
+
 # Checkpoints
 .ipynb_checkpoints
 
