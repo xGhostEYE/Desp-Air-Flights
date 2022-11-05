@@ -31,7 +31,7 @@ def update_airport_departures(airport_code, gdb=None):
         print("Failed to get data for:", airport_code, "\nDue to the exception:", e)
         return
 
-    print(airport_dept_df)
+    # print(airport_dept_df)
 
     if gdb==None:
         gdb = conGDB.connect_gdb()
@@ -48,7 +48,6 @@ def update_airport_departures(airport_code, gdb=None):
         destination_AP = flight_df["Airport Code"].values[0]
         status = flight_df["Status"].values[0]
         carrier = flight_df["Carrier"].values[0]
-        # gate = flight_df["Gate"].values[0]
         departTime = flight_df["Departure"].values[0]
 
         parameters = {
@@ -59,7 +58,6 @@ def update_airport_departures(airport_code, gdb=None):
             "Carrier": str(carrier),
             "DepartTime": departTime
         }
-        # "Gate": str(gate)
         print(parameters)
 
         flight_cypher = """

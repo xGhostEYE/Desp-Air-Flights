@@ -13,11 +13,12 @@ def create_path_graph():
     drop_path_graph()
 
     cypher = """
-             CALL gds.graph.project(
+             CALL gds.graph.project.cypher(
              'pathGraph',
-             'Airport',
-             'Flight'
+             "MATCH (a:Airport) RETURN id(a) as id",
+             "MATCH (a)-[f:Flight]-(a2:Airport) RETURN id(a) AS source, id(a2) AS target, id(f) as id"
              )"""
+
     gdb.run(cypher)
 
 def drop_path_graph():
@@ -39,14 +40,17 @@ def get_path(departure, destination):
                 sourceNode: source,
                 targetNode: target,
                 k: 3
+                
              })
              YIELD index, sourceNode, targetNode, nodeIds, path
+             UNWIND relationships(path) as rel
              RETURN
                  index,
                  gds.util.asNode(sourceNode).City AS departureCity,
                  gds.util.asNode(targetNode).City AS destinationCity,
                  [nodeId IN nodeIds | gds.util.asNode(nodeId).City] AS connectingCities,
-                 nodes(path) as path
+                 nodes(path) as path,
+                 rel
              ORDER BY index
              """
     
@@ -58,10 +62,12 @@ def get_path(departure, destination):
 
 
 if __name__ == "__main__":
-    # create_path_graph()
+    create_path_graph()
 
-    depature = "Saskatoon"
-    destination = "Calgary"
+    departure = "Saskatoon"
+    destination = "Toronto"
 
-    paths = get_path(depature, destination)
+    paths = get_path(departure, destination)
     print(paths)
+    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
+    
