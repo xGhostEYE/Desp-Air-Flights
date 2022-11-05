@@ -20,10 +20,10 @@
     </div>
 
     <div id="flights">
-      <button @click="showFlights">Search</button>
-      <first-component
-          v-if="showComponentOne"
-      />
+      <button @click="showFlights()">ShowFlights</button>
+      <p
+          v-if="myFlight">here betsch
+    </p>
     </div>
   </div>
  
