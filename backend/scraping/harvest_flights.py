@@ -77,6 +77,7 @@ def clean_data(df):
     df_cleaned[departure_or_origin] = cleanedflights_time
     df[departure_or_origin] = df_cleaned[departure_or_origin].values
     df['Flight'] = df_cleaned['Flight'].values
+
     return (df)
 
 
@@ -114,7 +115,9 @@ def harvest_data_departures(departure_location):
     # discard = ["cargo"]
     # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
 
-    return df
+    # return df
+    data = clean_data(df)
+    return data
 
 
 def harvest_data_arrivals(arrival_location):
