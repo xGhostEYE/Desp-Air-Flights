@@ -6,7 +6,11 @@ import connect_gdb as conGDB
 
 
 def create_path_graph():
+    """Creates a graph for use by the algorithm (graph named "pathGraph")"""
+
     gdb = conGDB.connect_gdb()
+
+    drop_path_graph()
 
     cypher = """
              CALL gds.graph.project(
@@ -17,6 +21,8 @@ def create_path_graph():
     gdb.run(cypher)
 
 def drop_path_graph():
+    """Removes the graph used for the algorithm (graph named "pathGraph")"""
+    
     gdb = conGDB.connect_gdb()
 
     cypher = "CALL gds.graph.drop('pathGraph', false)"
@@ -52,8 +58,7 @@ def get_path(departure, destination):
 
 
 if __name__ == "__main__":
-    # drop_path_graph()
-    create_path_graph()
+    # create_path_graph()
 
     depature = "Saskatoon"
     destination = "Calgary"
