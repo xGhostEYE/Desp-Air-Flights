@@ -133,6 +133,9 @@ def harvest_data_arrivals(arrival_location):
     # discard = ["cargo"]
     # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
     data = clean_data(df)
+    new_row = {"City":"above data from: "+arrival_location}
+    #append row to the dataframe
+    data = data.append(new_row, ignore_index=True)
     return data
 
 
@@ -152,7 +155,6 @@ def harvest_data_departures(departure_location,initial_search):
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
     list_of_dataframes = []
-    interval = soup.find_all("nav", {"id": "intervals"})
     interval = soup.find_all("nav", {"id": "intervals"})
     if (len(interval)<=0):
         url = url.encode('ascii', errors='ignore')
@@ -192,7 +194,7 @@ def harvest_data_departures(departure_location,initial_search):
     # discard = ["cargo"]
     # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
     data = clean_data(df)
-    new_row = {"City Name":"above data from: "+departure_location}
+    new_row = {"City":"above data from: "+departure_location}
     #append row to the dataframe
     data = data.append(new_row, ignore_index=True)
     return data

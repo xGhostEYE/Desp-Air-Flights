@@ -131,6 +131,9 @@ def harvest_data_arrivals(arrival_location):
     # discard = ["cargo"]
     # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
     data = clean_data(df)
+    new_row = {"City":"above data from: "+arrival_location}
+    #append row to the dataframe
+    data = data.append(new_row, ignore_index=True)
     return data
 
 
@@ -151,7 +154,6 @@ def harvest_data_departures(departure_location,initial_search):
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
     list_of_dataframes = []
-    interval = soup.find_all("nav", {"id": "intervals"})
     interval = soup.find_all("nav", {"id": "intervals"})
     if (len(interval)<=0):
         url = url.encode('ascii', errors='ignore')
@@ -191,15 +193,16 @@ def harvest_data_departures(departure_location,initial_search):
     # discard = ["cargo"]
     # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
     data = clean_data(df)
-    # new_row = {"City Name":"above data from: "+departure_location}
-    # #append row to the dataframe
-    # data = data.append(new_row, ignore_index=True)
+    new_row = {"City":"above data from: "+departure_location}
+    #append row to the dataframe
+    data = data.append(new_row, ignore_index=True)
     return data
 
-#currently only removes the second time
 
 
-
+# def harvest_prices(df){
+#     return df
+# }
                 
 
 if __name__ == "__main__":
@@ -208,9 +211,8 @@ if __name__ == "__main__":
     # forward scrape
     # get user location
     initial_search = True
-    user_location = "calgary"
+    user_location = "saskatoon"
     # need user requested destination
-    user_requested_destination = "los angeles"
     user_airport_timetable_data = harvest_data_departures(user_location,initial_search)
     user_airport_timetable_data.to_csv(os.path.abspath("origin_airport_departures.csv"), index=False)
     separator = '('
