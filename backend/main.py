@@ -1,8 +1,33 @@
-from flask import Flask
+from flask import Flask, jsonify
+from flask_cors import CORS
 
-backend = Flask(__name__)
-@backend.route("/")
-def main():
-  return "It Works!"
+# configuration
+DEBUG = True
+
+# instantiate the app
+app = Flask(__name__)
+app.config.from_object(__name__)
+
+# enable CORS
+CORS(app, resources={r'/*': {'origins': '*'}})
+
+# test data:
+airports = [
+    { 
+      'city': 'Saskatoon', 
+      'code': 'YXE' 
+    },
+    { 
+      'city': 'Regina',
+      'code': 'YQR'
+    }
+]
+
+@app.route("/airports", methods=['GET'])
+def get_airports():
+  return jsonify(airports)
+
+
 if __name__ == '__main__':
-  backend.run(debug=True)
+  app.run(debug=True,host='0.0.0.0')
+

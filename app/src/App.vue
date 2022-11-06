@@ -1,85 +1,78 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="message!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+  <div class="column">
+    <div>
+      <div class="title display-1 fixed-top">
+        <h1 class="text-center">{{title}}</h1>
+      </div>
+      <div class="search_box">
+        <p class="mb-0">Starting</p>
+        <input
+          :value="starting"
+          @input="event => starting = event.target.value">
+          <p class = "mt-5 mb-0">Destination</p>
+        <input
+          :value="destination"
+          @input="event => destination = event.target.value">
+          <div>
+            <button class="mt-5 btn btn-info">Search</button>
+          </div>
+      </div> 
     </div>
-  </header>
 
-  <RouterView />
+    <div id="flights">
+      <button @click="showFlights()">Search</button>
+      <first-component
+          v-if="showComponentOne"
+      />
+      <div v-if="myFlight">
+        {{ this.airports }}
+      </div>
+    </div>
+  </div>
+ 
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
+<script>
+import HomePage from './components/HomePage.vue';
+import Flights from './components/FlightPage.vue';
+import axios from 'axios';
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
+export default {
+  name: "App",
+  components: {
+    Flights,
+    HomePage
+  },
+  data() {
+    return {
+      airports: null,
+      myFlight: false,
+      title: "Desp-Air Flights"
+    };
+  },
+  async mounted () {
+    await axios
+      .get('http://127.0.0.1:5000/airports')
+      .then(response => (this.airports = response.data));
+  },
+  methods: {
+    showFlights () {
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+      this.myFlight = true;
+    },
   }
+};
+</script>
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
 
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+<style>
+.p{
+  margin-top: 0px;
+}
+.title{
+  background-color: #5F9DF7;
 }
 </style>
