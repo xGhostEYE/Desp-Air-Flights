@@ -23,6 +23,28 @@ airports = [
     }
 ]
 
+flights = [
+  {
+    'flight1': {
+      'departure': {
+        'location': 'Saskatoon',
+        'time': '2022-12-10T13:45:00.000Z',
+        'airport code': 'YXE'
+      },
+
+      'arrival': {
+        'location': 'Regina',
+        'time': '2022-12-10T16:20:00.000Z',
+        'airport code': 'YQR'
+      } 
+    }
+  }
+]
+
+@app.route("/flights", methods=['GET'])
+def get_flight():
+  return jsonify(flights)
+
 @app.route("/airports", methods=['GET'])
 def get_airports():
   return jsonify(airports)
