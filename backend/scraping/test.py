@@ -211,12 +211,12 @@ if __name__ == "__main__":
     # forward scrape
     # get user location
     initial_search = True
-    user_location = "saskatoon"
+    user_location = "calgary"
     # need user requested destination
     user_airport_timetable_data = harvest_data_departures(user_location,initial_search)
     user_airport_timetable_data.to_csv(os.path.abspath("origin_airport_departures.csv"), index=False)
     separator = '('
-    departures = user_airport_timetable_data['City Name'].unique().tolist()
+    departures = user_airport_timetable_data['Airport Code'].unique().tolist()
     
     file_output_origin_departures = os.path.abspath("connections_to_destination.csv")
     initial_search = False
@@ -232,7 +232,8 @@ if __name__ == "__main__":
             else:
                 ap_dep_df.to_csv(file_output_origin_departures, mode='a', header=False, index=False)
         except Exception as e:
-            print(f"skipping url for {departure} do to an exception:",e)
+            print(f"skipping url for {departure} at time do to an exception:",e)
+            print("line:",i)
 
     
 
@@ -245,7 +246,7 @@ if __name__ == "__main__":
     
     user_requested_airport_departures.to_csv(os.path.abspath("destination_airport_arrivals.csv"), index=False)
     separator = '('
-    departures = user_requested_airport_departures['City Name'].unique().tolist()
+    departures = user_requested_airport_departures['Airport Code'].unique().tolist()
     file_output_arrival=os.path.abspath("connections_from_destination.csv")
     # replace 5 with len(departures)
     for i in range(len(departures)):
