@@ -9,7 +9,6 @@
     it('should render', () =>{
         const wrapper = mount(SearchComponent)
         expect(wrapper.find('p').exists()).toBeTruthy()
-        // expect(wrapper.find('input[type="text"]').exists()).toBeTruthy()
         expect(wrapper.find('button').exists()).toBeTruthy()
         expect(wrapper.find('div').exists()).toBeTruthy()
     })
