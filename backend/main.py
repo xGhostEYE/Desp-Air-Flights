@@ -1,6 +1,15 @@
-from flask import Flask
+from flask import Flask, jsonify
+from flask_cors import CORS
 
-backend = Flask(__name__)
+# configuration
+DEBUG = True
+
+# instantiate the app
+app = Flask(__name__)
+app.config.from_object(__name__)
+
+# enable CORS
+CORS(app, resources={r'/*': {'origins': '*'}})
 
 # test data:
 airports = [
@@ -14,12 +23,11 @@ airports = [
     }
 ]
 
-def main():
-  return "It Works!"
-
-if __name__ == '__main__':
-  backend.run(debug=True)
-
-@backend.route("/airports")
+@app.route("/airports", methods=['GET'])
 def get_airports():
   return jsonify(airports)
+
+
+if __name__ == '__main__':
+  app.run(debug=True,host='0.0.0.0')
+
