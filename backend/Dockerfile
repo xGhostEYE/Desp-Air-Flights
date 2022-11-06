@@ -20,8 +20,9 @@ COPY . .
 
 
 
-# Expose port 8080 to the outside world
-EXPOSE 8080
+# Expose port 5000 to the outside world
+EXPOSE 5000
+#CMD ["flask", "run", "--host", "0.0.0.0"]
 
 # Run the executable
 CMD ["python", "main.py"]

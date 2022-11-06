@@ -20,10 +20,13 @@
     </div>
 
     <div id="flights">
-      <button @click="showFlights()">ShowFlights</button>
-      <p
-          v-if="myFlight">here betsch
-    </p>
+      <button @click="showFlights()">Search</button>
+      <first-component
+          v-if="showComponentOne"
+      />
+      <div v-if="myFlight">
+        {{ this.airports }}
+      </div>
     </div>
   </div>
  
@@ -34,6 +37,7 @@
 <script>
 import HomePage from './components/HomePage.vue';
 import Flights from './components/FlightPage.vue';
+import axios from 'axios';
 
 export default {
   name: "App",
@@ -48,13 +52,14 @@ export default {
       title: "Desp-Air Flights"
     };
   },
-  mounted () {
-    axios
-      .get('cmpt370-api:5000/airports')
-      .then(response => (this.airports = response));
+  async mounted () {
+    await axios
+      .get('http://127.0.0.1:5000/airports')
+      .then(response => (this.airports = response.data));
   },
   methods: {
     showFlights () {
+
       this.myFlight = true;
     },
   }
