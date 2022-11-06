@@ -9,8 +9,8 @@
 */.tox/
 */.cache/
 */.pytest_cache/
-*/docs/_build/
-
+*/docs/_build/ 
+*/makewebsitepewpewpew/done/
 # Coverage reports
 */htmlcov/
 */.coverage
