@@ -36,7 +36,9 @@ flights = [
         'location': 'Regina',
         'time': '2022-12-10T16:20:00.000Z',
         'airport code': 'YQR'
-      } 
+      },
+      'price': 555.55,
+      'airline': 'WestJet'
     }
   }
 ]
