@@ -168,6 +168,6 @@ def add_arrival_times():
 if __name__ == "__main__":
     # dep_airport = "YEG"
     # update_airport_departures(dep_airport)
-    # update_departures()
+    update_departures()
     add_arrival_times()
     # add_airport_arrival_times("YYC")
