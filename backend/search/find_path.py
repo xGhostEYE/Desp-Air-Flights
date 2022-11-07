@@ -81,7 +81,6 @@ def path_is_valid(path):
     numFlights = len(departTimes)
 
     for i in range(numFlights):
-        print(i)
         if i == numFlights - 1:
             return True
         if arrivalTimes[i] >= departTimes[i+1]:
@@ -183,18 +182,17 @@ def get_paths_json(departure, destination):
 
 if __name__ == "__main__":
     
+    departure = "Edmonton"
+    destination = "Waterloo"
 
-    departure = "Calgary"
-    destination = "Winnipeg"
-
-    # paths = get_paths_from_dijkstra(departure, destination, 10)
-    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
+    paths = get_paths_from_dijkstra(departure, destination, 10)
+    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
     # paths = get_paths(departure, destination, 2)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
     
-    paths = get_paths_json(departure, destination)
-    print(paths)
+    # paths = get_paths_json(departure, destination)
+    # print(paths)
 
     
