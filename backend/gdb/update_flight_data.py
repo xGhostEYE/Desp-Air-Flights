@@ -28,7 +28,7 @@ def update_airport_departures(airport_code, gdb=None):
     try:
         airport_dept_df = harv.harvest_data_departures(airport_code, None)
     except Exception as e:
-        print("Failed to get data for:", airport_code, "\nDue to the exception:", e)
+        print("Failed to get Departure data for:", airport_code, "\nDue to the exception:", e)
         return
 
     # print(airport_dept_df)
@@ -113,7 +113,7 @@ def add_airport_arrival_times(airport_code, gdb=None):
     try:
         airport_arvl_df = harv.harvest_data_arrivals(airport_code)
     except Exception as e:
-        print("Failed to get data for:", airport_code, "\nDue to the exception:", e)
+        print("Failed to get arrival data for:", airport_code, "\nDue to the exception:", e)
         return
 
     if gdb==None:
@@ -129,13 +129,16 @@ def add_airport_arrival_times(airport_code, gdb=None):
             "FlightNum": str(flight_Num),
             "ArrivalTime": arrivalTime
             }
-        
+        print(parameters)
+
         cypher = """
                  MATCH ()-[f:Flight {FlightNum: $FlightNum}]-()
                  Set f.ArrivalTime = $ArrivalTime
                  """
 
         gdb.run(cypher, parameters=parameters)
+
+        print("Finished added arrivalTimes for flights from", airport_code)
 
 
 def add_arrival_times():
@@ -157,16 +160,9 @@ def add_arrival_times():
     numOfAirport=len(airport_codes)
     count=0
     for code in airport_codes:
-        print(code)
         add_airport_arrival_times(airport_code=str(code), gdb=gdb)
         count+=1
         print(count,"/", numOfAirport)
-
-
-    
-
-    
-
 
 
 if __name__ == "__main__":
@@ -174,3 +170,4 @@ if __name__ == "__main__":
     # update_airport_departures(dep_airport)
     update_departures()
     add_arrival_times()
+    # add_airport_arrival_times("YYC")

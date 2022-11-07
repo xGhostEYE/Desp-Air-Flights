@@ -1,85 +1,68 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="message!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div>
+    <TitleComponent />
+  </div>
+  <div class="column container align-items-center justify-content-center">
+    <SearchComponent @getFlights="getFlights" airports="" class="row" />
+    <br>
+    <ResultsComponent v-if="showFlights" :results="results" class="row" />
+  </div> 
+ 
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
+<script>
+import SearchComponent from './components/SearchComponent.vue';
+import ResultsComponent from './components/ResultsComponent.vue';
+import axios from 'axios';
+import TitleComponent from './components/TitleComponent.vue';
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
+export default {
+  name: "App",
+  components: {
+    ResultsComponent,
+    SearchComponent,
+    TitleComponent
+},
+  data() {
+    return {
+      airports: null,
+      results: null,
+      showFlights: false,
+      baseURL: "http://127.0.0.1:5000"
+    };
+  },
+  mounted () {
+    axios
+      .get(this.baseURL + '/airports')
+      .then(response => (this.airports = response.data));
+  },
+  methods: {
+    async getFlights (dep, des) {
+      this.showFlights = true;
+      
+      await axios
+        .get(this.baseURL + '/flights', {
+          params: {
+            departure: String(dep),
+            destination: String(des)
+          }
+        })
+        .then(response => (this.results = response.data));
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+    },
   }
+};
+</script>
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
 
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+<style>
+.p{
+  margin-top: 0px;
+}
+.title{
+  background-color: #5F9DF7;
 }
 </style>
