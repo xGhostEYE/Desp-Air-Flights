@@ -1,5 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
+import search
+from search import find_path as fp
 
 # configuration
 DEBUG = True
@@ -21,26 +23,6 @@ airports = [
       'city': 'Regina',
       'code': 'YQR'
     }
-]
-
-flights = [
-  {
-    'flight1': {
-      'departure': {
-        'location': 'Saskatoon',
-        'time': '2022-12-10T13:45:00.000Z',
-        'airport code': 'YXE'
-      },
-
-      'arrival': {
-        'location': 'Regina',
-        'time': '2022-12-10T16:20:00.000Z',
-        'airport code': 'YQR'
-      },
-      'price': 555.55,
-      'airline': 'WestJet'
-    }
-  }
 ]
 
 flight_paths = [
@@ -67,7 +49,10 @@ flight_paths = [
 
 @app.route("/flights", methods=['GET'])
 def get_flight():
-  return jsonify(flight_paths)
+  return jsonify(fp.get_paths_json(
+    request.args.get("departure", default="", type=str),
+    request.args.get("destination", default="", type=str)
+))
 
 @app.route("/airports", methods=['GET'])
 def get_airports():

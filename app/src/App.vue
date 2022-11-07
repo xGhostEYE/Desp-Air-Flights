@@ -29,22 +29,26 @@ export default {
       airports: null,
       results: null,
       showFlights: false,
-      title: "Desp-Air Flights"
+      baseURL: "http://127.0.0.1:5000"
     };
   },
   mounted () {
     axios
-      .get('http://127.0.0.1:5000/airports')
+      .get(this.baseURL + '/airports')
       .then(response => (this.airports = response.data));
   },
   methods: {
-    async getFlights () {
+    async getFlights (dep, des) {
       this.showFlights = true;
-      console.log("its working");
       
       await axios
-      .get('http://127.0.0.1:5000/flights')
-      .then(response => (this.results = response.data));
+        .get(this.baseURL + '/flights', {
+          params: {
+            departure: String(dep),
+            destination: String(des)
+          }
+        })
+        .then(response => (this.results = response.data));
 
     },
   }
