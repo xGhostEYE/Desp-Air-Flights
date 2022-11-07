@@ -38,7 +38,7 @@ export default {
     },
     methods: {
       search(){
-        this.$emit('getFlights');
+        this.$emit('getFlights', this.starting, this.destination);
       }
     },
   };

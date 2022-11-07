@@ -52,7 +52,7 @@ def add_airports_from_csv(airport_df):
         add_airport(city=city, airport_code=code)
 
 if __name__ == "__main__":
-    airport_df = pd.read_csv("./__data/Canadian_Airports/Airports.csv")
+    airport_df = pd.read_csv("./__data/airports_in_gdb/Airports.csv")
     add_airports_from_csv(airport_df)
 
 
