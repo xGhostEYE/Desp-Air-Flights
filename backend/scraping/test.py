@@ -1,12 +1,15 @@
 from __future__ import print_function
 from cmath import nan
 # from asyncio.windows_events import NULL
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup as BeautifulSoup
+import re
 from urllib.request import urlopen
 import pandas as pd
 from pandas import *
 import os
+import requests
 from os.path import exists
+import time
 
 
 
@@ -19,13 +22,6 @@ def clean_data(df):
     Returns:
         lists of cleaned data
     """
-    # for index,item in df['Flight'].items():
-    #     item = str(item).replace(" ", "")
-    #     if len(item) > 1:
-    #         if (str(item[0]).isalpha() and str(item[1]).isalpha() and str(item[2]).isalpha()==False):
-    #             continue
-    #         else:
-    #             df.drop(index,inplace=True)
     cleanedflights_flightnumber = []
     cleanedflights_time = []
     flights = []
@@ -36,17 +32,6 @@ def clean_data(df):
             flights.append(str(item)[:6])
         else:
             df.drop(index,inplace=True)
-            # if (str(item[0]).isalpha() and str(item[1]).isalpha()):
-            #     if (len(item) <= 6):
-            #         flights.append(str(item))
-            #     else:
-            #         # flights.append(str(item)[:len(str(item))-6])
-            #         # changed here
-            #         for i in range(len(item)):
-            #             i+2  
-            #             if (str(item[i]).isalpha() and str(item[i+1]).isalpha()):
-            #                 flights.append(str(item).rsplit(item[i],1)[0])
-            #                 continue
     for i in range(len(flights)):
         if flights[i] == '':
             continue
@@ -85,7 +70,7 @@ def clean_data(df):
     df["Airport Code"] = new[1]
     df["Airport Code"] = df["Airport Code"].str.replace(r')', '')
     df.drop(columns =[destination_or_origin], axis=1,inplace = True)
-    
+    # df.drop(df.columns.difference(['a','b']), 1, inplace=True)
     return (df)
 
 
@@ -101,9 +86,30 @@ def harvest_data_arrivals(arrival_location):
 
     """
     url = "https://www.airports-worldwide.info/search/"+arrival_location+"/arrivals"
-    url = url.encode('ascii', errors='ignore')
-    url = url.decode('ascii', errors='ignore')
-    list_of_dataframes = pd.read_html(url.replace(" ","%20"))
+    reqs = requests.get(url)
+    soup = BeautifulSoup(reqs.text, 'html.parser')
+    urls = []
+    list_of_dataframes = []
+    interval = soup.find_all("nav", {"id": "intervals"})
+    interval = soup.find_all("nav", {"id": "intervals"})
+    if (len(interval)<=0):
+        url = url.encode('ascii', errors='ignore')
+        url = url.decode('ascii', errors='ignore')
+        dataframes = pd.read_html(url.replace(" ","%20"))
+        for i in range(len(dataframes)):
+            list_of_dataframes.append(dataframes[i])
+    else:
+        data = re.findall(r'(https?://[^\s]+)', str(interval[0]))
+        for i in range(len(data)):
+            urls.append(data[i].split(">", 1)[0])
+
+        for i in range(len(urls)):
+            
+            urls[i] = urls[i].encode('ascii', errors='ignore')
+            urls[i] = urls[i].decode('ascii', errors='ignore')
+            dataframes = pd.read_html(urls[i].replace(" ","%20"))
+            for i in range(len(dataframes)):
+                list_of_dataframes.append(dataframes[i])
     
     # combines dataframes
     df = pd.concat(list_of_dataframes)
@@ -125,6 +131,9 @@ def harvest_data_arrivals(arrival_location):
     # discard = ["cargo"]
     # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
     data = clean_data(df)
+    new_row = {"City":"above data from: "+arrival_location}
+    #append row to the dataframe
+    data = data.append(new_row, ignore_index=True)
     return data
 
 
@@ -139,11 +148,31 @@ def harvest_data_departures(departure_location,initial_search):
         dataframe with departing flights from airport
     
     """
-    url = "https://www.airports-worldwide.info/search/"+departure_location+"/departures"
 
-    url = url.encode('ascii', errors='ignore')
-    url = url.decode('ascii', errors='ignore')
-    list_of_dataframes = pd.read_html(url.replace(" ","%20"))
+    url = "https://www.airports-worldwide.info/search/"+departure_location+"/departures"
+    reqs = requests.get(url)
+    soup = BeautifulSoup(reqs.text, 'html.parser')
+    urls = []
+    list_of_dataframes = []
+    interval = soup.find_all("nav", {"id": "intervals"})
+    if (len(interval)<=0):
+        url = url.encode('ascii', errors='ignore')
+        url = url.decode('ascii', errors='ignore')
+        dataframes = pd.read_html(url.replace(" ","%20"))
+        for i in range(len(dataframes)):
+            list_of_dataframes.append(dataframes[i])
+    else:
+        data = re.findall(r'(https?://[^\s]+)', str(interval[0]))
+        for i in range(len(data)):
+            urls.append(data[i].split(">", 1)[0])
+
+        for i in range(len(urls)):
+            
+            urls[i] = urls[i].encode('ascii', errors='ignore')
+            urls[i] = urls[i].decode('ascii', errors='ignore')
+            dataframes = pd.read_html(urls[i].replace(" ","%20"))
+            for i in range(len(dataframes)):
+                list_of_dataframes.append(dataframes[i])
     
     # combines dataframes
     df = pd.concat(list_of_dataframes)
@@ -164,15 +193,16 @@ def harvest_data_departures(departure_location,initial_search):
     # discard = ["cargo"]
     # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
     data = clean_data(df)
-    # new_row = {"City Name":"above data from: "+departure_location}
-    # #append row to the dataframe
-    # data = data.append(new_row, ignore_index=True)
+    new_row = {"City":"above data from: "+departure_location}
+    #append row to the dataframe
+    data = data.append(new_row, ignore_index=True)
     return data
 
-#currently only removes the second time
 
 
-
+# def harvest_prices(df){
+#     return df
+# }
                 
 
 if __name__ == "__main__":
@@ -180,29 +210,30 @@ if __name__ == "__main__":
     # file out
     # forward scrape
     # get user location
-    # initial_search = True
-    # user_location = "calgary"
-    # # need user requested destination
-    # user_requested_destination = "los angeles"
-    # user_airport_timetable_data = harvest_data_departures(user_location,initial_search)
-    # user_airport_timetable_data.to_csv(os.path.abspath("origin_airport_departures.csv"), index=False)
-    # separator = '('
-    # departures = user_airport_timetable_data['City Name'].unique().tolist()
+    initial_search = True
+    user_location = "calgary"
+    # need user requested destination
+    user_airport_timetable_data = harvest_data_departures(user_location,initial_search)
+    user_airport_timetable_data.to_csv(os.path.abspath("origin_airport_departures.csv"), index=False)
+    separator = '('
+    departures = user_airport_timetable_data['Airport Code'].unique().tolist()
     
-    # file_output_origin_departures = os.path.abspath("connections_to_destination.csv")
-    # initial_search = False
-    # for i in range(len(departures)):
-    #     departures[i] = departures[i].split(separator, 1)[0]
-    #     departures[i] = departures[i].rstrip()
-    #     departure = departures[i]
-    #     try:
-    #         ap_dep_df = harvest_data_departures(departure,initial_search)
-    #         if not exists(file_output_origin_departures):
-    #             ap_dep_df.to_csv(file_output_origin_departures, index=False)
-    #         else:
-    #             ap_dep_df.to_csv(file_output_origin_departures, mode='a', header=False, index=False)
-    #     except Exception as e:
-    #         print(f"skipping url for {departure} do to an exception:",e)
+    file_output_origin_departures = os.path.abspath("connections_to_destination.csv")
+    initial_search = False
+    for i in range(len(departures)):
+        time.sleep(1)
+        departures[i] = departures[i].split(separator, 1)[0]
+        departures[i] = departures[i].rstrip()
+        departure = departures[i]
+        try:
+            ap_dep_df = harvest_data_departures(departure,initial_search)
+            if not exists(file_output_origin_departures):
+                ap_dep_df.to_csv(file_output_origin_departures, index=False)
+            else:
+                ap_dep_df.to_csv(file_output_origin_departures, mode='a', header=False, index=False)
+        except Exception as e:
+            print(f"skipping url for {departure} at time do to an exception:",e)
+            print("line:",i)
 
     
 
@@ -215,7 +246,7 @@ if __name__ == "__main__":
     
     user_requested_airport_departures.to_csv(os.path.abspath("destination_airport_arrivals.csv"), index=False)
     separator = '('
-    departures = user_requested_airport_departures['City Name'].unique().tolist()
+    departures = user_requested_airport_departures['Airport Code'].unique().tolist()
     file_output_arrival=os.path.abspath("connections_from_destination.csv")
     # replace 5 with len(departures)
     for i in range(len(departures)):
