@@ -70,9 +70,11 @@ def path_is_valid(path):
     Returns:
         boolean indicating whether or not path is valid
     """
+    # returns false if any DepartTimes or ArrivalTimes are null
     if path["DepartTime"].isnull().values.any() or path["ArrivalTime"].isnull().values.any():
         return False
 
+    # valid if the arrival is before the departure of the next flight for all flights, else returns false
     departTimes = path["DepartTime"].tolist()
     arrivalTimes = path["ArrivalTime"].tolist()
 
@@ -103,21 +105,22 @@ def get_paths(departure, destination, number_of_paths=1):
     """
     validPaths_df = pd.DataFrame()
     number_of_valid_paths = 0
-
-
-
     curPath = 1 
+
+    # loops until the desired number of valid paths are found, if paths cant be found, breaks
     while number_of_valid_paths != number_of_paths:
         paths_df = get_paths_from_dijkstra(departure, destination, curPath)
 
         if paths_df is None:
             return None
 
+        # checks if curPath is greater than maxPath, meaning there are no more paths
+        # to check and breaks loop
         maxPath = paths_df["path"].max()
-
         if maxPath < curPath:
             break
-
+        
+        # path_df is the dataframe with data on curPath
         path_df = paths_df[paths_df["path"] == curPath]
 
         if path_is_valid(path_df):
@@ -150,9 +153,8 @@ def get_paths_json(departure, destination):
     if path_df is None:
         return None
 
-    print(path_df)
-
     flights = []
+    # formats each flight
     for i in range(path_df.shape[0]):
         flight = {
             "departure": {
