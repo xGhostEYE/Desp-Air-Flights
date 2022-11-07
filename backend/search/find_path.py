@@ -110,7 +110,7 @@ def get_paths(departure, destination, number_of_paths=1):
     while number_of_valid_paths != number_of_paths:
         paths_df = get_paths_from_dijkstra(departure, destination, curPath)
 
-        if paths_df == None:
+        if paths_df is None:
             return None
 
         maxPath = paths_df["path"].max()
@@ -147,7 +147,7 @@ def get_paths_json(departure, destination):
     """
     path_df = get_paths(departure, destination)
     
-    if path_df == None:
+    if path_df is None:
         return None
 
     print(path_df)
@@ -183,16 +183,16 @@ if __name__ == "__main__":
     
 
     departure = "Calgary"
-    destination = "Richmond"
+    destination = "Winnipeg"
 
-    paths = get_paths_from_dijkstra(departure, destination, 10)
-    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
+    # paths = get_paths_from_dijkstra(departure, destination, 10)
+    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
     # paths = get_paths(departure, destination, 2)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
     
-    # paths = get_paths_json(departure, destination)
-    # print(paths)
+    paths = get_paths_json(departure, destination)
+    print(paths)
 
     
