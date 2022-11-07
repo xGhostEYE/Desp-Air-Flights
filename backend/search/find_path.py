@@ -43,6 +43,9 @@ def get_paths_from_dijkstra(departure, destination, number_of_paths=1):
              """
     paths_df = gdb.run(cypher, parameters={"departure": departure, "destination": destination, "numPaths": number_of_paths}).to_data_frame()
     
+    if paths_df.empty:
+        return None
+
     # label paths
     cities = paths_df["departFrom"].tolist()
     path = []
@@ -102,9 +105,13 @@ def get_paths(departure, destination, number_of_paths=1):
     number_of_valid_paths = 0
 
 
+
     curPath = 1 
     while number_of_valid_paths != number_of_paths:
         paths_df = get_paths_from_dijkstra(departure, destination, curPath)
+
+        if paths_df == None:
+            return None
 
         maxPath = paths_df["path"].max()
 
@@ -175,17 +182,17 @@ def get_paths_json(departure, destination):
 if __name__ == "__main__":
     
 
-    departure = "Saskatoon"
-    destination = "Winnipeg"
+    departure = "Calgary"
+    destination = "Richmond"
 
-    # paths = get_paths_from_dijkstra(departure, destination, 10)
-    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
+    paths = get_paths_from_dijkstra(departure, destination, 10)
+    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
     # paths = get_paths(departure, destination, 2)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
     
-    paths = get_paths_json(departure, destination)
-    print(paths)
+    # paths = get_paths_json(departure, destination)
+    # print(paths)
 
     
