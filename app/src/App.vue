@@ -1,10 +1,6 @@
 <template>
-  
-    <div>
-      <div class="title display-1 fixed-top">
-        <h1 class="text-center">{{title}}</h1>
-      </div>
-    </div>
+  <p hidden>Hello Vitest</p>
+    <TitleComponent />
     <div class="column container d-flex align-items-center justify-content-center">
       <SearchComponent @getFlights="getFlights" airports="" class="column container d-flex align-items-center justify-content-center" />
 
@@ -19,13 +15,15 @@
 import SearchComponent from './components/SearchComponent.vue';
 import ResultsComponent from './components/ResultsComponent.vue';
 import axios from 'axios';
+import TitleComponent from './components/TitleComponent.vue';
 
 export default {
   name: "App",
   components: {
     ResultsComponent,
-    SearchComponent
-  },
+    SearchComponent,
+    TitleComponent
+},
   data() {
     return {
       airports: null,
