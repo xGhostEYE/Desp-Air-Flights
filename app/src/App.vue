@@ -2,8 +2,8 @@
   <p hidden>Hello Vitest</p>
     <TitleComponent />
     <div class="column container d-flex align-items-center justify-content-center">
-      <SearchComponent @getFlights="getFlights" airports="" class="column container d-flex align-items-center justify-content-center" />
-
+      <SearchComponent @getFlights="getFlights" airports="" class="" />
+      <br>
       <ResultsComponent v-if="showFlights" :results="results" />
     </div> 
  
