@@ -87,7 +87,7 @@ def harvest_data_arrivals(arrival_location):
         dataframe with arriving flights to airport
 
     """
-    url = "https://www.airports-worldwide.info/search/"+arrival_location+"/arrivals"
+    url = "https://www.airports-worldwide.info/airport/"+arrival_location+"/arrivals"
     reqs = requests.get(url)
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
@@ -150,7 +150,7 @@ def harvest_data_departures(departure_location,initial_search):
     
     """
 
-    url = "https://www.airports-worldwide.info/search/"+departure_location+"/departures"
+    url = "https://www.airports-worldwide.info/airport/"+departure_location+"/departures"
     reqs = requests.get(url)
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
