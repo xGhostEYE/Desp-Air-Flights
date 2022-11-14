@@ -7,12 +7,92 @@ Purpose:
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import pandas as pd
-from pandas import *
-import os
 from os.path import exists
 import requests
 import re
+from selenium import webdriver 
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service 
+import pandas as pd
+from datetime import date
+import time
 
+
+def price_scrape(origin, destination, startdate, requests):
+    
+    global results
+    df = pd.DataFrame()
+
+    url = "https://www.kayak.com/flights/" + origin + "-" + destination + "/" + startdate + "?sort=bestflight_a&fs=stops=0"
+    print("\n" + url)
+
+    chrome_options = webdriver.ChromeOptions()
+    agents = ["Firefox/66.0.3","Chrome/73.0.3683.68","Edge/16.16299"]
+    print("User agent: " + agents[(requests%len(agents))])
+    chrome_options.add_argument('--user-agent=' + agents[(requests%len(agents))] + '"')    
+    chrome_options.add_experimental_option('useAutomationExtension', False)
+    
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
+    driver.implicitly_wait(20)
+    driver.get(url)
+
+    #Check if Kayak thinks that we're a bot
+    time.sleep(5) 
+    soup=BeautifulSoup(driver.page_source, 'lxml')
+
+    if soup.find_all('p')[0].getText() == "Please confirm that you are a real KAYAK user.":
+        print("Kayak thinks I'm a bot, which I am ... so let's wait a bit and try again")
+        driver.close()
+        time.sleep(20)
+        return "failure"
+
+    time.sleep(20) #wait 20sec for the page to load
+    
+    soup=BeautifulSoup(driver.page_source, 'lxml')
+    
+    #get the arrival and departure times
+    deptimes = soup.find_all('span', attrs={'class': 'depart-time base-time'})
+    arrtimes = soup.find_all('span', attrs={'class': 'arrival-time base-time'})
+    meridies = soup.find_all('span', attrs={'class': 'time-meridiem meridiem'})
+    airline = soup.find_all('div', attrs={'class': 'bottom'})
+    booking = soup.find_all('a', attrs={'class': 'booking-link'})
+    deptime = []
+    for div in deptimes:
+        deptime.append(div.getText()[:-1])    
+        
+    arrtime = []
+    for div in arrtimes:
+        arrtime.append(div.getText()[:-1])   
+
+    meridiem = []
+    for div in meridies:
+        meridiem.append(div.getText())  
+    airlines = []
+    for div in airline:
+        airlines.append(div.getText())
+    booking_list = []    
+    for div in booking:
+        booking_list.append(div.getText())
+    booking_clean = []
+    for i in range(len(booking_list)):
+        m = re.search('[0-9.]+', booking_list[i])
+        if m:
+            booking_clean.append(m.group())
+        else:
+            continue
+    listthing_clean = []
+    airlines_clean = []
+    for i in range(len(airlines)):
+        listthing_clean.append(("\n".join(item for item in airlines[i].split('\n') if item)))
+    for i in range(len(listthing_clean)):
+        if len(listthing_clean[i]) > 3 and "\n" not in listthing_clean[i]:
+            airlines_clean.append(listthing_clean[i])
+
+    df['Departure'] = deptime
+    df['Arrival'] = arrtime
+    df['Carrier'] = airlines_clean
+    df['Cost'] = booking_clean
+    return df
 
 # format times
 def clean_data(df):
@@ -27,6 +107,7 @@ def clean_data(df):
     cleanedflights_flightnumber = []
     cleanedflights_time = []
     flights = []
+    
     #clean flight number
     for index,item in df['Flight'].items():
         item = str(item).replace(" ", "")
@@ -42,7 +123,8 @@ def clean_data(df):
             cleanedflights_flightnumber.append(flights[i])
         else:
             cleanedflights_flightnumber.append(flights[i])
-    
+            
+    #determine if the DB is from departure or arrival
     departure_or_arrival = ""
     if ('Departure' in df):
         departure_or_arrival = 'Departure'
@@ -53,6 +135,7 @@ def clean_data(df):
         destination_or_origin = 'Destination'
     else:
         destination_or_origin = 'Origin'
+        
     #clean time
     time_list = list(df[departure_or_arrival])
     for i in range(len(time_list)):
@@ -66,13 +149,13 @@ def clean_data(df):
     df_cleaned[departure_or_arrival] = cleanedflights_time
     df[departure_or_arrival] = df_cleaned[departure_or_arrival].values
     df['Flight'] = df_cleaned['Flight'].values
+    
     # seperating airport code and city name
     new = df[destination_or_origin].str.split("(", n = 1, expand = True)
     df["City Name"]= new[0]
     df["Airport Code"] = new[1]
     df["Airport Code"] = df["Airport Code"].str.replace(r')', '')
     df.drop(columns =[destination_or_origin], axis=1,inplace = True)
-    # df.drop(df.columns.difference(['a','b']), 1, inplace=True)
     return (df)
 
 
@@ -92,8 +175,9 @@ def harvest_data_arrivals(arrival_location):
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
     list_of_dataframes = []
+    # get the different times on the site
     interval = soup.find_all("nav", {"id": "intervals"})
-    interval = soup.find_all("nav", {"id": "intervals"})
+    # if there is no times on the site then scrape once, else scrape all the times
     if (len(interval)<=0):
         url = url.encode('ascii', errors='ignore')
         url = url.decode('ascii', errors='ignore')
@@ -129,13 +213,8 @@ def harvest_data_arrivals(arrival_location):
     discard = [arrival_location]
     df = df[df["Origin"].str.contains('|'.join(discard))==False]
     
-    #remove cargo flights
-    # discard = ["cargo"]
-    # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
     data = clean_data(df)
-    # new_row = {"City":"above data from: "+arrival_location}
-    # #append row to the dataframe
-    # data = data.append(new_row, ignore_index=True)
+
     return data
 
 
@@ -155,7 +234,11 @@ def harvest_data_departures(departure_location,initial_search):
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
     list_of_dataframes = []
+    
+    # get the different times on the site
     interval = soup.find_all("nav", {"id": "intervals"})
+    
+    # if there is no times on the site then scrape once, else scrape all the times
     if (len(interval)<=0):
         url = url.encode('ascii', errors='ignore')
         url = url.decode('ascii', errors='ignore')
@@ -190,13 +273,10 @@ def harvest_data_departures(departure_location,initial_search):
     #remove flight loop
     discard = [departure_location]
     df = df[df["Destination"].str.contains('|'.join(discard))==False]
-    #remove cargo flights
-    # discard = ["cargo"]
-    # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
+    
+    # clean the scrapped data
     data = clean_data(df)
-    # new_row = {"City":"above data from: "+departure_location}
-    # #append row to the dataframe
-    # data = data.append(new_row, ignore_index=True)
+
     return data
 
 
@@ -247,7 +327,10 @@ if __name__ == "__main__":
     # save airport arrivals to csv
     airport_arvl_df.to_csv(arrival_file_out, index=False)
 
-
+    #scrape for prices from the departing airport
+    prices_file_out = f"./__data/{departure_airport}_flight prices.csv"
+    prices_df = price_scrape(departure_airport, arrival_airport, str(date.today()), 0)
+    prices_df.to_csv(prices_file_out, index=False)
     # separator = '('
     # departures = user_airport_timetable_data['Origin'].unique().tolist()
 
