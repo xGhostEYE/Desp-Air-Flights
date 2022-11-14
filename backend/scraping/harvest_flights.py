@@ -284,7 +284,7 @@ if __name__ == "__main__":
     
     # scrape departures from airport
     # airport flights depart from
-    departure_airport = "calgary"
+    departure_airport = "YYC"
     initial_search = True
     # file out
     departures_file_out = f"./__data/{departure_airport}_airport_departures.csv"
@@ -316,7 +316,7 @@ if __name__ == "__main__":
     
     # scrape arrivals to airport
     # airport flights arrive to
-    arrival_airport = "Saskatoon"
+    arrival_airport = "YYZ"
 
     # file out
     arrival_file_out = f"./__data/{arrival_airport}_airport_arrivals.csv"

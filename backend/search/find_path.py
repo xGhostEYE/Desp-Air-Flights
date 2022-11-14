@@ -134,7 +134,7 @@ def get_paths(departure, destination, number_of_paths=1):
     return validPaths_df
 
 
-def get_paths_json(departure, destination):
+def get_paths_json(departure, destination, number_of_paths=1):
     """gets a json of flight paths from departure to destination
 
     Args:
@@ -147,52 +147,60 @@ def get_paths_json(departure, destination):
     Returns:
         json with path data, if there are no valid paths returns None
     """
-    path_df = get_paths(departure, destination)
+    paths_df = get_paths(departure, destination)
     
-    if path_df is None:
+    if paths_df is None:
         return None
 
-    flights = []
-    # formats each flight
-    for i in range(path_df.shape[0]):
-        flight = {
-            "departure": {
-                "location": path_df.loc[i, "departFrom"],
-                "time": path_df.loc[i, "DepartTime"],
-                "airport code": path_df.loc[i, "departCode"]
-            },
-            "arrival": {
-                "location": path_df.loc[i, "arriveAt"],
-                "time": path_df.loc[i, "ArrivalTime"],
-                "airport code": path_df.loc[i, "arriveCode"]
-            },
-            "cost": 0,
-            "airline":  path_df.loc[i, "Carrier"],
-            "flight number": path_df.loc[i, "FlightNum"]
+    paths = paths_df["path"].unique().tolist()
+
+    path_jsons = []
+
+    for path in paths:
+        path_df = paths_df[paths_df["path"] == path]
+
+        flights = []
+        # formats each flight
+        for i in range(path_df.shape[0]):
+            flight = {
+                "departure": {
+                    "location": path_df.loc[i, "departFrom"],
+                    "time": path_df.loc[i, "DepartTime"],
+                    "airport code": path_df.loc[i, "departCode"]
+                },
+                "arrival": {
+                    "location": path_df.loc[i, "arriveAt"],
+                    "time": path_df.loc[i, "ArrivalTime"],
+                    "airport code": path_df.loc[i, "arriveCode"]
+                },
+                "cost": 0,
+                "airline":  path_df.loc[i, "Carrier"],
+                "flight number": path_df.loc[i, "FlightNum"]
+            }
+            flights.append(flight)
+
+
+        path_json = {
+            "flights": flights 
         }
-        flights.append(flight)
+        path_jsons.append(path_json)
 
 
-    path_json = {
-        "flights": flights 
-    }
-
-
-    return path_json
+    return path_jsons
 
 if __name__ == "__main__":
     
-    departure = "Edmonton"
-    destination = "Waterloo"
+    departure = "Richmond"
+    destination = "Saskatoon"
 
-    paths = get_paths_from_dijkstra(departure, destination, 10)
-    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
+    # paths = get_paths_from_dijkstra(departure, destination, 10)
+    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
     # paths = get_paths(departure, destination, 2)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
     
-    # paths = get_paths_json(departure, destination)
-    # print(paths)
+    paths = get_paths_json(departure, destination)
+    print(paths)
 
     
