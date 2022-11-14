@@ -43,6 +43,9 @@ def get_paths_from_dijkstra(departure, destination, number_of_paths=1):
              """
     paths_df = gdb.run(cypher, parameters={"departure": departure, "destination": destination, "numPaths": number_of_paths}).to_data_frame()
     
+    if paths_df.empty:
+        return None
+
     # label paths
     cities = paths_df["departFrom"].tolist()
     path = []
@@ -67,16 +70,17 @@ def path_is_valid(path):
     Returns:
         boolean indicating whether or not path is valid
     """
+    # returns false if any DepartTimes or ArrivalTimes are null
     if path["DepartTime"].isnull().values.any() or path["ArrivalTime"].isnull().values.any():
         return False
 
+    # valid if the arrival is before the departure of the next flight for all flights, else returns false
     departTimes = path["DepartTime"].tolist()
     arrivalTimes = path["ArrivalTime"].tolist()
 
     numFlights = len(departTimes)
 
     for i in range(numFlights):
-        print(i)
         if i == numFlights - 1:
             return True
         if arrivalTimes[i] >= departTimes[i+1]:
@@ -100,17 +104,22 @@ def get_paths(departure, destination, number_of_paths=1):
     """
     validPaths_df = pd.DataFrame()
     number_of_valid_paths = 0
-
-
     curPath = 1 
+
+    # loops until the desired number of valid paths are found, if paths cant be found, breaks
     while number_of_valid_paths != number_of_paths:
         paths_df = get_paths_from_dijkstra(departure, destination, curPath)
 
-        maxPath = paths_df["path"].max()
+        if paths_df is None:
+            return None
 
+        # checks if curPath is greater than maxPath, meaning there are no more paths
+        # to check and breaks loop
+        maxPath = paths_df["path"].max()
         if maxPath < curPath:
             break
-
+        
+        # path_df is the dataframe with data on curPath
         path_df = paths_df[paths_df["path"] == curPath]
 
         if path_is_valid(path_df):
@@ -140,12 +149,11 @@ def get_paths_json(departure, destination):
     """
     path_df = get_paths(departure, destination)
     
-    if path_df == None:
+    if path_df is None:
         return None
 
-    print(path_df)
-
     flights = []
+    # formats each flight
     for i in range(path_df.shape[0]):
         flight = {
             "departure": {
@@ -174,18 +182,17 @@ def get_paths_json(departure, destination):
 
 if __name__ == "__main__":
     
+    departure = "Edmonton"
+    destination = "Waterloo"
 
-    departure = "Saskatoon"
-    destination = "Winnipeg"
-
-    # paths = get_paths_from_dijkstra(departure, destination, 10)
-    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
+    paths = get_paths_from_dijkstra(departure, destination, 10)
+    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
     # paths = get_paths(departure, destination, 2)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
     
-    paths = get_paths_json(departure, destination)
-    print(paths)
+    # paths = get_paths_json(departure, destination)
+    # print(paths)
 
     
