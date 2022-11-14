@@ -1,11 +1,12 @@
 <template>
-  <p hidden>Hello Vitest</p>
+  <div>
     <TitleComponent />
-    <div class="column container d-flex align-items-center justify-content-center">
-      <SearchComponent @getFlights="getFlights" airports="" class="" />
-      <br>
-      <ResultsComponent v-if="showFlights" :results="results" />
-    </div> 
+  </div>
+  <div class="column container align-items-center justify-content-center">
+    <SearchComponent @getFlights="getFlights" airports="" class="row" />
+    <br>
+    <ResultsComponent v-if="showFlights" :results="results" class="row" />
+  </div> 
  
 </template>
 

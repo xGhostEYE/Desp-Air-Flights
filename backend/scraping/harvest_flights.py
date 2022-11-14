@@ -27,6 +27,7 @@ def clean_data(df):
     cleanedflights_flightnumber = []
     cleanedflights_time = []
     flights = []
+    
     #clean flight number
     for index,item in df['Flight'].items():
         item = str(item).replace(" ", "")
@@ -42,7 +43,8 @@ def clean_data(df):
             cleanedflights_flightnumber.append(flights[i])
         else:
             cleanedflights_flightnumber.append(flights[i])
-    
+            
+    #determine if the DB is from departure or arrival
     departure_or_arrival = ""
     if ('Departure' in df):
         departure_or_arrival = 'Departure'
@@ -53,6 +55,7 @@ def clean_data(df):
         destination_or_origin = 'Destination'
     else:
         destination_or_origin = 'Origin'
+        
     #clean time
     time_list = list(df[departure_or_arrival])
     for i in range(len(time_list)):
@@ -66,13 +69,13 @@ def clean_data(df):
     df_cleaned[departure_or_arrival] = cleanedflights_time
     df[departure_or_arrival] = df_cleaned[departure_or_arrival].values
     df['Flight'] = df_cleaned['Flight'].values
+    
     # seperating airport code and city name
     new = df[destination_or_origin].str.split("(", n = 1, expand = True)
     df["City Name"]= new[0]
     df["Airport Code"] = new[1]
     df["Airport Code"] = df["Airport Code"].str.replace(r')', '')
     df.drop(columns =[destination_or_origin], axis=1,inplace = True)
-    # df.drop(df.columns.difference(['a','b']), 1, inplace=True)
     return (df)
 
 
@@ -92,8 +95,9 @@ def harvest_data_arrivals(arrival_location):
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
     list_of_dataframes = []
+    # get the different times on the site
     interval = soup.find_all("nav", {"id": "intervals"})
-    interval = soup.find_all("nav", {"id": "intervals"})
+    # if there is no times on the site then scrape once, else scrape all the times
     if (len(interval)<=0):
         url = url.encode('ascii', errors='ignore')
         url = url.decode('ascii', errors='ignore')
@@ -129,13 +133,8 @@ def harvest_data_arrivals(arrival_location):
     discard = [arrival_location]
     df = df[df["Origin"].str.contains('|'.join(discard))==False]
     
-    #remove cargo flights
-    # discard = ["cargo"]
-    # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
     data = clean_data(df)
-    # new_row = {"City":"above data from: "+arrival_location}
-    # #append row to the dataframe
-    # data = data.append(new_row, ignore_index=True)
+
     return data
 
 
@@ -155,7 +154,11 @@ def harvest_data_departures(departure_location,initial_search):
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
     list_of_dataframes = []
+    
+    # get the different times on the site
     interval = soup.find_all("nav", {"id": "intervals"})
+    
+    # if there is no times on the site then scrape once, else scrape all the times
     if (len(interval)<=0):
         url = url.encode('ascii', errors='ignore')
         url = url.decode('ascii', errors='ignore')
@@ -190,13 +193,10 @@ def harvest_data_departures(departure_location,initial_search):
     #remove flight loop
     discard = [departure_location]
     df = df[df["Destination"].str.contains('|'.join(discard))==False]
-    #remove cargo flights
-    # discard = ["cargo"]
-    # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
+    
+    # clean the scrapped data
     data = clean_data(df)
-    # new_row = {"City":"above data from: "+departure_location}
-    # #append row to the dataframe
-    # data = data.append(new_row, ignore_index=True)
+
     return data
 
 
