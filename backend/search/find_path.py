@@ -104,29 +104,39 @@ def get_paths(departure, destination, number_of_paths=1):
     """
     validPaths_df = pd.DataFrame()
     number_of_valid_paths = 0
-    curPath = 1 
+    num_paths_to_query = number_of_paths
+    num_paths_already_checked = 0
 
     # loops until the desired number of valid paths are found, if paths cant be found, breaks
     while number_of_valid_paths != number_of_paths:
-        paths_df = get_paths_from_dijkstra(departure, destination, curPath)
+        paths_df = get_paths_from_dijkstra(departure, destination, num_paths_to_query)
 
         if paths_df is None:
             return None
 
+        
+        
+        # path_df is the dataframe with data on curPath
+        pathCheck_df = paths_df[paths_df["path"] >= num_paths_already_checked]
+
+        paths = pathCheck_df["path"].unique().tolist()
+
+        for path in paths:
+            path_df = pathCheck_df[pathCheck_df["path"] == path]
+            if path_is_valid(path_df):
+                validPaths_df = pd.concat([validPaths_df, path_df])
+                number_of_valid_paths +=1
+            if number_of_valid_paths == number_of_paths:
+                break
+
+        num_paths_already_checked = num_paths_to_query
+        num_paths_to_query = num_paths_to_query * 2
+
         # checks if curPath is greater than maxPath, meaning there are no more paths
         # to check and breaks loop
         maxPath = paths_df["path"].max()
-        if maxPath < curPath:
+        if maxPath < num_paths_already_checked:
             break
-        
-        # path_df is the dataframe with data on curPath
-        path_df = paths_df[paths_df["path"] == curPath]
-
-        if path_is_valid(path_df):
-            validPaths_df = pd.concat([validPaths_df, path_df])
-            number_of_valid_paths +=1
-
-        curPath +=1
 
     if validPaths_df.empty:
         return None
@@ -147,7 +157,7 @@ def get_paths_json(departure, destination, number_of_paths=1):
     Returns:
         json with path data, if there are no valid paths returns None
     """
-    paths_df = get_paths(departure, destination)
+    paths_df = get_paths(departure, destination, number_of_paths)
     
     if paths_df is None:
         return None
@@ -161,7 +171,7 @@ def get_paths_json(departure, destination, number_of_paths=1):
 
         flights = []
         # formats each flight
-        for i in range(path_df.shape[0]):
+        for i in path_df.index:
             flight = {
                 "departure": {
                     "location": path_df.loc[i, "departFrom"],
@@ -191,16 +201,16 @@ def get_paths_json(departure, destination, number_of_paths=1):
 if __name__ == "__main__":
     
     departure = "Richmond"
-    destination = "Saskatoon"
+    destination = "Mississauga"
 
-    # paths = get_paths_from_dijkstra(departure, destination, 10)
+    # paths = get_paths_from_dijkstra(departure, destination, 10000)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
-    # paths = get_paths(departure, destination, 2)
+    # paths = get_paths(departure, destination, 10)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
     
-    paths = get_paths_json(departure, destination)
+    paths = get_paths_json(departure, destination, 10)
     print(paths)
 
     
