@@ -192,21 +192,15 @@ def get_all_valid_paths(departure, destination):
     return validPaths_df
 
 
-def get_paths_json(departure, destination, number_of_paths=1):
-    """gets a json of flight paths from departure to destination
+def convert_paths_to_json(paths_df):
+    """converts the given dataframe of path data to a JSON
 
     Args:
-        departure: String
-            City name of the airport we are departing from
-        destination: String
-            City name of the destination airport
-        number_of_paths: int
-            number of paths to return
+        paths_df:
+            dataframe with path data
     Returns:
         json with path data, if there are no valid paths returns None
     """
-    paths_df = get_paths(departure, destination, number_of_paths)
-    
     if paths_df is None:
         return None
 
@@ -214,6 +208,7 @@ def get_paths_json(departure, destination, number_of_paths=1):
 
     path_jsons = []
 
+    # formats each path
     for path in paths:
         path_df = paths_df[paths_df["path"] == path]
 
@@ -251,15 +246,17 @@ if __name__ == "__main__":
     departure = "Richmond"
     destination = "Calgary"
 
-    paths = get_paths_from_dijkstra(departure, destination, 1000)
-    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
+    # paths = get_paths_from_dijkstra(departure, destination, 1000)
+    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
-    paths = get_paths(departure, destination, 100)
-    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
+    # paths = get_paths(departure, destination, 100)
+    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
     paths = get_all_valid_paths(departure, destination)
-    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_all.csv", index=False)
+    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_all.csv", index=False)
 
+    pathsJSON = convert_paths_to_json(paths)
+    print(pathsJSON)
     # paths = get_paths_json(departure, destination, 10)
     # print(paths)
 
