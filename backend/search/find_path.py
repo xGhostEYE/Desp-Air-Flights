@@ -142,6 +142,55 @@ def get_paths(departure, destination, number_of_paths=1):
 
     return validPaths_df
 
+def get_all_valid_paths(departure, destination):
+    """gets all valid flight paths from departure to destination
+
+    Args:
+        departure: String
+            City name of the airport we are departing from
+        destination: String
+            City name of the destination airport
+    Returns:
+        dataframe with data for all valid paths, if there are no valid paths returns None
+    """
+    validPaths_df = pd.DataFrame()
+    num_paths_to_query = 100
+    num_paths_already_checked = 0
+
+    not_all_paths_found = True
+
+    # loops until all paths have been found and checked for validity
+    while not_all_paths_found:
+        paths_df = get_paths_from_dijkstra(departure, destination, num_paths_to_query)
+
+        if paths_df is None:
+            return None
+
+        # dataframe of paths that havent been checked
+        pathCheck_df = paths_df[paths_df["path"] > num_paths_already_checked]
+
+        # iterates through and checks paths for validity, if valid adds to validPaths_df
+        paths = pathCheck_df["path"].unique().tolist()
+        for path in paths:
+            path_df = pathCheck_df[pathCheck_df["path"] == path]
+            if path_is_valid(path_df):
+                validPaths_df = pd.concat([validPaths_df, path_df])
+
+
+        num_paths_already_checked = num_paths_to_query
+        num_paths_to_query = num_paths_to_query * 2
+
+        # checks if num_paths_already_checked is greater than maxPath, meaning
+        # there are no more paths to check and breaks loop
+        maxPath = paths_df["path"].max()
+        if maxPath < num_paths_already_checked:
+            not_all_paths_found = False
+
+    if validPaths_df.empty:
+        return None
+
+    return validPaths_df
+
 
 def get_paths_json(departure, destination, number_of_paths=1):
     """gets a json of flight paths from departure to destination
@@ -200,15 +249,17 @@ def get_paths_json(departure, destination, number_of_paths=1):
 if __name__ == "__main__":
     
     departure = "Richmond"
-    destination = "Edmonton"
+    destination = "Calgary"
 
-    # paths = get_paths_from_dijkstra(departure, destination, 10000)
-    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
+    paths = get_paths_from_dijkstra(departure, destination, 1000)
+    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
-    paths = get_paths(departure, destination, 10)
+    paths = get_paths(departure, destination, 100)
     paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
-    
+    paths = get_all_valid_paths(departure, destination)
+    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_all.csv", index=False)
+
     # paths = get_paths_json(departure, destination, 10)
     # print(paths)
 
