@@ -1,12 +1,3 @@
-<script setup>
-defineProps({
-  msg: {
-    type: String,
-    required: true
-  }
-});
-</script>
-
 <template>
     <div class="column container d-flex align-items-center justify-content-center">
       <div class="search_box">

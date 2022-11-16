@@ -44,10 +44,10 @@ defineProps({
 <script>
 export default {
   name: "Results",
-  data() {
+  /* data() {
     return {
       
     };
-  }
+  } */
 };
 </script>

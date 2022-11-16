@@ -17,3 +17,34 @@ export default defineConfig({
     }
   }
 })
+
+/* export default defineConfig(({ command, mode, ssrBuild }) => {
+  if (command === 'serve') {
+    return {
+      plugins: [vue()],
+      server: {
+        watch: {
+          usePolling: true
+        }
+      },
+      resolve: {
+        alias: {
+          '@': fileURLToPath(new URL('./src', import.meta.url))
+        },
+        define: {
+          __APP_ENV__: env.APP_ENV
+        }
+      }
+    }
+  } else {
+    // command === 'build'
+    return {
+      plugins: [vue()],
+      resolve: {
+        alias: {
+          '@': fileURLToPath(new URL('./src', import.meta.url))
+        }
+      }
+    }
+  }
+}) */
