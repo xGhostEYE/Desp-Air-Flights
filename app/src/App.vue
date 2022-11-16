@@ -1,9 +1,6 @@
 <template>
-  
-    <div>
-      <div class="title display-1 fixed-top">
-        <h1 class="text-center">{{title}}</h1>
-      </div>
+    <div class="title display-1 fixed-top">
+      <h1 class="text-center">{{title}}</h1>
     </div>
     <div class="column container d-flex align-items-center justify-content-center">
       <SearchComponent @getFlights="getFlights" airports="" class="column container d-flex align-items-center justify-content-center" />
