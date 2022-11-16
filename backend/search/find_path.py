@@ -200,7 +200,7 @@ def get_paths_json(departure, destination, number_of_paths=1):
 if __name__ == "__main__":
     
     departure = "Richmond"
-    destination = "Calgary"
+    destination = "Edmonton"
 
     # paths = get_paths_from_dijkstra(departure, destination, 10000)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
