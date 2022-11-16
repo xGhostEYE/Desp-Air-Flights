@@ -1,11 +1,18 @@
+<script setup>
+let showFlights = false;
+let airports = ["Saskatoon", "Regina", "Calgary"];
+
+</script>
+
 <template>
   <div>
     <TitleComponent />
   </div>
-  <div class="column container align-items-center justify-content-center">
-    <SearchComponent @getFlights="getFlights" airports="" class="row" />
-    <br>
-    <ResultsComponent v-if="showFlights" :results="results" class="row" />
+  <div class="container">
+    <div class="row align-items-start">
+      <SearchComponent @getFlights="getFlights" :airports="airports" class="col" />
+      <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
+      </div>
   </div> 
  
 </template>
@@ -27,9 +34,8 @@ export default {
 },
   data() {
     return {
-      airports: null,
+      airports: ["Saskatoon", "Regina", "Calgary"],
       results: null,
-      showFlights: false,
       baseURL: "http://127.0.0.1:5000"
     };
   },
