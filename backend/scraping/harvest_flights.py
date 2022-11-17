@@ -5,33 +5,32 @@ Purpose:
 """
 
 from bs4 import BeautifulSoup
-from urllib.request import urlopen
 import pandas as pd
 from os.path import exists
 import requests
 import re
+import random
 from selenium import webdriver 
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service 
+from selenium.webdriver.chrome.service import Service
 import pandas as pd
-from datetime import date
+from datetime import date, datetime
 import time
 
 
-def price_scrape(origin, destination, startdate, requests):
-    
-    global results
+def price_link_scrape(origin, destination, startdate):
+
     df = pd.DataFrame()
 
-    url = "https://www.kayak.com/flights/" + origin + "-" + destination + "/" + startdate + "?sort=bestflight_a&fs=stops=0"
+    url = "https://www.kayak.com/flights/" + origin + "-" + destination + "/" + startdate + "?sort=depart_a&fs=stops=0"
     print("\n" + url)
 
     chrome_options = webdriver.ChromeOptions()
     agents = ["Firefox/66.0.3","Chrome/73.0.3683.68","Edge/16.16299"]
-    print("User agent: " + agents[(requests%len(agents))])
-    chrome_options.add_argument('--user-agent=' + agents[(requests%len(agents))] + '"')    
+    print("User agent: " + agents[(0%len(agents))])
+    chrome_options.add_argument('--user-agent=' + agents[(0%len(agents))] + '"')
     chrome_options.add_experimental_option('useAutomationExtension', False)
-    
+
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
     driver.implicitly_wait(20)
     driver.get(url)
@@ -47,51 +46,65 @@ def price_scrape(origin, destination, startdate, requests):
         return "failure"
 
     time.sleep(20) #wait 20sec for the page to load
-    
+
     soup=BeautifulSoup(driver.page_source, 'lxml')
-    
-    #get the arrival and departure times
-    deptimes = soup.find_all('span', attrs={'class': 'depart-time base-time'})
-    arrtimes = soup.find_all('span', attrs={'class': 'arrival-time base-time'})
-    meridies = soup.find_all('span', attrs={'class': 'time-meridiem meridiem'})
-    airline = soup.find_all('div', attrs={'class': 'bottom'})
-    booking = soup.find_all('a', attrs={'class': 'booking-link'})
-    deptime = []
-    for div in deptimes:
-        deptime.append(div.getText()[:-1])    
-        
-    arrtime = []
-    for div in arrtimes:
-        arrtime.append(div.getText()[:-1])   
-
-    meridiem = []
-    for div in meridies:
-        meridiem.append(div.getText())  
+    data = soup.find_all('div', attrs={'class': 'inner-grid keel-grid'})
+    urls = []
+    for link in soup.find_all('a', href=True):
+        urls.append(link['href'])
+    data_seperated = []
+    for div in data:
+        data_seperated.append(str(div.getText().replace("\n",'')))
+    departure_time = []
+    arrival_time = []
     airlines = []
-    for div in airline:
-        airlines.append(div.getText())
-    booking_list = []    
-    for div in booking:
-        booking_list.append(div.getText())
-    booking_clean = []
-    for i in range(len(booking_list)):
-        m = re.search('[0-9.]+', booking_list[i])
-        if m:
-            booking_clean.append(m.group())
-        else:
-            continue
-    listthing_clean = []
-    airlines_clean = []
-    for i in range(len(airlines)):
-        listthing_clean.append(("\n".join(item for item in airlines[i].split('\n') if item)))
-    for i in range(len(listthing_clean)):
-        if len(listthing_clean[i]) > 3 and "\n" not in listthing_clean[i]:
-            airlines_clean.append(listthing_clean[i])
+    prices = []
+    for i in range(len(data_seperated)):
+        booking_info = data_seperated[i].split('$')[0]
+        time_departure = booking_info.split('–')[0]
+        time_departure = time_departure.replace(' ','')
+        in_time = datetime.strptime(time_departure, "%I:%M%p")
+        out_time = datetime.strftime(in_time, "%H:%M")
+        departure_time.append(out_time)
+        time_arrival = booking_info.split(' ')[1]
+        time_arrival_remaining = booking_info.split(' ')[2]
+        timething = time_arrival[3:]+time_arrival_remaining[:2]
+        in_time = datetime.strptime(timething, "%I:%M%p")
+        out_time = datetime.strftime(in_time, "%H:%M")
+        arrival_time.append(out_time)
+        price = data_seperated[i].split('$')[1]
+        price = price.split(' ')[0]
+        prices.append('$'+price)
+        airline = booking_info.split('nonstop')[0]
+        airline_remaining = airline.split(":", 2)[2]
+        airlines.append(airline_remaining[5:])
 
-    df['Departure'] = deptime
-    df['Arrival'] = arrtime
-    df['Carrier'] = airlines_clean
-    df['Cost'] = booking_clean
+    urls = soup.select(".above-button")
+
+    urls_clean = []
+    urls_clean_no_duplicates = []
+    final_urls = []
+    final_urls = []
+    urls_clean = urls[::2]
+    urls_clean_no_duplicates = []
+    for i in range(len(urls_clean)):
+        for link in urls_clean[i].findAll('a'):
+            urls_clean_no_duplicates.append("https://www.kayak.com"+link.get('href'))
+
+    for i in range(len(urls_clean_no_duplicates)):
+        driver.execute_script("window.open()")
+        driver.switch_to.window(driver.window_handles[-1])
+        driver.get(urls_clean_no_duplicates[i])
+        driver.implicitly_wait(10)
+        time.sleep(random.randint(3,8))
+        final_urls.append(driver.current_url)
+
+        
+    df['Departure'] = departure_time
+    df['Arrival'] = arrival_time
+    df['Carrier'] = airlines
+    df['Cost'] = prices
+    df['Link'] = final_urls
     return df
 
 # format times
@@ -329,7 +342,7 @@ if __name__ == "__main__":
 
     #scrape for prices from the departing airport
     prices_file_out = f"./__data/{departure_airport}_flight prices.csv"
-    prices_df = price_scrape(departure_airport, arrival_airport, str(date.today()), 0)
+    prices_df = price_link_scrape(departure_airport, arrival_airport, str(date.today()))
     prices_df.to_csv(prices_file_out, index=False)
     # separator = '('
     # departures = user_airport_timetable_data['Origin'].unique().tolist()
