@@ -17,8 +17,6 @@ const inputClasses = function(isValid) {
   ];
 };
 
-
-
 </script>
 <template>
     <div class="align-items-center justify-content-center">

@@ -1,10 +1,5 @@
-
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid title">
-      <h1 class="text-center">Desp-Air Flights</h1>
-    </div>
-  </nav>
+      <h1 class="fixed-top text-center">Desp-Air Flights</h1>
 </template>
   
 <script>
