@@ -7,13 +7,14 @@ defineProps({
 });
 </script>
 
+<!-- non-hardcoded stuff
 <template>
   <div class="column">
     <li v-for="resultObject in this.results">
-      <div class="card w-75">  
+      <div class="card w-200">  
         <span v-for="item in resultObject.flights">
           <div class="card-body">
-            <h5 class="card-title">12:03-14:02</h5>
+            <h5 class="card-title">{{ item.startTime }} - {{ item.endTime }}    {{ item.totalTime }}   {{ item.totalStops }}    {{ item.totalCost }}</h5>
 
             <p class="card-text">{{ item.departure.time }} - {{ item.departure.location }} ({{ item.departure['airport code'] }})</p>
 
@@ -25,6 +26,37 @@ defineProps({
         </span>
       </div>
     </li>
+  </div>  
+</template>
+-->
+
+<template>
+  <div class="column">
+      <div class="card w-200">
+          <div class="card-body">
+            <h5 class="card-header">12:02 - 15:45 3h 43m 1 stop $345</h5>
+            <!--<h5 class="card-title">12:02 - 15:45     3h 43m       1 stop       $345 </h5>-->
+
+            <p class="card-text">12:02   -    Saskatoon (YXE)</p>
+
+            <img src="node_modules/bootstrap-icons/icons/stop.svg" alt="">
+            <div class="vr"></div>
+            <img src="node_modules/bootstrap-icons/icons/stop.svg" alt="">
+            
+            <p class="card-text">13:12   -    Calgary (YYC)</p>
+            <p class="card-text">Air Canada</p>
+            <a href="#" class="btn btn-primary">Take me to this flight!</a>
+            <hr>
+            <p class="card-text">14:14   -    Calgary (YYC)</p>
+
+            <img src="node_modules/bootstrap-icons/icons/stop.svg" alt="">
+            <div class="vr"></div>
+            <img src="node_modules/bootstrap-icons/icons/stop.svg" alt="">
+            <p class="card-text">15:45   -    Vancouver (YVR)</p>
+            <p class="card-text">WestJet</p>
+            <a href="#" class="btn btn-primary">Take me to this flight!</a>
+          </div>
+      </div>
   </div>  
 </template>
 
