@@ -351,7 +351,7 @@ if __name__ == "__main__":
     airport_arvl_df.to_csv(arrival_file_out, index=False)
 
     #scrape for prices from the departing airport
-    prices_file_out = f"./__data/{departure_airport}_flight prices.csv"
+    prices_file_out = f"./__data/{departure_airport}_flight_prices_urls.csv"
     prices_df = price_link_scrape(departure_airport, arrival_airport, str(date.today()))
     prices_df.to_csv(prices_file_out, index=False)
     # separator = '('
