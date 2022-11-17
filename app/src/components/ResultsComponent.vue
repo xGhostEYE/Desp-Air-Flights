@@ -13,11 +13,11 @@ defineProps({
       <div class="card w-75">  
         <span v-for="item in resultObject.flights">
           <div class="card-body">
-            <h5 class="card-title">{{ item.startTime }} - {{ item.endTime }}    {{ item.totalTime }}   {{ item.totalStops }}    {{ item.totalCost }}</h5>
+            <h5 class="card-title">12:03-14:02</h5>
 
-            <p class="card-text">{{ item.departure.time }} - {{ item.departure.location }} ({{ item.departure.airport code }})</p>
+            <p class="card-text">{{ item.departure.time }} - {{ item.departure.location }} ({{ item.departure['airport code'] }})</p>
 
-            <p class="card-text">{{ item.arrival.time }} - {{ item.arrival.location }} ({{ item.arrival.airport code }})</p>
+            <p class="card-text">{{ item.arrival.time }} - {{ item.arrival.location }} ({{ item.arrival['airport code'] }})</p>
             <p class="card-text">{{ item.airline }}</p>
             <a href="#" class="btn btn-primary">Take me to this flight!</a>
             <hr/>
