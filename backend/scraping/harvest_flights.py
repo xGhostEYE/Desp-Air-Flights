@@ -44,43 +44,52 @@ def price_link_scrape(origin, destination, startdate):
         driver.close()
         time.sleep(20)
         return "failure"
+    
+    #wait 20sec for the page to load
+    time.sleep(20)
 
-    time.sleep(20) #wait 20sec for the page to load
-
+    # use soup to get the div data of the flights (arrival, departure, price, ect)
     soup=BeautifulSoup(driver.page_source, 'lxml')
     data = soup.find_all('div', attrs={'class': 'inner-grid keel-grid'})
-    urls = []
-    for link in soup.find_all('a', href=True):
-        urls.append(link['href'])
+    
+        
+    # convert div data to txt and append to list
     data_seperated = []
     for div in data:
         data_seperated.append(str(div.getText().replace("\n",'')))
     departure_time = []
+    
+    
     arrival_time = []
     airlines = []
     prices = []
     for i in range(len(data_seperated)):
+        # original data
         booking_info = data_seperated[i].split('$')[0]
+        # get departure time
         time_departure = booking_info.split('–')[0]
         time_departure = time_departure.replace(' ','')
         in_time = datetime.strptime(time_departure, "%I:%M%p")
         out_time = datetime.strftime(in_time, "%H:%M")
         departure_time.append(out_time)
+        # get arrival time
         time_arrival = booking_info.split(' ')[1]
         time_arrival_remaining = booking_info.split(' ')[2]
         timething = time_arrival[3:]+time_arrival_remaining[:2]
         in_time = datetime.strptime(timething, "%I:%M%p")
         out_time = datetime.strftime(in_time, "%H:%M")
         arrival_time.append(out_time)
+        # get flight price
         price = data_seperated[i].split('$')[1]
         price = price.split(' ')[0]
         prices.append('$'+price)
+        # get airline name
         airline = booking_info.split('nonstop')[0]
         airline_remaining = airline.split(":", 2)[2]
         airlines.append(airline_remaining[5:])
 
+    # get kayak.com url links to tickets
     urls = soup.select(".above-button")
-
     urls_clean = []
     urls_clean_no_duplicates = []
     final_urls = []
@@ -90,7 +99,8 @@ def price_link_scrape(origin, destination, startdate):
     for i in range(len(urls_clean)):
         for link in urls_clean[i].findAll('a'):
             urls_clean_no_duplicates.append("https://www.kayak.com"+link.get('href'))
-
+    
+    # open the links and get the true ticket urls from the airline websites
     for i in range(len(urls_clean_no_duplicates)):
         driver.execute_script("window.open()")
         driver.switch_to.window(driver.window_handles[-1])
@@ -99,7 +109,7 @@ def price_link_scrape(origin, destination, startdate):
         time.sleep(random.randint(3,8))
         final_urls.append(driver.current_url)
 
-        
+    # put all data into dataframe and return it
     df['Departure'] = departure_time
     df['Arrival'] = arrival_time
     df['Carrier'] = airlines
