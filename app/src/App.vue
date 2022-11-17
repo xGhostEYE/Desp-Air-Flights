@@ -5,16 +5,20 @@ let airports = ["Saskatoon", "Regina", "Calgary"];
 </script>
 
 <template>
-  <div>
-    <TitleComponent />
-  </div>
+  <h1 class="fixed-top text-center">Desp-Air Flights</h1>
   <div class="container">
     <div class="row align-items-start">
       <SearchComponent @getFlights="getFlights" :airports="airports" class="col" />
       <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
-      </div>
+    </div>
   </div> 
- 
+
+  <footer class="text-center text-white fixed-bottom" style="background-color: #f1f1f1;">
+  <div class="text-center text-dark p-3" style="background-color: #214177;">
+    © 2022 Copyright:
+    <p class="text-dark" style="display:inline">Team_1 CMPT370-22-Fall University of Saskatchewan</p>
+  </div>
+  </footer>
 </template>
 
 
@@ -36,8 +40,11 @@ export default {
     return {
       airports: ["Saskatoon", "Regina", "Calgary"],
       results: null,
-      baseURL: "http://127.0.0.1:5000"
+      baseURL: "http://127.0.0.1:5000",
     };
+
+
+
   },
   mounted () {
     axios
@@ -68,7 +75,9 @@ export default {
 .p{
   margin-top: 0px;
 }
-.title{
-  background-color: #5F9DF7;
+.container{
+  font-family: "Merienda", Helvetica, Arial;
+  font-size: 20px;
 }
+
 </style>

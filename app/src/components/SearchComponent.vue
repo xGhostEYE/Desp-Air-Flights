@@ -17,8 +17,6 @@ const inputClasses = function(isValid) {
   ];
 };
 
-
-
 </script>
 <template>
     <div class="align-items-center justify-content-center">
@@ -31,8 +29,7 @@ const inputClasses = function(isValid) {
         <datalist id="startingList">
           <option v-for="airport in this.airports">{{airport}}</option>
         </datalist>
-      
-      
+        <br>
         <label for="destination" class="form-label">Destination</label>
         <input class="form-control" list="destinationList" name="destination" 
                 id="destination" v-model="destination" />
