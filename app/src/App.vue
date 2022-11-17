@@ -1,11 +1,20 @@
+<script setup>
+let showFlights = false;
+let airports = ["Saskatoon", "Regina", "Calgary"];
+
+</script>
+
 <template>
-    <div class="title display-1 fixed-top">
-      <h1 class="text-center">{{title}}</h1>
-    </div>
-    <div class="column container d-flex align-items-center justify-content-center">
-      <SearchComponent @getFlights="getFlights" airports="" class="column container d-flex align-items-center justify-content-center" />
-      <ResultsComponent v-if="showFlights" :results="results" />
-    </div> 
+  <div>
+    <TitleComponent />
+  </div>
+  <div class="container">
+    <div class="row align-items-start">
+      <SearchComponent @getFlights="getFlights" :airports="airports" class="col" />
+      <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
+      </div>
+  </div> 
+ 
 </template>
 
 
@@ -14,34 +23,39 @@
 import SearchComponent from './components/SearchComponent.vue';
 import ResultsComponent from './components/ResultsComponent.vue';
 import axios from 'axios';
+import TitleComponent from './components/TitleComponent.vue';
 
 export default {
   name: "App",
   components: {
     ResultsComponent,
-    SearchComponent
-  },
+    SearchComponent,
+    TitleComponent
+},
   data() {
     return {
-      airports: null,
+      airports: ["Saskatoon", "Regina", "Calgary"],
       results: null,
-      showFlights: false,
-      title: "Desp-Air Flights"
+      baseURL: "http://127.0.0.1:5000"
     };
   },
   mounted () {
     axios
-      .get('http://127.0.0.1:5000/airports')
+      .get(this.baseURL + '/airports')
       .then(response => (this.airports = response.data));
   },
   methods: {
-    async getFlights () {
+    async getFlights (dep, des) {
       this.showFlights = true;
-      console.log("its working");
       
       await axios
-      .get('http://127.0.0.1:5000/flights')
-      .then(response => (this.results = response.data));
+        .get(this.baseURL + '/flights', {
+          params: {
+            departure: String(dep),
+            destination: String(des)
+          }
+        })
+        .then(response => (this.results = response.data));
 
     },
   }
