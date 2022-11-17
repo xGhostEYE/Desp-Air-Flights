@@ -5,5 +5,9 @@ def connect_gdb():
     gdb = Graph("bolt://cmpt370-db:7687", user="neo4j", password="password")
     return gdb
 
+def connect_test_gdb():
+    """Connects to a test neo4j database"""
+    gdb = Graph("bolt://localhost:11006", auth=("neo4j", "password"))
+    return gdb
    
 

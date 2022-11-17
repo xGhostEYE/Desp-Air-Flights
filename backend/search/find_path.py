@@ -89,6 +89,10 @@ def path_is_valid(path):
     return True
 
 
+def get_path_price(path_df):
+    return None
+
+
 def get_paths(departure, destination, number_of_paths=1):
     """gets flight paths from departure to destination
 
