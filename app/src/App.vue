@@ -11,7 +11,7 @@ let airports = ["Saskatoon", "Regina", "Calgary"];
         <span class="h1">Desp-Air Flights</span>
       </div> -->
     <div class="row flex-nowrap">
-      <div class="col-4 navbar navbar-light bg-light">
+      <div class="col navbar navbar-light bg-light">
         <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
       <!-- <nav class="col navbar navbar-light bg-light"> -->
         <div class="container-fluid">
@@ -22,7 +22,7 @@ let airports = ["Saskatoon", "Regina", "Calgary"];
         </div>
 
 <!--       </nav>
- -->      <div class="col-8">
+ -->      <div class="col">
         <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
       </div>
     </div>
@@ -69,19 +69,59 @@ export default {
   methods: {
     async getFlights (dep, des) {
       this.showFlights = true;
-      
-      await axios
+      this.processResults(null);
+      /* await axios
         .get(this.baseURL + '/flights', {
           params: {
             departure: String(dep),
             destination: String(des)
           }
         })
-        .then(response => (this.processResults(response.data)));
+        .then(response => (this.processResults(response.data))); */
 
     },
     processResults(flightData) {
-      this.results = flightData;
+      //this.results = flightData;
+      this.results = [{
+  'flights': [
+  {
+    'departure': {
+      'location': 'Saskatoon', 
+      'time': '19:15',
+      'airport code': 'YXE'
+    },
+    'arrival': {
+      'location': 'Winnipeg', 
+      'time': '21:53',
+      'airport code': 'YWG'
+    },
+   'cost': 0, 
+   'airline': 'WestJet',
+   'flight number': 'WS3266'
+},
+{
+  'departure': {
+      'location': 'Saskatoon', 
+      'time': '19:15',
+      'airport code': 'YXE'
+    },
+    'arrival': {
+      'location': 'Winnipeg', 
+      'time': '21:53',
+      'airport code': 'YWG'
+    },
+   'cost': 0, 
+   'airline': 'WestJet',
+   'flight number': 'WS3266',
+   'startTime': '19:15',
+   'endTime': '21:53'
+}
+],
+'totalCost': '5',
+'totalTime': '0:44',
+'startTime':'19:15',
+'endTime': '21:53'
+}];
     }
   }
 };
