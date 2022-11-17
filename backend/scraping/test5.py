@@ -12,7 +12,7 @@ import time
 import requests
 import random
 
-url = "https://www.kayak.com/flights/YYC-YVR/2022-11-14?sort=depart_a&fs=stops=0"
+url = "https://www.kayak.com/flights/YYC-YVR/2022-11-16?sort=depart_a&fs=stops=0"
 print("\n" + url)
 
 chrome_options = webdriver.ChromeOptions()
@@ -40,28 +40,15 @@ time.sleep(20) #wait 20sec for the page to load
 
 # soup=BeautifulSoup(driver.page_source, 'lxml')
 # data = soup.find_all('div', attrs={'class': 'inner-grid keel-grid'})
-urls = []
-# traverse list
-elements = driver.find_elements(By.TAG_NAME, "a")
-for el in elements:
-    urls.append(el.get_attribute("href"))
-
-urls_clean = []
-urls_clean_no_duplicates = []
+urls = soup.select(".above-button")
 final_urls = []
-# for link in soup.find_all('a', href=True):
-#     urls.append(link['href'])
-for i in range(len(urls)):
-    if urls[i] == None:
-        continue
-    if "javascript" in urls[i]:
-        continue
-    if "/book/" in urls[i]:
-        urls_clean.append(urls[i])
-        
-for i in urls_clean:
-  if i not in urls_clean_no_duplicates:
-    urls_clean_no_duplicates.append(i)
+urls_clean = urls[::2]
+urls_clean_no_duplicates = []
+urls.clear()
+for i in range(len(urls_clean)):
+    for link in urls_clean[i].findAll('a'):
+        urls_clean_no_duplicates.append("https://www.kayak.com"+link.get('href'))
+    
 
 for url in urls_clean_no_duplicates:
     print(url)
