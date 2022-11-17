@@ -1,13 +1,39 @@
-<template>
-  <div>
-    <TitleComponent />
-  </div>
-  <div class="column container align-items-center justify-content-center">
-    <SearchComponent @getFlights="getFlights" airports="" class="row" />
-    <br>
-    <ResultsComponent v-if="showFlights" :results="results" class="row" />
-  </div> 
+<script setup>
+let showFlights = false;
+let airports = ["Saskatoon", "Regina", "Calgary"];
+
+</script>
  
+<template>    
+  <h1 class="fixed-top text-center">Desp-Air Flights</h1>
+    <div class="container">
+      <!-- <div class="navbar navbar-expand-lg fixed-top">
+        <span class="h1">Desp-Air Flights</span>
+      </div> -->
+    <div class="row flex-nowrap">
+      <div class="col navbar navbar-light bg-light">
+        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
+      <!-- <nav class="col navbar navbar-light bg-light"> -->
+        <div class="container-fluid">
+          <span class="navbar-brand mb-0 h1">Navbar</span>
+          <SearchComponent @getFlights="getFlights" :airports="airports" />
+        </div>
+        </div>
+        </div>
+
+<!--       </nav>
+ -->      <div class="col">
+        <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center text-white fixed-bottom" style="background-color: #f1f1f1;">
+  <div class="text-center text-dark p-3" style="background-color: #214177;">
+    © 2022 Copyright:
+    <p class="text-dark" style="display:inline">Team_1 CMPT370-22-Fall University of Saskatchewan</p>
+  </div>
+  </footer>
 </template>
 
 
@@ -27,11 +53,13 @@ export default {
 },
   data() {
     return {
-      airports: null,
+      airports: ["Saskatoon", "Regina", "Calgary"],
       results: null,
-      showFlights: false,
-      baseURL: "http://127.0.0.1:5000"
+      baseURL: "http://127.0.0.1:5000",
     };
+
+
+
   },
   mounted () {
     axios
@@ -41,17 +69,60 @@ export default {
   methods: {
     async getFlights (dep, des) {
       this.showFlights = true;
-      
-      await axios
+      this.processResults(null);
+      /* await axios
         .get(this.baseURL + '/flights', {
           params: {
             departure: String(dep),
             destination: String(des)
           }
         })
-        .then(response => (this.results = response.data));
+        .then(response => (this.processResults(response.data))); */
 
     },
+    processResults(flightData) {
+      //this.results = flightData;
+      this.results = [{
+  'flights': [
+  {
+    'departure': {
+      'location': 'Saskatoon', 
+      'time': '19:15',
+      'airport code': 'YXE'
+    },
+    'arrival': {
+      'location': 'Winnipeg', 
+      'time': '21:53',
+      'airport code': 'YWG'
+    },
+   'cost': 0, 
+   'airline': 'WestJet',
+   'flight number': 'WS3266'
+},
+{
+  'departure': {
+      'location': 'Saskatoon', 
+      'time': '19:15',
+      'airport code': 'YXE'
+    },
+    'arrival': {
+      'location': 'Winnipeg', 
+      'time': '21:53',
+      'airport code': 'YWG'
+    },
+   'cost': 0, 
+   'airline': 'WestJet',
+   'flight number': 'WS3266',
+   'startTime': '19:15',
+   'endTime': '21:53'
+}
+],
+'totalCost': '5',
+'totalTime': '0:44',
+'startTime':'19:15',
+'endTime': '21:53'
+}];
+    }
   }
 };
 </script>
@@ -62,7 +133,9 @@ export default {
 .p{
   margin-top: 0px;
 }
-.title{
-  background-color: #5F9DF7;
+.container{
+  font-family: "Merienda", Helvetica, Arial;
+  font-size: 20px;
 }
+
 </style>

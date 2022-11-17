@@ -31,7 +31,7 @@ def drop_path_graph():
 
 
 
-def get_path(departure, destination):
+def get_path(departure, destination) -> DataFrame:
     gdb = conGDB.connect_gdb()
 
     cypher = """

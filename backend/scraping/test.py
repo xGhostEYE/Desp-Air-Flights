@@ -10,6 +10,7 @@ import os
 import requests
 from os.path import exists
 import time
+from datetime import datetime
 
 
 
@@ -90,7 +91,6 @@ def harvest_data_arrivals(arrival_location):
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
     list_of_dataframes = []
-    interval = soup.find_all("nav", {"id": "intervals"})
     interval = soup.find_all("nav", {"id": "intervals"})
     if (len(interval)<=0):
         url = url.encode('ascii', errors='ignore')
