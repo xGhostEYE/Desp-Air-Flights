@@ -3,18 +3,30 @@ let showFlights = false;
 let airports = ["Saskatoon", "Regina", "Calgary"];
 
 </script>
-
-<template>
-  <div>
-    <TitleComponent />
-  </div>
-  <div class="container">
-    <div class="row align-items-start">
-      <SearchComponent @getFlights="getFlights" :airports="airports" class="col" />
-      <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
-      </div>
-  </div> 
  
+<template>    
+  
+    <div class="container">
+      <div class="navbar navbar-expand-lg fixed-top">
+        <span class="h1">Desp-Air Flights</span>
+      </div>
+    <div class="row flex-nowrap">
+      <div class="col-4 navbar navbar-light bg-light">
+        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
+      <!-- <nav class="col navbar navbar-light bg-light"> -->
+        <div class="container-fluid">
+          <span class="navbar-brand mb-0 h1">Navbar</span>
+          <SearchComponent @getFlights="getFlights" :airports="airports" />
+        </div>
+        </div>
+        </div>
+
+<!--       </nav>
+ -->      <div class="col-8">
+        <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
+      </div>
+    </div>
+  </div>
 </template>
 
 
@@ -55,9 +67,12 @@ export default {
             destination: String(des)
           }
         })
-        .then(response => (this.results = response.data));
+        .then(response => (this.processResults(response.data)));
 
     },
+    processResults(flightData) {
+      this.results = flightData;
+    }
   }
 };
 </script>

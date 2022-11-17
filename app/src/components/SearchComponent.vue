@@ -31,19 +31,18 @@ const inputClasses = function(isValid) {
         <datalist id="startingList">
           <option v-for="airport in this.airports">{{airport}}</option>
         </datalist>
-      
+        <br/>
       
         <label for="destination" class="form-label">Destination</label>
         <input class="form-control" list="destinationList" name="destination" 
                 id="destination" v-model="destination" />
-        <span :class="{'invisible':this.validStarting}" class="form-text text-danger">Enter valid airport</span>
+        <span :class="{'invisible':this.validDestination}" class="form-text text-danger">Enter valid airport</span>
         <datalist id="destinationList">
           <option v-for="airport in this.airports">{{airport}}</option>
         </datalist>
+        <br/>
         
-        <div>
-          <button :class="{'disabled': !this.validEntries()}" @click="search()" class="mt-5 btn btn-primary">Search</button>
-        </div>
+        <button :class="{'disabled': !this.validEntries()}" @click="search()" class="mt-5 btn btn-primary">Search</button>
     </div>
 </template>
 <script>

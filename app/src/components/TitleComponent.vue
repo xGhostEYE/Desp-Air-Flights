@@ -1,10 +1,10 @@
 
 <template>
-  <div>
-    <div class="title display-1 fixed-top">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid title">
       <h1 class="text-center">Desp-Air Flights</h1>
     </div>
-  </div>
+  </nav>
 </template>
   
 <script>
