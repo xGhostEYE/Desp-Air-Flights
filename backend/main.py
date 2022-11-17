@@ -28,10 +28,10 @@ airports = [
 
 @app.route("/flights", methods=['GET'])
 def get_flight():
-  return jsonify(fp.get_paths_json(
+  return jsonify(fp.get_paths(
     request.args.get("departure", default="", type=str),
     request.args.get("destination", default="", type=str)
-))
+).to_json())
 
 @app.route("/airports", methods=['GET'])
 def get_airports():
