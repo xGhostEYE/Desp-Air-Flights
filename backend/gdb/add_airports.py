@@ -28,7 +28,7 @@ def add_airport(city, airport_code, gdb=None):
     gdb.run(cypher, parameters={"code": airport_code, "city": city})
 
 
-def add_airports_from_csv(airport_df):
+def add_airports_from_df(airport_df):
     """Adds airport nodes to the gdb.
 
     Creates Airport nodes in the neo4j database. The Airports are created with 
@@ -53,7 +53,7 @@ def add_airports_from_csv(airport_df):
 
 if __name__ == "__main__":
     airport_df = pd.read_csv("./__data/airports_in_gdb/Airports.csv")
-    add_airports_from_csv(airport_df)
+    add_airports_from_df(airport_df)
 
 
 
