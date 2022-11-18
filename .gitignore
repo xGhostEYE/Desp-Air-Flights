@@ -59,7 +59,8 @@
 __pycache__
 .idea
 
-neo4j
+neo4j/*
+neo4j-test/*
 backend/scraping/test.py
 backend/scraping/test.py
 backend/scraping/test.py

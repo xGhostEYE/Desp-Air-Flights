@@ -1,0 +1,35 @@
+version: "3"
+services:
+  neo4j-test:
+    container_name: neo4j-test
+    hostname: cmpt370-testdb
+    image: neo4j:latest
+    ports: 
+      - "7475:7474"
+      - "7688:7687"
+    volumes:
+      - ./neo4j-test/data:/data
+      - ./neo4j-test/plugins:/plugins
+      - ./neo4j-test/logs:/logs
+      - ./neo4j-test/imports:/imports
+    restart: "unless-stopped"
+    environment:
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+      NEO4J_AUTH: none
+      # NEO4J_dbms_default__advertised__address: 0.0.0.0
+      # NEO4J_dbms_connector_http_listen__address: 0.0.0.0:7475
+      # NEO4J_dbms_connector_bolt_listen__address: 0.0.0.0:7688
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+      NEO4J_apoc_import_file_enabled: true
+      NEO4J_apoc_export_file_enabled: true
+      NEO4J_apoc_import_file_use__neo4j__config: true
+      NEO4J_dbms_default__database: mainDB
+      NEO4JLABS_PLUGINS: '["apoc"]'
+    healthcheck:
+      test: [ "CMD-SHELL", "echo RETURN 1 | cypher-shell -a bolt://localhost:7687 -u admin -p password || exit 1" ]
+    networks:
+      - cmpt370
+networks:
+  cmpt370:
+volumes:
+  Neo4j-test:
