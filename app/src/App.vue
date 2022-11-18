@@ -5,7 +5,7 @@ let airports = ["Saskatoon", "Regina", "Calgary"];
 </script>
  
 <template>    
-  <h1 class="fixed-top text-center">Desp-Air Flights</h1>
+  <h1 class="title fixed-top text-center">Desp-Air Flights</h1>
     <div class="container"  >
     <div class="row flex-nowrap" style="width: 50%;">
         <div class="container-fluid">
@@ -18,7 +18,7 @@ let airports = ["Saskatoon", "Regina", "Calgary"];
   </div>
 
   <footer class="text-center text-white fixed-bottom" style="background-color: #f1f1f1;">
-  <div class="text-center text-dark p-3" style="background-color: #214177;">
+  <div class="text-center text-dark p-3" style="background-color: #E8DFCA;">
     © 2022 Copyright:
     <p class="text-dark" style="display:inline">Team_1 CMPT370-22-Fall University of Saskatchewan</p>
   </div>
@@ -126,5 +126,11 @@ export default {
   font-family: "Merienda", Helvetica, Arial;
   font-size: 20px;
 }
-
+.title{
+  font-family: 'Montserrat', sans-serif;
+  font-family: 'Pacifico', cursive;
+  font-size: 80px;
+  color: #7a9bb1;
+  margin-top: 70px;
+}
 </style>
