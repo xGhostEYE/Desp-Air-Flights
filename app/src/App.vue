@@ -6,19 +6,12 @@ let airports = ["Saskatoon", "Regina", "Calgary"];
  
 <template>    
   <h1 class="fixed-top text-center">Desp-Air Flights</h1>
-    <div class="container">
-      <div class="navbar navbar-expand-lg fixed-top">
-        <span class="h1">Desp-Air Flights</span>
-      </div>
-    <div class="row flex-nowrap">
-      <!-- <nav class="col navbar navbar-light bg-light"> -->
+    <div class="container"  >
+    <div class="row flex-nowrap" style="width: 50%;">
         <div class="container-fluid">
-          <span class="navbar-brand mb-0 h1">Navbar</span>
           <SearchComponent @getFlights="getFlights" :airports="airports" />
     </div>
-
-<!--       </nav>
- -->      <div class="col">
+    <div class="col">
         <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
       </div>
     </div>

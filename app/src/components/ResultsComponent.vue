@@ -8,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="column">
+  <div class="column" style="height:1px; width: 1000px;">
     <li v-for="resultObject in this.results">
       <div class="card w-75">  
         <span v-for="item in resultObject.flights">
