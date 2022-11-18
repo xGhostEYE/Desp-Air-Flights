@@ -237,9 +237,9 @@ def harvest_data_arrivals(arrival_location):
     # discard = ["cargo"]
     # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
     data = clean_data(df)
-    new_row = {"City":"above data from: "+arrival_location}
-    #append row to the dataframe
-    data = data.append(new_row, ignore_index=True)
+    # new_row = {"City":"above data from: "+arrival_location}
+    # #append row to the dataframe
+    # data = data.append(new_row, ignore_index=True)
     return data
 
 
@@ -298,9 +298,9 @@ def harvest_data_departures(departure_location,initial_search):
     # discard = ["cargo"]
     # df = df[df["Carrier"].str.contains('|'.join(discard))==False]
     data = clean_data(df)
-    new_row = {"City":"above data from: "+departure_location}
-    #append row to the dataframe
-    data = data.append(new_row, ignore_index=True)
+    # new_row = {"City":"above data from: "+departure_location}
+    # #append row to the dataframe
+    # data = data.append(new_row, ignore_index=True)
     return data
 
 

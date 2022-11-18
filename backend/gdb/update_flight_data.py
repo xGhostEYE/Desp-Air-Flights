@@ -10,7 +10,7 @@ import harvest_flights as harv
 
 import connect_gdb as conGDB
 
-def update_airport_departures(airport_code, gdb=None):
+def update_airport_departures(airport_code, gdb=None, airport_dept_df=None):
     """Updates the flights departing from the given airport
 
     Scrapes flights departing from the airport and adds them to the gdb as relationships
@@ -20,24 +20,27 @@ def update_airport_departures(airport_code, gdb=None):
             airport code of the airport we are adding
         gdb: py2neo Graph
             connection to the neo4j database
+        airport_dept_df:
+            dataframe with departure data, scapes departure data if not provided
     """
     if gdb==None:
             gdb = conGDB.connect_gdb()
 
-    airport_cypher = """MATCH (a:Airport {Code: $Code})-[f:Flight]-(:Airport)
+    airport_cypher = """MATCH (a:Airport {Code: $Code})-[f:Flight]->(:Airport)
                             DELETE f"""
     gdb.run(airport_cypher, parameters={"Code": airport_code})
 
-    try:
-        airport_dept_df = harv.harvest_data_departures(airport_code, None)
-    except Exception as e:
-        print("Failed to get Departure data for:", airport_code, "\nDue to the exception:", e)
-        return
+    if airport_dept_df is None:
+        try:
+            airport_dept_df = harv.harvest_data_departures(airport_code, None)
+        except Exception as e:
+            print("Failed to get Departure data for:", airport_code, "\nDue to the exception:", e)
+            return
 
     # print(airport_dept_df)
 
     flight_Nums = airport_dept_df["Flight"].unique().tolist()
-
+    
     for flight_Num in flight_Nums:
         flight_df = airport_dept_df[airport_dept_df["Flight"] == flight_Num]
         
@@ -92,7 +95,7 @@ def update_departures():
     numOfAirport=len(airport_codes)
     count=0
     for code in airport_codes:
-        update_airport_departures(airport_code= str(code), gdb=gdb)
+        update_airport_departures(airport_code=str(code), gdb=gdb)
         count+=1
         print(count,"/", numOfAirport)
 
@@ -186,4 +189,5 @@ if __name__ == "__main__":
     # update_airport_departures(dep_airport)
     # add_airport_arrival_times("YYC")
 
-    update_flight_data()
+    update_departures()
+    # update_flight_data()
