@@ -40,7 +40,7 @@ const inputClasses = function(isValid) {
         </datalist>
         <br/>
         
-        <button :class="{'disabled': !this.validEntries()}" @click="search()" class="mt-5 btn btn-primary">Search</button>
+        <button :class="{'disabled': !this.validEntries()}" @click="search()" class="mt-5 btn btn-primary" style="background-color: #3E6D9C;">Search</button>
     </div>
 </template>
 <script>

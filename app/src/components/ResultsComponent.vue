@@ -19,7 +19,7 @@ defineProps({
 
             <p class="card-text">{{ item.arrival.time }} - {{ item.arrival.location }} ({{ item.arrival['airport code'] }})</p>
             <p class="card-text">{{ item.airline }}</p>
-            <a href="#" class="btn btn-primary">Take me to this flight!</a>
+            <a href="#" class="btn btn-primary" style="background-color: #3E6D9C">Take me to this flight!</a>
             <hr/>
           </div>
         </span>
