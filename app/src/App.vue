@@ -5,31 +5,20 @@ let airports = ["Saskatoon", "Regina", "Calgary"];
 </script>
  
 <template>    
-  <h1 class="fixed-top text-center">Desp-Air Flights</h1>
-    <div class="container">
-      <!-- <div class="navbar navbar-expand-lg fixed-top">
-        <span class="h1">Desp-Air Flights</span>
-      </div> -->
-    <div class="row flex-nowrap">
-      <div class="col navbar navbar-light bg-light">
-        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
-      <!-- <nav class="col navbar navbar-light bg-light"> -->
+  <h1 class="title fixed-top text-center">Desp-Air Flights</h1>
+    <div class="container"  >
+    <div class="row flex-nowrap" style="width: 50%;">
         <div class="container-fluid">
-          <span class="navbar-brand mb-0 h1">Navbar</span>
           <SearchComponent @getFlights="getFlights" :airports="airports" />
-        </div>
-        </div>
-        </div>
-
-<!--       </nav>
- -->      <div class="col">
+    </div>
+    <div class="col">
         <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
       </div>
     </div>
   </div>
 
   <footer class="text-center text-white fixed-bottom" style="background-color: #f1f1f1;">
-  <div class="text-center text-dark p-3" style="background-color: #214177;">
+  <div class="text-center text-dark p-3" style="background-color: #E8DFCA;">
     © 2022 Copyright:
     <p class="text-dark" style="display:inline">Team_1 CMPT370-22-Fall University of Saskatchewan</p>
   </div>
@@ -137,5 +126,11 @@ export default {
   font-family: "Merienda", Helvetica, Arial;
   font-size: 20px;
 }
-
+.title{
+  font-family: 'Montserrat', sans-serif;
+  font-family: 'Pacifico', cursive;
+  font-size: 80px;
+  color: #7a9bb1;
+  margin-top: 70px;
+}
 </style>

@@ -9,7 +9,7 @@ defineProps({
 
 <!-- non-hardcoded stuff
 <template>
-  <div class="column">
+  <div class="column" style="height:1px; width: 1000px;">
     <li v-for="resultObject in this.results">
       <div class="card w-200">  
         <span v-for="item in resultObject.flights">
@@ -20,7 +20,7 @@ defineProps({
 
             <p class="card-text">{{ item.arrival.time }} - {{ item.arrival.location }} ({{ item.arrival['airport code'] }})</p>
             <p class="card-text">{{ item.airline }}</p>
-            <a href="#" class="btn btn-primary">Take me to this flight!</a>
+            <a href="#" class="btn btn-primary" style="background-color: #3E6D9C">Take me to this flight!</a>
             <hr/>
           </div>
         </span>
