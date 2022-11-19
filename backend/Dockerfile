@@ -58,7 +58,11 @@ ENV DISPLAY=:99
 
 # ENV CHROME_BIN=/usr/bin/chromium-browser \
 #     CHROME_PATH=/usr/lib/chromium/
-    
+
+# display
+RUN export DISPLAY=:20
+RUN Xvfb :20 -screen 0 1366x768x16 &
+
 # Make dir app
 RUN mkdir /app
 WORKDIR /app
