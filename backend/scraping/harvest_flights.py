@@ -409,20 +409,20 @@ if __name__ == "__main__":
     # scrape airport arrivals
     airport_arvl_df = harvest_data_arrivals(arrival_airport)
 
-        # save airport arrivals to csv
-        airport_arvl_df.to_csv(arrival_file_out, index=False)
+    # save airport arrivals to csv
+    airport_arvl_df.to_csv(arrival_file_out, index=False)
 
-        #scrape for prices from the departing airport
-        prices_file_out = f"./__data/{departure_airport}_flight_prices_urls.csv"
-        prices_df = price_link_scrape(departure_airport, arrival_airport, str(date.today()))
-        prices_df.to_csv(prices_file_out, index=False)
-        i=0
-        # while i<5:
-        #     print("waiting")
-        #     time.sleep(5)
-        #     i+=1
-        # separator = '('
-        # departures = user_airport_timetable_data['Origin'].unique().tolist()
+    #scrape for prices from the departing airport
+    prices_file_out = f"./__data/{departure_airport}_flight_prices_urls.csv"
+    prices_df = price_link_scrape(departure_airport, arrival_airport, str(date.today()))
+    prices_df.to_csv(prices_file_out, index=False)
+    i=0
+    # while i<5:
+    #     print("waiting")
+    #     time.sleep(5)
+    #     i+=1
+    # separator = '('
+    # departures = user_airport_timetable_data['Origin'].unique().tolist()
 
     # for i in range(len(arrival_airport)):
     #     departures[i] = departures[i].split(separator, 1)[0]

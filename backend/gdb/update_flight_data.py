@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from datetime import datetime
+from datetime import date, datetime
 
 import sys
 import os
@@ -137,7 +137,7 @@ def add_airport_arrival_times(airport_code, gdb=None):
 
         gdb.run(cypher, parameters=parameters)
 
-        print("Finished added arrivalTimes for flights from", airport_code)
+    print("Finished added arrivalTimes for flights from", airport_code)
 
 
 def add_arrival_times():
@@ -175,6 +175,10 @@ def remove_flights_missing_arrival_times():
     
     gdb.run(cypher)
 
+def add_flight_price(departure_airport, destination_airport):
+    price_df = harv.price_link_scrape(departure_airport, destination_airport, str(date.today()))
+    print(price_df)
+
 def update_flight_data():
     """updates flight data in the gdb"""
 
@@ -185,9 +189,12 @@ def update_flight_data():
     print("Finished updating flight data")
 
 if __name__ == "__main__":
-    # dep_airport = "YEG"
+    dep_airport = "YEG"
+    arv_airport = "YYC"
     # update_airport_departures(dep_airport)
     # add_airport_arrival_times("YYC")
+    add_flight_price(dep_airport, arv_airport)
 
-    update_departures()
+
+    # update_departures()
     # update_flight_data()
