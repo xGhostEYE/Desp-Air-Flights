@@ -200,10 +200,4 @@ export default {
   font-size: 20px;
   margin-top: 50px;
 }
-.title{
-  font-family: 'Kanit', sans-serif, 'Montserrat', sans-serif;
-  font-size: 40px;
-  color: black;
-
-}
 </style>

@@ -10,7 +10,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300&family=Montserrat:wght@400;900&display=swap" rel="stylesheet">
   <body style="background-color: #F5EFE6;">
     <nav class = "navbar fixed-top" style="background-color: rgb(198, 219, 230);">
-      <h1 class="title text-center">Desp-Air Flights</h1>
+      <div class="container-fluid ">
+        <a class="navbar-brand fs-2" href="#">
+          <img src="https://cdn-icons-png.flaticon.com/512/870/870092.png" alt="" width="50" height="50" class="d-inline-block align-text-top">
+          Desp-Air Flights
+        </a>
+        <div class="navbar ms-auto fs-5">
+          <a href="https://git.cs.usask.ca/mel196/comp370fall2022">GitLab</a>
+        </div>
+      </div>
+
     </nav>
     <div id="app" class="border border-dark rounded" style="background-color: rgb(177, 199, 204); width: 600px;"></div>
     <script type="module" src="/src/main.js"></script>
@@ -18,7 +27,8 @@
 </html>
 <style>
   .navbar{
-    padding: 5px;
+    font-family: 'Kanit', sans-serif, 'Montserrat', sans-serif;
+    color: black;
   }
 
 </style>
