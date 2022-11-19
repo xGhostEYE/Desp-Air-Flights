@@ -17,12 +17,6 @@ let airports = ["Saskatoon", "Regina", "Calgary"];
     </div>
   </div>
 
-  <footer class="text-center text-white fixed-bottom" style="background-color: #f1f1f1;">
-  <div class="text-center text-dark p-3" style="background-color: #E8DFCA;">
-    © 2022 Copyright:
-    <p class="text-dark" style="display:inline">Team_1 CMPT370-22-Fall University of Saskatchewan</p>
-  </div>
-  </footer>
 </template>
 
 
@@ -127,8 +121,7 @@ export default {
   font-size: 20px;
 }
 .title{
-  font-family: 'Montserrat', sans-serif;
-  font-family: 'Pacifico', cursive;
+  font-family: 'Kanit', sans-serif, 'Montserrat', sans-serif;
   font-size: 80px;
   color: #7a9bb1;
   margin-top: 70px;
