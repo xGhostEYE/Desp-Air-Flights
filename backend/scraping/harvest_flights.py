@@ -61,7 +61,7 @@ def price_link_scrape(origin, destination, startdate):
         return "failure"
     
     #wait 20sec for the page to load
-    sleep(20)
+    sleep(10)
 
     # use soup to get the div data of the flights (arrival, departure, price, ect)
     soup=BeautifulSoup(driver.page_source, 'lxml')
@@ -123,7 +123,8 @@ def price_link_scrape(origin, destination, startdate):
         driver.switch_to.window(driver.window_handles[-1])
         driver.get(urls_clean_no_duplicates[i])
         driver.implicitly_wait(10)
-        sleep(random.randint(4,10))
+        sleep(3)
+        # sleep(random.randint(4,10))
         final_urls.append(driver.current_url)
 
     # put all data into dataframe and return it
@@ -395,4 +396,4 @@ if __name__ == "__main__":
     
 
     #scrape for prices from the departing airport
-    # price_link_scrape(departure_airport, arrival_airport, str(date.today()))
+    price_link_scrape(departure_airport, arrival_airport, str(date.today()))
