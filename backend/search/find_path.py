@@ -189,7 +189,7 @@ def get_all_valid_paths(departure, destination):
         maxPath = paths_df["path"].max()
         if maxPath < num_paths_already_checked:
             not_all_paths_found = False
-
+        print(maxPath)
     if validPaths_df.empty:
         return None
 
@@ -247,20 +247,20 @@ def convert_paths_to_json(paths_df):
 
 if __name__ == "__main__":
     
-    departure = "Richmond"
-    destination = "Calgary"
+    departure = "Saskatoon"
+    destination = "Regina"
 
-    # paths = get_paths_from_dijkstra(departure, destination, 1000)
-    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
+    paths = get_paths_from_dijkstra(departure, destination, 15000)
+    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
     # paths = get_paths(departure, destination, 100)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
-    paths = get_all_valid_paths(departure, destination)
+    # paths = get_all_valid_paths(departure, destination)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_all.csv", index=False)
 
-    pathsJSON = convert_paths_to_json(paths)
-    print(pathsJSON)
+    # pathsJSON = convert_paths_to_json(paths)
+    # print(pathsJSON)
     # paths = get_paths_json(departure, destination, 10)
     # print(paths)
 
