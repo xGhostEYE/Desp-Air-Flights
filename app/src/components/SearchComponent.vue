@@ -19,8 +19,7 @@ const inputClasses = function(isValid) {
 
 </script>
 <template>
-    <div class="align-items-center justify-content-center">
-
+    <div class="align-items-center justify-content-center" style="width:300px ;">
         <label for="starting" class="form-label">Starting</label>
         <input class="form-control" list="startingList" name="starting" 
                 id="starting" v-model="starting" 
