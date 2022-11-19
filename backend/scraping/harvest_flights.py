@@ -30,7 +30,7 @@ def price_link_scrape(origin, destination, startdate):
     print("\n" + url)
 
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("--headless")
+    # chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-infobars"); # disabling infobars
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
@@ -49,7 +49,7 @@ def price_link_scrape(origin, destination, startdate):
     chrome_options.add_argument('--no-proxy-server')
     #chrome_options.add_argument('--remote-debugging-port=20')
 
-    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    # chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
     chrome_options.add_argument('--disable-blink-features=AutomationControlled')
 
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -107,22 +107,25 @@ def price_link_scrape(origin, destination, startdate):
                 break
         if i not in range(len(data_seperated)):
             break
+        print("\ndata seperated: ",data_seperated[i])
+
         booking_info = data_seperated[i].split('$')[0]
         booking_info = booking_info.replace("No change fees","")
+        booking_info = booking_info.replace("Bus ticket","")
+        booking_info = booking_info.replace("Train ticket","")
         # get departure time
-        print(booking_info)
         time_departure = booking_info.split('–')[0]
         time_departure = time_departure.replace(' ','')
         in_time = datetime.strptime(time_departure, "%I:%M%p")
         out_time = datetime.strftime(in_time, "%H:%M")
-        departure_time.append(str(date.today())+out_time)
+        departure_time.append(str(date.today())+" "+out_time)
         # get arrival time
         time_arrival = booking_info.split(' ')[1]
         time_arrival_remaining = booking_info.split(' ')[2]
         timething = time_arrival[3:]+time_arrival_remaining[:2]
         in_time = datetime.strptime(timething, "%I:%M%p")
         out_time = datetime.strftime(in_time, "%H:%M")
-        arrival_time.append(str(date.today())+out_time)
+        arrival_time.append(str(date.today())+" "+out_time)
         # get flight price
         price = data_seperated[i].split('$')[1]
         price = price.split(' ')[0]
@@ -130,20 +133,21 @@ def price_link_scrape(origin, destination, startdate):
         # get airline name
         airline = booking_info.split('nonstop')[0]
         airline_remaining = airline.split(":", 2)[2]
-        airlines.append(airline_remaining[5:])
+        airline_remaining = airline_remaining[5:]
+        if "+1" in airline_remaining:
+            airline_remaining = airline_remaining.replace("+1","")
+        airlines.append(airline_remaining)
 
     # get kayak.com url links to tickets
     urls = soup.select(".above-button")
-    urls_clean = []
+    urls_clean = urls[::2]
     urls_clean_no_duplicates = []
     final_urls = []
-    final_urls = []
-    urls_clean = urls[::2]
+    
     urls_clean_no_duplicates = []
     for i in range(len(urls_clean)):
         for link in urls_clean[i].findAll('a'):
             urls_clean_no_duplicates.append("https://www.kayak.com"+link.get('href'))
-    print(urls_clean_no_duplicates)
     # open the links and get the true ticket urls from the airline websites
     for i in range(len(urls_clean_no_duplicates)):
         driver.execute_script("window.open()")
@@ -440,4 +444,4 @@ if __name__ == "__main__":
     
 
     #scrape for prices from the departing airport
-    price_link_scrape(departure_airport, arrival_airport, str(date.today()))
+    price_link_scrape("YKA", "YVR", str(date.today()))
