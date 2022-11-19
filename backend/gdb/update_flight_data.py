@@ -189,7 +189,7 @@ def update_flight_data():
     print("Finished updating flight data")
 
 if __name__ == "__main__":
-    dep_airport = "YEG"
+    dep_airport = "YVR"
     arv_airport = "YYC"
     # update_airport_departures(dep_airport)
     # add_airport_arrival_times("YYC")
@@ -198,3 +198,4 @@ if __name__ == "__main__":
 
     # update_departures()
     # update_flight_data()
+    print("Finished")

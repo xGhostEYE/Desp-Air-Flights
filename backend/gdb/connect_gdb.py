@@ -10,4 +10,3 @@ def connect_test_gdb():
     gdb = Graph("bolt://cmpt370-testdb:7687", auth=("neo4j", "password"))
     return gdb
    
-
