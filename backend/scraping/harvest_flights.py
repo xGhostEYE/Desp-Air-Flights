@@ -115,14 +115,14 @@ def price_link_scrape(origin, destination, startdate):
         time_departure = time_departure.replace(' ','')
         in_time = datetime.strptime(time_departure, "%I:%M%p")
         out_time = datetime.strftime(in_time, "%H:%M")
-        departure_time.append(out_time)
+        departure_time.append(str(date.today())+out_time)
         # get arrival time
         time_arrival = booking_info.split(' ')[1]
         time_arrival_remaining = booking_info.split(' ')[2]
         timething = time_arrival[3:]+time_arrival_remaining[:2]
         in_time = datetime.strptime(timething, "%I:%M%p")
         out_time = datetime.strftime(in_time, "%H:%M")
-        arrival_time.append(out_time)
+        arrival_time.append(str(date.today())+out_time)
         # get flight price
         price = data_seperated[i].split('$')[1]
         price = price.split(' ')[0]
@@ -365,20 +365,20 @@ def harvest_data_departures(departure_location,initial_search):
 if __name__ == "__main__":
     browser = 0
     flights=[["YVR", "LAX"],["LAX","YVR"],["LAX","YYC"],["YYC","YVR"]]#]#["YVR", "LAX"],["LAX","YVR"],["LAX","YYC"],
-    for f in flights:
-        time.sleep(random.randint(4,9))
-        # scrape departures from airport
-        # airport flights depart from
-        departure_airport = f[0]
-        initial_search = True
-        # file out
-        departures_file_out = f"./__data/{departure_airport}_airport_departures.csv"
+    # for f in flights:
+    sleep(random.randint(4,9))
+    # scrape departures from airport
+    # airport flights depart from
+    departure_airport = "YVR"
+    initial_search = True
+    # file out
+    departures_file_out = f"./__data/{departure_airport}_airport_departures.csv"
 
-        # scrape airport departures
-        airport_dept_df = harvest_data_departures(departure_airport, initial_search)
-        initial_search = False
-        # save airport departures to csv
-        airport_dept_df.to_csv(departures_file_out, index=False)
+    # scrape airport departures
+    airport_dept_df = harvest_data_departures(departure_airport, initial_search)
+    initial_search = False
+    # save airport departures to csv
+    airport_dept_df.to_csv(departures_file_out, index=False)
 
 
     # separator = '('
@@ -401,28 +401,27 @@ if __name__ == "__main__":
         
         # scrape arrivals to airport
         # airport flights arrive to
-        arrival_airport = f[1]
-
+    arrival_airport = "YYC"
     # file out
     arrival_file_out = f"./__data/{arrival_airport}_airport_arrivals.csv"
     arrival_connections = f"./__data/{arrival_airport}_connections.csv"
     # scrape airport arrivals
     airport_arvl_df = harvest_data_arrivals(arrival_airport)
 
-    # save airport arrivals to csv
+        # save airport arrivals to csv
     airport_arvl_df.to_csv(arrival_file_out, index=False)
 
     #scrape for prices from the departing airport
-    prices_file_out = f"./__data/{departure_airport}_flight_prices_urls.csv"
-    prices_df = price_link_scrape(departure_airport, arrival_airport, str(date.today()))
-    prices_df.to_csv(prices_file_out, index=False)
-    i=0
-    # while i<5:
-    #     print("waiting")
-    #     time.sleep(5)
-    #     i+=1
-    # separator = '('
-    # departures = user_airport_timetable_data['Origin'].unique().tolist()
+    # prices_file_out = f"./__data/{departure_airport}_flight_prices_urls.csv"
+    # prices_df = price_link_scrape(departure_airport, arrival_airport, str(date.today()))
+    # prices_df.to_csv(prices_file_out, index=False)
+    # i=0
+        # while i<5:
+        #     print("waiting")
+        #     time.sleep(5)
+        #     i+=1
+        # separator = '('
+        # departures = user_airport_timetable_data['Origin'].unique().tolist()
 
     # for i in range(len(arrival_airport)):
     #     departures[i] = departures[i].split(separator, 1)[0]
