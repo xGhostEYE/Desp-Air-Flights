@@ -27,22 +27,41 @@ def price_link_scrape(origin, destination, startdate):
     print("\n" + url)
 
     chrome_options = webdriver.ChromeOptions()
+    
+    # enable headless mode
     chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-infobars"); # disabling infobars
+    # disable sandbox to get around dockers security policies
     chrome_options.add_argument("--no-sandbox")
+    ### SET ARGUMENTS FOR THE CHROME WEB DRIVER TO LOOK MORE LIKE A NORMAL USERS BROWSER
+    # disabling infobars
+    chrome_options.add_argument("--disable-infobars"); 
+    # disable dev shm usage
     chrome_options.add_argument("--disable-dev-shm-usage")
+    # set the language to base english and us english
     chrome_options.add_argument("--lang=['en-US', 'en']")
+    # set the vendor
     chrome_options.add_argument("--vendor='GoogleInc.'")
+    # set the current platform
     chrome_options.add_argument("--platform='Win32'")
+    # set the webgl vendor
     chrome_options.add_argument("--webgl_vendor='Intel Inc.'")
+    # set teh renderer
     chrome_options.add_argument("--rederer='Intel Iris OpenGL Engine'")
+    # enable fix hairline
     chrome_options.add_argument("--fix_hairline=True")
+    #start the browser maximized
     chrome_options.add_argument("--start-maximized")
+    #disable extensions
     chrome_options.add_argument("--disable-extensions")
+    # set no first run
     chrome_options.add_argument('--no-first-run')
+    # set no service autorun
     chrome_options.add_argument('--no-service-autorun')
+    # set no default browser check
     chrome_options.add_argument('--no-default-browser-check')
+    # set password store to basic
     chrome_options.add_argument('--password-store=basic')
+    # set no proxy server
     chrome_options.add_argument('--no-proxy-server')
     #chrome_options.add_argument('--remote-debugging-port=20')
 
@@ -352,7 +371,7 @@ def harvest_data_departures(departure_location,initial_search):
 
 if __name__ == "__main__":
     browser = 0
-    flights=[["YVR", "LAX"],["LAX","YVR"],["LAX","YYC"],["YYC","YVR"]]#]#["YVR", "LAX"],["LAX","YVR"],["LAX","YYC"],
+    flights=[["YVR", "LAX"],["LAX","YVR"],["LAX","YYC"],["YYC","YVR"], ["YXE", "YYC"]]#]#["YVR", "LAX"],["LAX","YVR"],["LAX","YYC"],
     for f in flights:
         time.sleep(random.randint(4,9))
         # scrape departures from airport
