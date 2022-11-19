@@ -7,12 +7,8 @@ import os
 
 sys.path.append(os.path.abspath("./scraping/"))
 import harvest_flights as harv
-# import test as harv
 
 import connect_gdb as conGDB
-
-
-
 
 def update_airport_departures(airport_code, gdb=None):
     """Updates the flights departing from the given airport
@@ -25,6 +21,13 @@ def update_airport_departures(airport_code, gdb=None):
         gdb: py2neo Graph
             connection to the neo4j database
     """
+    if gdb==None:
+            gdb = conGDB.connect_gdb()
+
+    airport_cypher = """MATCH (a:Airport {Code: $Code})-[f:Flight]-(:Airport)
+                            DELETE f"""
+    gdb.run(airport_cypher, parameters={"Code": airport_code})
+
     try:
         airport_dept_df = harv.harvest_data_departures(airport_code, None)
     except Exception as e:
@@ -33,13 +36,6 @@ def update_airport_departures(airport_code, gdb=None):
 
     # print(airport_dept_df)
 
-    if gdb==None:
-        gdb = conGDB.connect_gdb()
-
-    airport_cypher = """MATCH (a:Airport {Code: $Code})-[f:Flight]-(:Airport)
-                        DELETE f"""
-    gdb.run(airport_cypher, parameters={"Code": airport_code})
-    
     flight_Nums = airport_dept_df["Flight"].unique().tolist()
 
     for flight_Num in flight_Nums:
