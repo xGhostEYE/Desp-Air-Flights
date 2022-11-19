@@ -16,6 +16,7 @@ from selenium.webdriver.chrome.service import Service
 import pandas as pd
 from datetime import date, datetime
 import time
+#from selenium_stealth import stealth
 
 
 def price_link_scrape(origin, destination, startdate):
@@ -26,17 +27,39 @@ def price_link_scrape(origin, destination, startdate):
     print("\n" + url)
 
     chrome_options = webdriver.ChromeOptions()
-    agents = ["Firefox/66.0.3","Chrome/73.0.3683.68","Edge/16.16299"]
-    print("User agent: " + agents[(0%len(agents))])
-    chrome_options.add_argument('--user-agent=' + agents[(0%len(agents))] + '"')
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-infobars"); # disabling infobars
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--lang=['en-US', 'en']")
+    chrome_options.add_argument("--vendor='GoogleInc.'")
+    chrome_options.add_argument("--platform='Win32'")
+    chrome_options.add_argument("--webgl_vendor='Intel Inc.'")
+    chrome_options.add_argument("--rederer='Intel Iris OpenGL Engine'")
+    chrome_options.add_argument("--fix_hairline=True")
+    chrome_options.add_argument("--start-maximized")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_experimental_option('useAutomationExtension', False)
 
+    agents = ["Firefox/"+str(random.randint(60,70))+".0.3","Chrome/"+str(random.randint(70,80))+".0.3683.68","Edge/"+str(random.randint(10,20))+".16299"]
+    print("User agent: " + agents[(0%len(agents))])
+    chrome_options.add_argument('--user-agent=' + agents[(0%len(agents))] + '"')
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
-    driver.implicitly_wait(20)
+    
+    # stealth(driver,
+    #     languages=["en-US", "en"],
+    #     vendor="Google Inc.",
+    #     platform="Win32",
+    #     webgl_vendor="Intel Inc.",
+    #     renderer="Intel Iris OpenGL Engine",
+    #     fix_hairline=True,
+    #     )
+    driver.implicitly_wait(random.randint(15,20))
     driver.get(url)
 
     #Check if Kayak thinks that we're a bot
-    time.sleep(5) 
+    time.sleep(random.randint(4,10)) 
     soup=BeautifulSoup(driver.page_source, 'lxml')
 
     if soup.find_all('p')[0].getText() == "Please confirm that you are a real KAYAK user.":
@@ -66,7 +89,9 @@ def price_link_scrape(origin, destination, startdate):
     for i in range(len(data_seperated)):
         # original data
         booking_info = data_seperated[i].split('$')[0]
+        booking_info = booking_info.replace("No change fees","")
         # get departure time
+        print(booking_info)
         time_departure = booking_info.split('–')[0]
         time_departure = time_departure.replace(' ','')
         in_time = datetime.strptime(time_departure, "%I:%M%p")
@@ -104,9 +129,10 @@ def price_link_scrape(origin, destination, startdate):
     for i in range(len(urls_clean_no_duplicates)):
         driver.execute_script("window.open()")
         driver.switch_to.window(driver.window_handles[-1])
+        print(urls_clean_no_duplicates[i])
         driver.get(urls_clean_no_duplicates[i])
         driver.implicitly_wait(10)
-        time.sleep(random.randint(3,8))
+        time.sleep(random.randint(4,10))
         final_urls.append(driver.current_url)
 
     # put all data into dataframe and return it
@@ -352,8 +378,13 @@ if __name__ == "__main__":
 
     #scrape for prices from the departing airport
     prices_file_out = f"./__data/{departure_airport}_flight_prices_urls.csv"
-    prices_df = price_link_scrape(departure_airport, arrival_airport, str(date.today()))
+    prices_df = price_link_scrape("YVR", "LAX", str(date.today()))
     prices_df.to_csv(prices_file_out, index=False)
+    i=0
+    # while i<5:
+    #     print("waiting")
+    #     time.sleep(5)
+    #     i+=1
     # separator = '('
     # departures = user_airport_timetable_data['Origin'].unique().tolist()
 
