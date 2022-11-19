@@ -26,8 +26,9 @@ def price_link_scrape(origin, destination, startdate):
     print("\n" + url)
 
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
+    # chrome_options.add_argument("--headless")
+    # chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     #chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--lang=['en-US', 'en']")
     chrome_options.add_argument("--vendor='GoogleInc.'")
@@ -112,7 +113,7 @@ def price_link_scrape(origin, destination, startdate):
     for i in range(len(urls_clean)):
         for link in urls_clean[i].findAll('a'):
             urls_clean_no_duplicates.append("https://www.kayak.com"+link.get('href'))
-    
+    print(urls_clean_no_duplicates)
     # open the links and get the true ticket urls from the airline websites
     for i in range(len(urls_clean_no_duplicates)):
         driver.execute_script("window.open()")
@@ -365,12 +366,8 @@ if __name__ == "__main__":
     airport_arvl_df.to_csv(arrival_file_out, index=False)
 
     #scrape for prices from the departing airport
-    prices_file_out = f"./__data/{departure_airport}_flight_prices_urls.csv"
-    prices_df = price_link_scrape("YVR", "LAX", str(date.today()))
-    prices_df.to_csv(prices_file_out, index=False)
-    while 1:
-        print("waiting")
-        time.sleep(5)
+    price_link_scrape(departure_airport, arrival_airport, str(date.today()))
+
     # separator = '('
     # departures = user_airport_timetable_data['Origin'].unique().tolist()
 
