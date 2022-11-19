@@ -14,8 +14,11 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 import pandas as pd
-from datetime import date, datetime
-import time
+from datetime import date, datetime, timedelta, time
+from time import sleep
+
+
+
 
 
 def price_link_scrape(origin, destination, startdate):
@@ -29,7 +32,7 @@ def price_link_scrape(origin, destination, startdate):
     chrome_options.add_argument("--no-sandbox")
     # chrome_options.add_argument("--headless")
     # chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-    #chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--lang=['en-US', 'en']")
     chrome_options.add_argument("--vendor='GoogleInc.'")
     chrome_options.add_argument("--platform='Win32'")
@@ -48,17 +51,17 @@ def price_link_scrape(origin, destination, startdate):
     driver.get(url)
 
     #Check if Kayak thinks that we're a bot
-    time.sleep(5) 
+    sleep(5) 
     soup=BeautifulSoup(driver.page_source, 'lxml')
 
     if soup.find_all('p')[0].getText() == "Please confirm that you are a real KAYAK user.":
         print("Kayak thinks I'm a bot, which I am ... so let's wait a bit and try again")
         driver.close()
-        time.sleep(20)
+        sleep(20)
         return "failure"
     
     #wait 20sec for the page to load
-    time.sleep(20)
+    sleep(20)
 
     # use soup to get the div data of the flights (arrival, departure, price, ect)
     soup=BeautifulSoup(driver.page_source, 'lxml')
@@ -120,7 +123,7 @@ def price_link_scrape(origin, destination, startdate):
         driver.switch_to.window(driver.window_handles[-1])
         driver.get(urls_clean_no_duplicates[i])
         driver.implicitly_wait(10)
-        time.sleep(random.randint(4,10))
+        sleep(random.randint(4,10))
         final_urls.append(driver.current_url)
 
     # put all data into dataframe and return it
@@ -130,7 +133,7 @@ def price_link_scrape(origin, destination, startdate):
     df['Cost'] = prices
     df['Link'] = final_urls
     print(df)
-    df.to_csv(f"./__data/{departure_airport}_flight_prices_urls.csv", index=False)
+    df.to_csv(f"./__data/{origin}_flight_prices_urls.csv", index=False)
 
 # format times
 def clean_data(df):
@@ -171,15 +174,22 @@ def clean_data(df):
         destination_or_origin = 'Destination'
     else:
         destination_or_origin = 'Origin'
+    # today = date.today()
+    # tomorrow = today + timedelta(1)
+    # flight_date = date
+    # saw_00 = False
+    # saw_23 = False
     #clean time
     time_list = list(df[departure_or_arrival])
     for i in range(len(time_list)):
         time_list[i] = str(time_list[i])
         if (len(time_list[i])>5):
             time_list[i] = time_list[i][-5:]
-            cleanedflights_time.append(time_list[i])
+            # if time_list[i] :
+            #     saw_00 = True
+            cleanedflights_time.append(str(date.today())+" "+time_list[i])
         else:
-            cleanedflights_time.append(time_list[i])
+            cleanedflights_time.append(str(date.today())+" "+time_list[i])
     df_cleaned = pd.DataFrame (cleanedflights_flightnumber, columns = ['Flight'])
     df_cleaned[departure_or_arrival] = cleanedflights_time
     df[departure_or_arrival] = df_cleaned[departure_or_arrival].values
@@ -335,22 +345,22 @@ if __name__ == "__main__":
 
 
     # separator = '('
-    # departure_airports = airport_dept_df['Destination'].unique().tolist()
-
-    # for i in range(5):
+    # departure_airports = airport_dept_df['Airport Code'].unique().tolist()
+    # departure_connections = f"./__data/{departure_airport}_connections.csv"
+    # for i in range(len(departure_airport)):
     #     departure_airports[i] = departure_airports[i].split(separator, 1)[0]
     #     departure_airports[i] = departure_airports[i].rstrip()
     #     departure_airport = departure_airports[i]
 
     #     try:
-    #         ap_dep_df = harvest_data_departures(departure)
+    #         ap_dep_df = harvest_data_departures(departure_airport, initial_search)
     
-    #         if not exists(file_output_origin_departures):
-    #             ap_dep_df.to_csv(file_output_origin_departures, index=False)
+    #         if not exists(departure_connections):
+    #             ap_dep_df.to_csv(departure_connections, index=False)
     #         else:
-    #             ap_dep_df.to_csv(file_output_origin_departures, mode='a', header=False, index=False)
+    #             ap_dep_df.to_csv(departure_connections, mode='a', header=False, index=False)
     #     except Exception as e:
-    #         print(f"skipping url for {departure} do to an exception:",e)
+    #         print(f"skipping url for {departure_airport} do to an exception:",e)
     
     # scrape arrivals to airport
     # airport flights arrive to
@@ -358,33 +368,31 @@ if __name__ == "__main__":
 
     # file out
     arrival_file_out = f"./__data/{arrival_airport}_airport_arrivals.csv"
-    
+    arrival_connections = f"./__data/{arrival_airport}_connections.csv"
     # scrape airport arrivals
     airport_arvl_df = harvest_data_arrivals(arrival_airport)
 
     # save airport arrivals to csv
     airport_arvl_df.to_csv(arrival_file_out, index=False)
 
-    #scrape for prices from the departing airport
-    price_link_scrape(departure_airport, arrival_airport, str(date.today()))
-
     # separator = '('
-    # departures = user_airport_timetable_data['Origin'].unique().tolist()
+    # departures = airport_arvl_df['Airport Code'].unique().tolist()
 
-    # for i in range(5):
+    # for i in range(len(arrival_airport)):
     #     departures[i] = departures[i].split(separator, 1)[0]
     #     departures[i] = departures[i].rstrip()
     #     departure = departures[i]
 
     #     try:
-    #         ap_dep_df = harvest_data_departures(departure)
+    #         ap_dep_df = harvest_data_departures(departure, initial_search)
 
-    #         if not exists(file_output_arrival):
-    #             ap_dep_df.to_csv(file_output_arrival, index=False)
+    #         if not exists(arrival_connections):
+    #             ap_dep_df.to_csv(arrival_connections, index=False)
     #         else:
-    #             ap_dep_df.to_csv(file_output_arrival, mode='a', header=False, index=False)
+    #             ap_dep_df.to_csv(arrival_connections, mode='a', header=False, index=False)
     #     except Exception as e:
     #         print(f"skipping url for {departure} do to an exception:",e)
     
 
-
+    #scrape for prices from the departing airport
+    # price_link_scrape(departure_airport, arrival_airport, str(date.today()))
