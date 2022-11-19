@@ -19,19 +19,20 @@ from time import sleep
 
 
 
+#from selenium_stealth import stealth
 
 
 def price_link_scrape(origin, destination, startdate):
 
     df = pd.DataFrame()
 
-    url = "https://www.kayak.com/flights/" + origin + "-" + destination + "/" + startdate + "?sort=depart_a&fs=stops=0"
+    url = "https://www.kayak.com/flights/" + origin + "-" + destination + "/" + startdate + "?sort=depart_a&fs=stops=0"#airlines=AC;
     print("\n" + url)
 
     chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-infobars"); # disabling infobars
     chrome_options.add_argument("--no-sandbox")
-    # chrome_options.add_argument("--headless")
-    # chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--lang=['en-US', 'en']")
     chrome_options.add_argument("--vendor='GoogleInc.'")
@@ -39,14 +40,34 @@ def price_link_scrape(origin, destination, startdate):
     chrome_options.add_argument("--webgl_vendor='Intel Inc.'")
     chrome_options.add_argument("--rederer='Intel Iris OpenGL Engine'")
     chrome_options.add_argument("--fix_hairline=True")
+    chrome_options.add_argument("--start-maximized")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument('--no-first-run')
+    chrome_options.add_argument('--no-service-autorun')
+    chrome_options.add_argument('--no-default-browser-check')
+    chrome_options.add_argument('--password-store=basic')
+    chrome_options.add_argument('--no-proxy-server')
+    #chrome_options.add_argument('--remote-debugging-port=20')
+
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
 
     agents = ["Firefox/"+str(random.randint(60,70))+".0.3","Chrome/"+str(random.randint(70,80))+".0.3683.68","Edge/"+str(random.randint(10,20))+".16299"]
     print("User agent: " + agents[(0%len(agents))])
     chrome_options.add_argument('--user-agent=' + agents[(0%len(agents))] + '"')
-    chrome_options.add_experimental_option('useAutomationExtension', False)
-
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
+    
+    # stealth(driver,
+    #     languages=["en-US", "en"],
+    #     vendor="Google Inc.",
+    #     platform="Win32",
+    #     webgl_vendor="Intel Inc.",
+    #     renderer="Intel Iris OpenGL Engine",
+    #     fix_hairline=True,
+    #     )
     driver.implicitly_wait(random.randint(15,20))
     driver.get(url)
 
@@ -80,6 +101,12 @@ def price_link_scrape(origin, destination, startdate):
     prices = []
     for i in range(len(data_seperated)):
         # original data
+        while "Undisclosed Carrier" in data_seperated[i]:
+            data_seperated.pop(i)
+            if i not in range(len(data_seperated)):
+                break
+        if i not in range(len(data_seperated)):
+            break
         booking_info = data_seperated[i].split('$')[0]
         booking_info = booking_info.replace("No change fees","")
         # get departure time
@@ -121,6 +148,12 @@ def price_link_scrape(origin, destination, startdate):
     for i in range(len(urls_clean_no_duplicates)):
         driver.execute_script("window.open()")
         driver.switch_to.window(driver.window_handles[-1])
+        while "javascript:void(0)" in urls_clean_no_duplicates[i]:
+            urls_clean_no_duplicates.pop(i)
+            if i not in range(len(urls_clean_no_duplicates)):
+                break
+        if i not in range(len(urls_clean_no_duplicates)):
+            break
         driver.get(urls_clean_no_duplicates[i])
         driver.implicitly_wait(10)
         sleep(3)
@@ -330,19 +363,22 @@ def harvest_data_departures(departure_location,initial_search):
 
 
 if __name__ == "__main__":
-    
-    # scrape departures from airport
-    # airport flights depart from
-    departure_airport = "YYC"
-    initial_search = True
-    # file out
-    departures_file_out = f"./__data/{departure_airport}_airport_departures.csv"
+    browser = 0
+    flights=[["YVR", "LAX"],["LAX","YVR"],["LAX","YYC"],["YYC","YVR"]]#]#["YVR", "LAX"],["LAX","YVR"],["LAX","YYC"],
+    for f in flights:
+        time.sleep(random.randint(4,9))
+        # scrape departures from airport
+        # airport flights depart from
+        departure_airport = f[0]
+        initial_search = True
+        # file out
+        departures_file_out = f"./__data/{departure_airport}_airport_departures.csv"
 
-    # scrape airport departures
-    airport_dept_df = harvest_data_departures(departure_airport, initial_search)
-    initial_search = False
-    # save airport departures to csv
-    airport_dept_df.to_csv(departures_file_out, index=False)
+        # scrape airport departures
+        airport_dept_df = harvest_data_departures(departure_airport, initial_search)
+        initial_search = False
+        # save airport departures to csv
+        airport_dept_df.to_csv(departures_file_out, index=False)
 
 
     # separator = '('
@@ -353,19 +389,19 @@ if __name__ == "__main__":
     #     departure_airports[i] = departure_airports[i].rstrip()
     #     departure_airport = departure_airports[i]
 
-    #     try:
-    #         ap_dep_df = harvest_data_departures(departure_airport, initial_search)
-    
-    #         if not exists(departure_connections):
-    #             ap_dep_df.to_csv(departure_connections, index=False)
-    #         else:
-    #             ap_dep_df.to_csv(departure_connections, mode='a', header=False, index=False)
-    #     except Exception as e:
-    #         print(f"skipping url for {departure_airport} do to an exception:",e)
-    
-    # scrape arrivals to airport
-    # airport flights arrive to
-    arrival_airport = "YVR"
+        #     try:
+        #         ap_dep_df = harvest_data_departures(departure)
+        
+        #         if not exists(file_output_origin_departures):
+        #             ap_dep_df.to_csv(file_output_origin_departures, index=False)
+        #         else:
+        #             ap_dep_df.to_csv(file_output_origin_departures, mode='a', header=False, index=False)
+        #     except Exception as e:
+        #         print(f"skipping url for {departure} do to an exception:",e)
+        
+        # scrape arrivals to airport
+        # airport flights arrive to
+        arrival_airport = f[1]
 
     # file out
     arrival_file_out = f"./__data/{arrival_airport}_airport_arrivals.csv"
@@ -373,11 +409,20 @@ if __name__ == "__main__":
     # scrape airport arrivals
     airport_arvl_df = harvest_data_arrivals(arrival_airport)
 
-    # save airport arrivals to csv
-    airport_arvl_df.to_csv(arrival_file_out, index=False)
+        # save airport arrivals to csv
+        airport_arvl_df.to_csv(arrival_file_out, index=False)
 
-    # separator = '('
-    # departures = airport_arvl_df['Airport Code'].unique().tolist()
+        #scrape for prices from the departing airport
+        prices_file_out = f"./__data/{departure_airport}_flight_prices_urls.csv"
+        prices_df = price_link_scrape(departure_airport, arrival_airport, str(date.today()))
+        prices_df.to_csv(prices_file_out, index=False)
+        i=0
+        # while i<5:
+        #     print("waiting")
+        #     time.sleep(5)
+        #     i+=1
+        # separator = '('
+        # departures = user_airport_timetable_data['Origin'].unique().tolist()
 
     # for i in range(len(arrival_airport)):
     #     departures[i] = departures[i].split(separator, 1)[0]
