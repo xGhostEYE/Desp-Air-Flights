@@ -171,7 +171,8 @@ def price_link_scrape(origin, destination, startdate):
     df['Cost'] = prices
     df['Link'] = final_urls
     print(df)
-    df.to_csv(f"./__data/{origin}_flight_prices_urls.csv", index=False)
+    # df.to_csv(f"./__data/{origin}_flight_prices_urls.csv", index=False)
+    return df
 
 # format times
 def clean_data(df):

@@ -70,9 +70,15 @@ def path_is_valid(path):
     Returns:
         boolean indicating whether or not path is valid
     """
+    print(path)
+
     # returns false if any DepartTimes or ArrivalTimes are null
     if path["DepartTime"].isnull().values.any() or path["ArrivalTime"].isnull().values.any():
         return False
+    
+    # convert DepartTimes and ArrivalTimes to datetime object
+    # path["DepartTime"] = pd.to_datetime(path["DepartTime"], infer_datetime_format=True)
+    # path["ArrivalTime"] = pd.to_datetime(path["ArrivalTime"], infer_datetime_format=True)
 
     # valid if the arrival is before the departure of the next flight for all flights, else returns false
     departTimes = path["DepartTime"].tolist()
@@ -128,10 +134,10 @@ def get_paths(departure, destination, number_of_paths=1):
             if path_is_valid(path_df):
                 validPaths_df = pd.concat([validPaths_df, path_df])
                 number_of_valid_paths +=1
-
+                
                 if number_of_valid_paths == number_of_paths:
                     break
-        
+            print(number_of_valid_paths)
         num_paths_already_checked = num_paths_to_query
         num_paths_to_query = num_paths_to_query * 2
 
@@ -247,14 +253,14 @@ def convert_paths_to_json(paths_df):
 
 if __name__ == "__main__":
     
-    departure = "Saskatoon"
-    destination = "Regina"
+    departure = "Richmond"
+    destination = "Calgary"
 
-    paths = get_paths_from_dijkstra(departure, destination, 15000)
-    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
+    # paths = get_paths_from_dijkstra(departure, destination, 500)
+    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
-    # paths = get_paths(departure, destination, 100)
-    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
+    paths = get_paths(departure, destination, 10)
+    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
     # paths = get_all_valid_paths(departure, destination)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_all.csv", index=False)
