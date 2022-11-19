@@ -115,14 +115,14 @@ def price_link_scrape(origin, destination, startdate):
         time_departure = time_departure.replace(' ','')
         in_time = datetime.strptime(time_departure, "%I:%M%p")
         out_time = datetime.strftime(in_time, "%H:%M")
-        departure_time.append(str(date.today())+out_time)
+        departure_time.append(str(date.today())+" "+out_time)
         # get arrival time
         time_arrival = booking_info.split(' ')[1]
         time_arrival_remaining = booking_info.split(' ')[2]
         timething = time_arrival[3:]+time_arrival_remaining[:2]
         in_time = datetime.strptime(timething, "%I:%M%p")
         out_time = datetime.strftime(in_time, "%H:%M")
-        arrival_time.append(str(date.today())+out_time)
+        arrival_time.append(str(date.today())+" "+out_time)
         # get flight price
         price = data_seperated[i].split('$')[1]
         price = price.split(' ')[0]
@@ -167,7 +167,8 @@ def price_link_scrape(origin, destination, startdate):
     df['Cost'] = prices
     df['Link'] = final_urls
     print(df)
-    df.to_csv(f"./__data/{origin}_flight_prices_urls.csv", index=False)
+    # df.to_csv(f"./__data/{origin}_flight_prices_urls.csv", index=False)
+    return df
 
 # format times
 def clean_data(df):

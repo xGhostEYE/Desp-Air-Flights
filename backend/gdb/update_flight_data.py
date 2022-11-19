@@ -10,6 +10,7 @@ import harvest_flights as harv
 
 import connect_gdb as conGDB
 
+
 def update_airport_departures(airport_code, gdb=None, airport_dept_df=None):
     """Updates the flights departing from the given airport
 
@@ -36,8 +37,6 @@ def update_airport_departures(airport_code, gdb=None, airport_dept_df=None):
         except Exception as e:
             print("Failed to get Departure data for:", airport_code, "\nDue to the exception:", e)
             return
-
-    # print(airport_dept_df)
 
     flight_Nums = airport_dept_df["Flight"].unique().tolist()
     
@@ -163,6 +162,7 @@ def add_arrival_times():
         count+=1
         print(count,"/", numOfAirport)
 
+
 def remove_flights_missing_arrival_times():
     """removes flights in the gdb that do not have an arrival time"""
     gdb = conGDB.connect_gdb()
@@ -175,9 +175,75 @@ def remove_flights_missing_arrival_times():
     
     gdb.run(cypher)
 
-def add_flight_price(departure_airport, destination_airport):
-    price_df = harv.price_link_scrape(departure_airport, destination_airport, str(date.today()))
-    print(price_df)
+
+def add_flight_price(departure_airport, destination_airport, gdb=None):
+    """Adds the prices of flights between the given airports
+    
+    Args:
+        departure_airport: String
+            airport code of departure airport
+        destination_airport: String
+            airport code of destination airport
+        gdb: py2neo Graph
+            connection to the neo4j database
+    """
+
+    if gdb==None:
+        gdb = conGDB.connect_gdb()
+    try:
+        price_df = harv.price_link_scrape(departure_airport, destination_airport, str(date.today()))
+    except Exception as e:
+        print("Failed to get price data for:", departure_airport, "to", destination_airport, "\nDue to the exception:", e)
+        return
+
+    for i in price_df.index:
+        flight_df = price_df.iloc[i, :]
+
+        carrier = flight_df["Carrier"]
+        departTime = flight_df["Departure"]
+        arrivalTime = flight_df["Arrival"]
+        cost = flight_df["Cost"]
+
+        parameters = {
+            "DepartFrom": str(departure_airport),
+            "Destination_AP": str(destination_airport),
+            "Carrier": str(carrier),
+            "DepartTime": departTime,
+            "ArrivalTime": arrivalTime,
+            "Cost": cost
+        }
+        print(parameters)
+
+        flight_cypher = """
+                        With $flt as flt
+                        MATCH (a1:Airport {Code: flt["DepartFrom"]})-[f:Flight]->(a2:Airport {Code: flt["Destination_AP"]})
+                        WHERE f.DepartTime = flt["DepartTime"] AND f.ArrivalTime = flt["ArrivalTime"]
+                        SET f.Cost = flt["Cost"] 
+                        """
+        gdb.run(flight_cypher, parameters={"flt": parameters})
+    print("Finished added departing flights from", airport_code)
+
+
+def add_prices():
+    """Adds prices to flights in the gdb"""
+    
+    gdb = conGDB.connect_gdb()
+
+    cypher = """
+             MATCH (a1:Airport)-[f:Flight]->(a2:Airport)
+             WHERE NOT EXISTS(f.Cost)
+             RETURN DISTINCT a1.Code as departure_airport, a2.Code as destination_airport
+             """
+
+    airport_codes = gdb.run(cypher).to_ndarray()
+
+    numOfAirport=len(airport_codes)
+    count=0
+    for code in airport_codes:
+        add_flight_price(departure_airport=str(code[0]), destination_airport=str(code[1]), gdb=gdb)
+        count+=1
+        print(count,"/", numOfAirport)
+
 
 def update_flight_data():
     """updates flight data in the gdb"""
@@ -188,12 +254,14 @@ def update_flight_data():
 
     print("Finished updating flight data")
 
+
 if __name__ == "__main__":
     dep_airport = "YVR"
     arv_airport = "YYC"
     # update_airport_departures(dep_airport)
     # add_airport_arrival_times("YYC")
-    add_flight_price(dep_airport, arv_airport)
+    # add_flight_price(dep_airport, arv_airport)
+    add_prices()
 
 
     # update_departures()
