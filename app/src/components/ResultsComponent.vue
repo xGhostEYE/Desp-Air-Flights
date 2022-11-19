@@ -9,7 +9,7 @@ defineProps({
 
 
 <template>
-  <div class="column" style="height:1px; width: 1000px;">
+  <div class="column" style="height:10px; width: 1000px;">
     <li v-for="resultObject in this.results">
       <div class="card w-75">
         <div class="card-body">
@@ -52,3 +52,11 @@ export default {
   }
 };
 </script>
+
+<style>
+li {
+    list-style-type: none;
+    padding:50px;
+    left:-200px;
+}
+</style>

@@ -5,17 +5,18 @@ let airports = ["Saskatoon", "Regina", "Calgary"];
 </script>
  
 <template>    
-  <h1 class="title fixed-top text-center">Desp-Air Flights</h1>
-    <div class="container"  >
-    <div class="row flex-nowrap" style="width: 50%;">
-        <div class="container-fluid">
-          <SearchComponent @getFlights="getFlights" :airports="airports" />
-    </div>
-    <div class="col">
-        <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
+
+  <div class="container">   
+    <div class="row">
+      <div class="container-fluid">
+        <SearchComponent @getFlights="getFlights" :airports="airports" />
       </div>
+
+    <div class="col">
+      <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
     </div>
   </div>
+</div>
 
 </template>
 
@@ -120,11 +121,12 @@ export default {
 .container{
   font-family: "Merienda", Helvetica, Arial;
   font-size: 20px;
+  margin-top: 50px;
 }
 .title{
-  font-family: 'Montserrat', sans-serif;
-  font-size: 80px;
-  color: #7a9bb1;
-  margin-top: 70px;
+  font-family: 'Kanit', sans-serif, 'Montserrat', sans-serif;
+  font-size: 40px;
+  color: black;
+
 }
 </style>
