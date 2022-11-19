@@ -17,12 +17,6 @@ let airports = ["Saskatoon", "Regina", "Calgary"];
     </div>
   </div>
 
-  <footer class="text-center text-white fixed-bottom" style="background-color: #f1f1f1;">
-  <div class="text-center text-dark p-3" style="background-color: #E8DFCA;">
-    © 2022 Copyright:
-    <p class="text-dark" style="display:inline">Team_1 CMPT370-22-Fall University of Saskatchewan</p>
-  </div>
-  </footer>
 </template>
 
 
@@ -106,10 +100,11 @@ export default {
    'endTime': '21:53'
 }
 ],
-'totalCost': '5',
+'totalCost': '$255',
 'totalTime': '0:44',
 'startTime':'19:15',
-'endTime': '21:53'
+'endTime': '21:53',
+'url': 'https://www.google.com/search?q=monkeys&rlz=1C1CHBF_enCA921CA921&source=lnms&tbm=isch&sa=X&ved=2ahUKEwiiiZDVgLv7AhWpIDQIHTibCLAQ_AUoAXoECAEQAw&biw=709&bih=903&dpr=1'
 }];
     }
   }
@@ -128,7 +123,6 @@ export default {
 }
 .title{
   font-family: 'Montserrat', sans-serif;
-  font-family: 'Pacifico', cursive;
   font-size: 80px;
   color: #7a9bb1;
   margin-top: 70px;
