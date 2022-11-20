@@ -223,7 +223,7 @@ def get_all_valid_paths(departure, destination):
     return validPaths_df
 
 
-def convert_paths_to_json(paths_df):
+def convert_paths_to_json(paths_df) -> list:
     """converts the given dataframe of path data to a JSON
 
     Args:
@@ -233,7 +233,7 @@ def convert_paths_to_json(paths_df):
         json with path data, if there are no valid paths returns None
     """
     if paths_df is None:
-        return None
+        return []
 
     paths = paths_df["path"].unique().tolist()
 
