@@ -85,3 +85,4 @@ EXPOSE 5000
 
 # Run the main executable to start flask
 #CMD ["python", "main.py"]
+CMD ["./wait-for-it.sh", "bolt://cmpt370-db:7687","-t", "40", "--", "python", "main.py"]

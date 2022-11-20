@@ -63,8 +63,8 @@ export default {
       await axios
         .get(this.baseURL + '/flights', {
           params: {
-            departure: String(dep),
-            destination: String(des)
+            departure: String(dep.split(' - '[1])),
+            destination: String(des.split(' - '[1]))
           }
         })
         .then(response => (this.processResults(response.data)));

@@ -221,7 +221,7 @@ def add_flight_price(departure_airport, destination_airport, gdb=None):
                         SET f.Cost = flt["Cost"] 
                         """
         gdb.run(flight_cypher, parameters={"flt": parameters})
-    print("Finished added departing flights from", airport_code)
+    print("Finished added departing flights from", departure_airport)
 
 
 def add_prices():
