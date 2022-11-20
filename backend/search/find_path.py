@@ -2,11 +2,12 @@ import sys
 import os
 
 import pandas as pd
+from datetime import date, datetime
 
 sys.path.append(os.path.abspath("./gdb/"))
 import connect_gdb as conGDB
 
-def get_paths_from_dijkstra(departure, destination, number_of_paths=1):
+def get_paths_from_dijkstra(departure, destination, number_of_paths=1, weight="Connections"):
     """gets flight paths from the gdb using the dijkstra algorithm
 
     Args:
@@ -16,15 +17,23 @@ def get_paths_from_dijkstra(departure, destination, number_of_paths=1):
             City name of the destination airport
         number_of_paths: int
             number of paths to return
+        weight: String
+            property in the relationship we will use as the weight
     Returns:
         dataframe containing path data
     """
 
     gdb = conGDB.connect_gdb()
 
+    defaultWeight = 1
+    if weight == "Cost":
+        # high default val so flights without price arent used
+        defaultWeight = 99999
+        
+
     cypher = """
              MATCH (start:Airport{City: $departure}), (end:Airport{City: $destination})
-             CALL apoc.algo.dijkstra(start, end, "Flight>", "Price", 1, $numPaths)
+             CALL apoc.algo.dijkstra(start, end, "Flight>", $weight, 1, $numPaths)
              YIELD path, weight
              WITH apoc.path.elements(path) AS elements
              UNWIND range(0, size(elements)-2) AS index
@@ -37,11 +46,18 @@ def get_paths_from_dijkstra(departure, destination, number_of_paths=1):
                 f.Carrier as Carrier,
                 f.DepartTime as DepartTime,
                 f.ArrivalTime as ArrivalTime,
+                f.Cost as Cost,
                 a2.City as arriveAt,
                 a2.Code as arriveCode
              
              """
-    paths_df = gdb.run(cypher, parameters={"departure": departure, "destination": destination, "numPaths": number_of_paths}).to_data_frame()
+
+    params ={"departure": departure, 
+             "destination": destination, 
+             "numPaths": number_of_paths,
+             "weight": weight}
+
+    paths_df = gdb.run(cypher, parameters=params).to_data_frame()
     
     if paths_df.empty:
         return None
@@ -70,7 +86,6 @@ def path_is_valid(path):
     Returns:
         boolean indicating whether or not path is valid
     """
-    print(path)
 
     # returns false if any DepartTimes or ArrivalTimes are null
     if path["DepartTime"].isnull().values.any() or path["ArrivalTime"].isnull().values.any():
@@ -95,11 +110,7 @@ def path_is_valid(path):
     return True
 
 
-def get_path_price(path_df):
-    return None
-
-
-def get_paths(departure, destination, number_of_paths=1):
+def get_paths(departure, destination, number_of_paths=1, startTime=str(date.today()), weight="Connections"):
     """gets flight paths from departure to destination
 
     Args:
@@ -109,6 +120,11 @@ def get_paths(departure, destination, number_of_paths=1):
             City name of the destination airport
         number_of_paths: int
             number of paths to return
+        startTime: String
+            flights departure must be after this time
+        weight: String
+            property in the flight relationship, in the gdb, we will use as the weight
+
     Returns:
         dataframe with path data, if there are no valid paths returns None
     """
@@ -127,17 +143,23 @@ def get_paths(departure, destination, number_of_paths=1):
         # dataframe of paths that havent been checked
         pathCheck_df = paths_df[paths_df["path"] > num_paths_already_checked]
 
+        #
+        pathCheck_df
+
         # iterates through and checks paths for validity, if valid adds to validPaths_df
         paths = pathCheck_df["path"].unique().tolist()
         for path in paths:
             path_df = pathCheck_df[pathCheck_df["path"] == path]
-            if path_is_valid(path_df):
-                validPaths_df = pd.concat([validPaths_df, path_df])
-                number_of_valid_paths +=1
-                
-                if number_of_valid_paths == number_of_paths:
-                    break
-            print(number_of_valid_paths)
+            pathDepartureTime = path_df["DepartTime"].values[0]
+            print(pathDepartureTime, ">=", startTime)
+            if pathDepartureTime >= startTime:
+                if path_is_valid(path_df):
+                    validPaths_df = pd.concat([validPaths_df, path_df])
+                    number_of_valid_paths +=1
+                    
+                    if number_of_valid_paths == number_of_paths:
+                        break
+
         num_paths_already_checked = num_paths_to_query
         num_paths_to_query = num_paths_to_query * 2
 
@@ -186,7 +208,6 @@ def get_all_valid_paths(departure, destination):
             if path_is_valid(path_df):
                 validPaths_df = pd.concat([validPaths_df, path_df])
 
-
         num_paths_already_checked = num_paths_to_query
         num_paths_to_query = num_paths_to_query * 2
 
@@ -195,7 +216,7 @@ def get_all_valid_paths(departure, destination):
         maxPath = paths_df["path"].max()
         if maxPath < num_paths_already_checked:
             not_all_paths_found = False
-        print(maxPath)
+
     if validPaths_df.empty:
         return None
 
@@ -236,7 +257,7 @@ def convert_paths_to_json(paths_df):
                     "time": path_df.loc[i, "ArrivalTime"],
                     "airport code": path_df.loc[i, "arriveCode"]
                 },
-                "cost": 0,
+                "cost": path_df.loc[i, "Code"],
                 "airline":  path_df.loc[i, "Carrier"],
                 "flight number": path_df.loc[i, "FlightNum"]
             }
