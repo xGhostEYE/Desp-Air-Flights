@@ -4,12 +4,9 @@ import App from './App.vue'
 import router from './router'
 import './assets/main.css'
 import 'bootstrap/dist/css/bootstrap.css'
-<<<<<<< HEAD
+import { BIconArrowDown} from 'bootstrap-icons-vue';
 
 // create the base app
-=======
-import { BIconArrowDown} from 'bootstrap-icons-vue';
->>>>>>> frontend-ykm535
 const app = createApp(App);
 app.component('BIconArrowDown', BIconArrowDown);
 

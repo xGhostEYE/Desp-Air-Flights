@@ -7,15 +7,8 @@ defineProps({
 });
 </script>
 <template>
-<<<<<<< HEAD
-
-    <div class="align-items-center justify-content-center">
-
-        <label id="starting label" for="starting" class="form-label">Starting</label>
-=======
     <div class="align-items-center justify-content-center" style="width:300px ;">
         <label for="starting" class="form-label">Starting</label>
->>>>>>> frontend-ykm535
         <input class="form-control" list="startingList" name="starting" 
                 id="starting" v-model="starting" 
                 type="text" />
