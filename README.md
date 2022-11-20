@@ -64,7 +64,22 @@ On some READMEs, you may see small images that convey metadata, such as whether 
 Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+- [ ] git clone the repo to your local system
+- [ ] make sure to check the system requirements for wsl 2 backend here and have everything setup that they describe:
+      https://docs.docker.com/desktop/install/windows-install/#wsl-2-backend
+- [ ] download the Docker Desktop executable here:
+      https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe 
+- [ ] run the executable and follow the "Install Interactively" instruction at the following link:
+      https://docs.docker.com/desktop/install/windows-install/#install-docker-desktop-on-windows
+- [ ] after installation is complete, make sure to read step 5 carefully and follow the instructions given if you are not using an administrator account
+- [ ] then follow these instructions to open Docker Desktop:
+      https://docs.docker.com/desktop/install/windows-install/#start-docker-desktop
+- [ ] after that, if you are prompted with an error about wsl 2 not being enabled, go to the link they provide and follow the instructions to enable it, then restart your pc
+- [ ] then, open a command prompt in the root directory of the project
+- [ ] run the following command from the terminal:
+      docker compose up
+
+The app should now be available from your browser at the web address: https://localhost:8080
 
 ## Usage
 Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
