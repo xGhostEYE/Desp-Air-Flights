@@ -55,7 +55,7 @@ export default {
       validateinput(value, validString) {
         if (value.length) {
           for (let airport of this.airports) {
-            this[validString] = airport.toLowerCase().startsWith(value.toLowerCase());
+            this[validString] = airport.toLowerCase().includes(value.toLowerCase());
             if (this[validString]) break;
           }
           this.validEntries();

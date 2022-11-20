@@ -11,7 +11,7 @@ def add_initial_data(airport_file="./__data/airports_in_gdb/Airports.csv"):
             csv containing airports City and Code
     """
     airport_df = pd.read_csv(airport_file)
-    add_airports.add_airports_from_csv(airport_df)
+    add_airports.add_airports_from_df(airport_df)
 
     update_flight_data.update_flight_data()
 

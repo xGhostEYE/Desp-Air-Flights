@@ -82,5 +82,6 @@ COPY . .
 # Expose port 5000 to the outside world for flask to use
 EXPOSE 5000
 
+
 # Run the main executable to start flask
-CMD ["python", "main.py"]
+#CMD ["python", "main.py"]
