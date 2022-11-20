@@ -25,12 +25,10 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 
 @app.route("/flights", methods=['GET'])
 def get_flight():
-  current_time = datetime.now().strftime("%H:%M")
-  return jsonify(fp.get_paths(
+  return jsonify(fp.convert_paths_to_json(fp.get_all_valid_paths(
     request.args.get("departure", default="", type=str),
-    request.args.get("destination", default="", type=str),
-    3
-))
+    request.args.get("destination", default="", type=str)
+)))
 
 @app.route("/airports", methods=['GET'])
 def get_airports():
