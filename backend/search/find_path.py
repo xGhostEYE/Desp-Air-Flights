@@ -320,7 +320,7 @@ if __name__ == "__main__":
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
     paths = get_paths(departure, destination, 3, weight="AirTime")
-    # paths = get_flight_urls(paths)
+    paths = get_flight_urls(paths)
     paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
     # paths = get_all_valid_paths(departure, destination)
