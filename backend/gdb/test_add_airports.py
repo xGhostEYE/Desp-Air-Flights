@@ -6,6 +6,7 @@ import misc_queries
 
 
 def get_airport_data(code, gdb):
+    """gets airport city and code"""
     
     cypher = """
              MATCH (a:Airport {Code: $code})

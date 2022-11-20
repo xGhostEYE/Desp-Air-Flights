@@ -175,6 +175,54 @@ def remove_flights_missing_arrival_times():
     
     gdb.run(cypher)
 
+def add_flight_airtime(gdb=None):
+    """adds airtime to flights in the gdb"""
+    if gdb==None:
+        gdb = conGDB.connect_gdb()
+
+    cypher = """
+             MATCH ()-[f:Flight]->(a:Airport)
+             WHERE NOT EXISTS(f.AirTime)
+             RETURN f.FlightNum as FlightNum,
+                    f.DepartTime as DepartTime,
+                    f.ArrivalTime as ArrivalTime
+             """
+    
+    time_df = gdb.run(cypher).to_data_frame()
+    time_df["DepartTime"] = pd.to_datetime(time_df["DepartTime"], infer_datetime_format=True)
+    time_df["ArrivalTime"] = pd.to_datetime(time_df["ArrivalTime"], infer_datetime_format=True)
+
+    time_df["AirTime"] = (time_df.ArrivalTime - time_df.DepartTime) / pd.Timedelta(minutes=1)
+
+    for i in time_df.index:
+        flight_df = time_df.iloc[i, :]
+
+        flightNum = flight_df["FlightNum"]
+        airTime = flight_df["AirTime"]
+
+        params = {"flightNum": flightNum,
+                  "airTime": int(airTime)}
+
+        print(params)
+
+        set_cypher = """
+                     MATCH ()-[f:Flight {FlightNum: $flightNum}]->()
+                     SET f.AirTime = $airTime
+                     """
+
+        gdb.run(set_cypher, parameters=params)
+
+def remove_negative_airTimes(gdb=None):
+    """Removes flights with negative AirTime"""
+    if gdb==None:
+        gdb = conGDB.connect_gdb()
+
+    cypher = """
+                MATCH ()-[f:Flight]->(a:Airport)
+                WHERE f.AirTime <= 0
+                DELETE f
+             """
+    gdb.run(cypher)
 
 def add_flight_price(departure_airport, destination_airport, gdb=None):
     """Adds the prices of flights between the given airports
@@ -221,7 +269,7 @@ def add_flight_price(departure_airport, destination_airport, gdb=None):
                         SET f.Cost = flt["Cost"] 
                         """
         gdb.run(flight_cypher, parameters={"flt": parameters})
-    print("Finished added departing flights from", airport_code)
+    print("Added prices for flights from", departure_airport, "to", destination_airport)
 
 
 def add_prices():
@@ -262,7 +310,9 @@ if __name__ == "__main__":
     # update_airport_departures(dep_airport)
     # add_airport_arrival_times("YYC")
     # add_flight_price(dep_airport, arv_airport)
-    add_prices()
+    # add_prices()
+    # add_flight_airtime()
+    remove_negative_airTimes()
 
 
     # update_departures()
