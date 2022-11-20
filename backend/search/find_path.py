@@ -136,7 +136,6 @@ def get_paths(departure, destination, number_of_paths=1, startTime=str(date.toda
     # loops until the desired number of valid paths are found, if paths cant be found, breaks
     while number_of_valid_paths != number_of_paths:
         paths_df = get_paths_from_dijkstra(departure, destination, num_paths_to_query)
-
         if paths_df is None:
             return None
 
@@ -232,6 +231,7 @@ def convert_paths_to_json(paths_df) -> list:
     Returns:
         json with path data, if there are no valid paths returns None
     """
+    print(paths_df)
     if paths_df is None:
         return []
 

@@ -5,7 +5,6 @@ from search import find_path as fp
 from gdb.add_initial_data import add_initial_data
 from gdb.get_airports import get_airports as get_airports_gdb
 import os
-from datetime import datetime
 
 """ nope bout to work on some psych.
 -add_initial_data.py will add the airports and flight data to the gdb
@@ -19,7 +18,8 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 # enable CORS
-CORS(app, resources={r'/*': {'origins': '*'}})
+cors = CORS(app, resources={r'/*': {'origins': '*'}})
+#app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 
@@ -27,9 +27,9 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 def get_flight():
   return jsonify(fp.convert_paths_to_json(fp.get_paths(
     request.args.get("departure", default="", type=str),
-    request.args.get("destination", default="", type=str),
-    10, "Cost"
+    request.args.get("destination", default="", type=str)
 )))
+
 
 @app.route("/airports", methods=['GET'])
 def get_airports():
@@ -39,7 +39,7 @@ def get_airports():
 if __name__ == '__main__':
   if 'FIRST_RUN' not in os.environ:
     add_initial_data()
-    os.environ['FIRST_RUN'] = "True"
+    os.environ['FIRST_RUN'] = 'FIRST_RUN'
   
   app.run(debug=True,host='0.0.0.0')
 
