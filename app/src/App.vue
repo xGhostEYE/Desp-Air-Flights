@@ -6,16 +6,30 @@ let airports = ["Saskatoon", "Regina", "Calgary"];
  
 <template>    
 
-  <div class="container">   
+<div class="container">   
     <div class="row">
       <div class="container-fluid">
         <SearchComponent @getFlights="getFlights" :airports="airports" />
       </div>
-
+    </div>
+    
+    <div v-if="this.noFlights">
+      <br>
+      <div class="row g-6">
+        <div class="column" style="height:10px; width: 900px;">
+          <div class="card w-75">
+            <div class="card-body">
+              <BIconExclamationCircle/>
+              <h5 class="card-title">Sorry...</h5>
+              <p class="card-text">No flights are available for that path at this time.</p>
+            </div>
+          </div>
+        </div>
+      </div> 
+    </div>
     <div class="col">
       <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
     </div>
-  </div>
 </div>
 
 </template>
@@ -38,8 +52,9 @@ export default {
   data() {
     return {
       airports: ["Saskatoon", "Regina", "Calgary"],
-      results: null,
+      results: [],
       baseURL: "http://127.0.0.1:5000",
+      noFlights: false,
     };
 
 
@@ -52,8 +67,8 @@ export default {
   },
   methods: {
     async getFlights (dep, des) {
-      this.showFlights = true;
-      this.processResults(null);
+      
+      //this.processResults(null);
       /* await axios
         .get(this.baseURL + '/flights', {
           params: {
@@ -62,7 +77,8 @@ export default {
           }
         })
         .then(response => (this.processResults(response.data))); */
-
+        this.showFlights = this.results.length > 0;
+        this.noFlights = this.results.length == 0;
     },
     processResults(flightData) {
       //this.results = flightData;
@@ -102,7 +118,7 @@ export default {
 }
 ],
 'totalCost': '$255',
-'totalTime': '0:44',
+'totalTime': '0:44h',
 'startTime':'19:15',
 'endTime': '21:53',
 'url': 'https://www.google.com/search?q=monkeys&rlz=1C1CHBF_enCA921CA921&source=lnms&tbm=isch&sa=X&ved=2ahUKEwiiiZDVgLv7AhWpIDQIHTibCLAQ_AUoAXoECAEQAw&biw=709&bih=903&dpr=1',
@@ -144,12 +160,12 @@ export default {
 }
 ],
 'totalCost': '$170',
-'totalTime': '2:44',
+'totalTime': '2:44h',
 'startTime':'19:00',
 'endTime': '21:44',
 'url': 'https://www.google.com/search?q=monkeys&rlz=1C1CHBF_enCA921CA921&source=lnms&tbm=isch&sa=X&ved=2ahUKEwiiiZDVgLv7AhWpIDQIHTibCLAQ_AUoAXoECAEQAw&biw=709&bih=903&dpr=1',
 'isVisible':false
-}];
+}]
     }
   }
 };

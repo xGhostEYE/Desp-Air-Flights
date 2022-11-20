@@ -19,6 +19,7 @@ const inputClasses = function(isValid) {
 
 </script>
 <template>
+  <div class="row gy-6">
     <div class="align-items-center justify-content-center" style="width:300px ;">
         <label for="starting" class="form-label">Starting</label>
         <input class="form-control" list="startingList" name="starting" 
@@ -38,9 +39,9 @@ const inputClasses = function(isValid) {
           <option v-for="airport in this.airports">{{airport}}</option>
         </datalist>
         <br/>
-        
         <button :class="{'disabled': !this.validEntries()}" @click="search()" class="mt-5 btn btn-primary" style="background-color: #3E6D9C;">Search</button>
     </div>
+  </div>  
 </template>
 <script>
 export default {
