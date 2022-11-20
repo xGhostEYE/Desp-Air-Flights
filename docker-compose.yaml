@@ -28,7 +28,7 @@ services:
     restart: "unless-stopped"
     depends_on:
     - neo4j
-#    command: ["./wait-for-it.sh", "bolt://cmpt370-db:7474","-t", "100", "--", "python", "main.py"]
+    #command: ["./wait-for-it.sh", "bolt://cmpt370-db:7687","-t", "100", "--", "python", "main.py"]
     networks:
       - cmpt370
   neo4j:

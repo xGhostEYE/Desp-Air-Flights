@@ -12,9 +12,9 @@ def get_paths_from_dijkstra(departure, destination, number_of_paths=1, weight="C
 
     Args:
         departure: String
-            City name of the airport we are departing from
+            Code of the airport we are departing from
         destination: String
-            City name of the destination airport
+            Code of the destination airport
         number_of_paths: int
             number of paths to return
         weight: String
@@ -32,7 +32,7 @@ def get_paths_from_dijkstra(departure, destination, number_of_paths=1, weight="C
         
 
     cypher = """
-             MATCH (start:Airport{City: $departure}), (end:Airport{City: $destination})
+             MATCH (start:Airport{Code: $departure}), (end:Airport{Code: $destination})
              CALL apoc.algo.dijkstra(start, end, "Flight>", $weight, 1, $numPaths)
              YIELD path, weight
              WITH apoc.path.elements(path) AS elements
@@ -63,11 +63,11 @@ def get_paths_from_dijkstra(departure, destination, number_of_paths=1, weight="C
         return None
 
     # label paths
-    cities = paths_df["departFrom"].tolist()
+    codes = paths_df["departCode"].tolist()
     path = []
     pathNum = 0
-    for city in cities:
-        if city == departure:
+    for code in codes:
+        if code == departure:
             pathNum +=1
         path.append(pathNum)
 
@@ -115,9 +115,9 @@ def get_paths(departure, destination, number_of_paths=1, startTime=str(date.toda
 
     Args:
         departure: String
-            City name of the airport we are departing from
+            Code of the airport we are departing from
         destination: String
-            City name of the destination airport
+            Code of the destination airport
         number_of_paths: int
             number of paths to return
         startTime: String
@@ -136,6 +136,7 @@ def get_paths(departure, destination, number_of_paths=1, startTime=str(date.toda
     # loops until the desired number of valid paths are found, if paths cant be found, breaks
     while number_of_valid_paths != number_of_paths:
         paths_df = get_paths_from_dijkstra(departure, destination, num_paths_to_query)
+
         if paths_df is None:
             return None
 
@@ -178,9 +179,9 @@ def get_all_valid_paths(departure, destination):
 
     Args:
         departure: String
-            City name of the airport we are departing from
+            Code of the airport we are departing from
         destination: String
-            City name of the destination airport
+            Code of the destination airport
     Returns:
         dataframe with data for all valid paths, if there are no valid paths returns None
     """
@@ -222,7 +223,7 @@ def get_all_valid_paths(departure, destination):
     return validPaths_df
 
 
-def convert_paths_to_json(paths_df) -> list:
+def convert_paths_to_json(paths_df):
     """converts the given dataframe of path data to a JSON
 
     Args:
@@ -231,9 +232,8 @@ def convert_paths_to_json(paths_df) -> list:
     Returns:
         json with path data, if there are no valid paths returns None
     """
-    print(paths_df)
     if paths_df is None:
-        return []
+        return None
 
     paths = paths_df["path"].unique().tolist()
 
@@ -274,14 +274,17 @@ def convert_paths_to_json(paths_df) -> list:
 
 if __name__ == "__main__":
     
-    departure = "Richmond"
-    destination = "Calgary"
+    # departure = "Richmond"
+    # destination = "Calgary"
 
-    # paths = get_paths_from_dijkstra(departure, destination, 500)
-    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
+    departure = "YTZ"
+    destination = "YOW"
 
-    paths = get_paths(departure, destination, 10)
-    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
+    paths = get_paths_from_dijkstra(departure, destination, 500)
+    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
+
+    # paths = get_paths(departure, destination, 10)
+    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
     # paths = get_all_valid_paths(departure, destination)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_all.csv", index=False)
