@@ -251,6 +251,7 @@ def update_flight_data():
     update_departures()
     add_arrival_times()
     remove_flights_missing_arrival_times()
+    add_prices()
 
     print("Finished updating flight data")
 
