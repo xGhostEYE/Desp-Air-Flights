@@ -299,7 +299,8 @@ def update_flight_data():
     update_departures()
     add_arrival_times()
     remove_flights_missing_arrival_times()
-    add_prices()
+    add_flight_airtime()
+    remove_negative_airTimes()
 
     print("Finished updating flight data")
 
@@ -312,9 +313,9 @@ if __name__ == "__main__":
     # add_flight_price(dep_airport, arv_airport)
     # add_prices()
     # add_flight_airtime()
-    remove_negative_airTimes()
+    # remove_negative_airTimes()
 
 
     # update_departures()
-    # update_flight_data()
+    update_flight_data()
     print("Finished")
