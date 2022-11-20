@@ -7,10 +7,15 @@ defineProps({
 });
 </script>
 <template>
+<<<<<<< HEAD
 
     <div class="align-items-center justify-content-center">
 
         <label id="starting label" for="starting" class="form-label">Starting</label>
+=======
+    <div class="align-items-center justify-content-center" style="width:300px ;">
+        <label for="starting" class="form-label">Starting</label>
+>>>>>>> frontend-ykm535
         <input class="form-control" list="startingList" name="starting" 
                 id="starting" v-model="starting" 
                 type="text" />
@@ -29,7 +34,7 @@ defineProps({
         </datalist>
         <br/>
         
-        <button :class="{'disabled': !this.validEntries()}" @click="search()" class="mt-5 btn btn-primary">Search</button>
+        <button :class="{'disabled': !this.validEntries()}" @click="search()" class="mt-5 btn btn-primary" style="background-color: #3E6D9C;">Search</button>
     </div>
 </template>
 <script>
