@@ -5,36 +5,25 @@ defineProps({
     required: true
   }
 });
-let validStarting = true;
-let validDestination = true;
-
-const inputClasses = function(isValid) {
-  return [
-    'mb-3',
-    'alert',
-    isValid? 'alert-light':'',
-    isValid? '':'alert-danger'
-  ];
-};
-
 </script>
 <template>
+
     <div class="align-items-center justify-content-center">
 
-        <label for="starting" class="form-label">Starting</label>
+        <label id="starting label" for="starting" class="form-label">Starting</label>
         <input class="form-control" list="startingList" name="starting" 
                 id="starting" v-model="starting" 
                 type="text" />
-        <span :class="{'invisible':this.validStarting}" class="form-text text-danger">Enter valid airport</span>
+        <span id="startingErr" v-show="!this.validStarting"  class="form-text text-danger">Enter valid airport</span>
         <datalist id="startingList">
           <option v-for="airport in this.airports">{{airport}}</option>
         </datalist>
         <br/>
       
-        <label for="destination" class="form-label">Destination</label>
+        <label id="destination label" for="destination" class="form-label">Destination</label>
         <input class="form-control" list="destinationList" name="destination" 
                 id="destination" v-model="destination" />
-        <span :class="{'invisible':this.validDestination}" class="form-text text-danger">Enter valid airport</span>
+        <span id="destinationErr" v-show="!this.validDestination" class="form-text text-danger">Enter valid airport</span>
         <datalist id="destinationList">
           <option v-for="airport in this.airports">{{airport}}</option>
         </datalist>
@@ -49,6 +38,9 @@ export default {
       return {
         starting: '',
         destination: '',
+        visible1: true,
+        validStarting: true,
+        validDestination: true
       }
     },
     methods: {
@@ -68,6 +60,7 @@ export default {
           }
           this.validEntries();
         }
+        else this[validString] = true;
       }
       
     },

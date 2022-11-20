@@ -22,8 +22,8 @@ let airports = ["Saskatoon", "Regina", "Calgary"];
         </div>
 
 <!--       </nav>
- -->      <div class="col">
-        <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
+ -->      <div class="col" v-if="showFlights" >
+        <ResultsComponent  :class="{'invisible': !showFlights, 'col': true}" :results="results" />
       </div>
     </div>
   </div>
@@ -83,6 +83,84 @@ export default {
     processResults(flightData) {
       //this.results = flightData;
       this.results = [{
+  'flights': [
+  {
+    'departure': {
+      'location': 'Saskatoon', 
+      'time': '19:15',
+      'airport code': 'YXE'
+    },
+    'arrival': {
+      'location': 'Winnipeg', 
+      'time': '21:53',
+      'airport code': 'YWG'
+    },
+   'cost': 0, 
+   'airline': 'WestJet',
+   'flight number': 'WS3266'
+},
+{
+  'departure': {
+      'location': 'Saskatoon', 
+      'time': '19:15',
+      'airport code': 'YXE'
+    },
+    'arrival': {
+      'location': 'Winnipeg', 
+      'time': '21:53',
+      'airport code': 'YWG'
+    },
+   'cost': 0, 
+   'airline': 'WestJet',
+   'flight number': 'WS3266',
+   'startTime': '19:15',
+   'endTime': '21:53'
+}
+],
+'totalCost': '5',
+'totalTime': '0:44',
+'startTime':'19:15',
+'endTime': '21:53'
+},{
+  'flights': [
+  {
+    'departure': {
+      'location': 'Saskatoon', 
+      'time': '19:15',
+      'airport code': 'YXE'
+    },
+    'arrival': {
+      'location': 'Winnipeg', 
+      'time': '21:53',
+      'airport code': 'YWG'
+    },
+   'cost': 0, 
+   'airline': 'WestJet',
+   'flight number': 'WS3266'
+},
+{
+  'departure': {
+      'location': 'Saskatoon', 
+      'time': '19:15',
+      'airport code': 'YXE'
+    },
+    'arrival': {
+      'location': 'Winnipeg', 
+      'time': '21:53',
+      'airport code': 'YWG'
+    },
+   'cost': 0, 
+   'airline': 'WestJet',
+   'flight number': 'WS3266',
+   'startTime': '19:15',
+   'endTime': '21:53'
+}
+],
+'totalCost': '5',
+'totalTime': '0:44',
+'startTime':'19:15',
+'endTime': '21:53'
+},{
   'flights': [
   {
     'departure': {
