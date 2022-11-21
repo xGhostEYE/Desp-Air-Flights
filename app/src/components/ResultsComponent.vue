@@ -35,7 +35,7 @@ defineProps({
     </li>
   </div>-->
 
-<div class="column" style="height:10px; width: 500px;">
+<div class="row" style="height:10px; width: 500px;">
   <div class="accordion" v-if="this.results != null" id="accordionPanelsStayOpenExample">
     <li v-for="resultObject in this.results">
       <div class="accordion-item">

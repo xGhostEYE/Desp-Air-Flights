@@ -3,7 +3,7 @@
 FROM ubuntu:latest
 
 #set timezone
-RUN export TZ=America/Regina
+ENV TZ=America/Regina
 
 # setting environment variable to set the dev frontend to noninteractive
 ENV DEBIAN_FRONTEND noninteractive
