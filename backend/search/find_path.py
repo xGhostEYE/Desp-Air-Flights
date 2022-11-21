@@ -333,9 +333,6 @@ def convert_paths_to_json(paths_df):
 
 if __name__ == "__main__":
     
-    # departure = "Richmond"
-    # destination = "Calgary"
-
     departure = "YVR"
     destination = "YYC"
 
@@ -353,5 +350,6 @@ if __name__ == "__main__":
     # print(pathsJSON)
     # paths = get_paths_json(departure, destination, 10)
     # print(paths)
+    
 
     

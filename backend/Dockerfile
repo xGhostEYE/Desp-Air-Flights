@@ -3,7 +3,7 @@
 FROM ubuntu:latest
 #MAINTAINER Qxf2 Services
 
-RUN export TZ=America/Regina
+ENV TZ=America/Regina
 
 ENV DEBIAN_FRONTEND noninteractive 
 # Essential tools and xvfb
