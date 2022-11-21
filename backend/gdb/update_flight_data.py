@@ -195,32 +195,34 @@ def add_flight_price(departure_airport, destination_airport, gdb=None):
     except Exception as e:
         print("Failed to get price data for:", departure_airport, "to", destination_airport, "\nDue to the exception:", e)
         return
+    try:
+        for i in price_df.index:
+            flight_df = price_df.iloc[i, :]
 
-    for i in price_df.index:
-        flight_df = price_df.iloc[i, :]
+            carrier = flight_df["Carrier"]
+            departTime = flight_df["Departure"]
+            arrivalTime = flight_df["Arrival"]
+            cost = flight_df["Cost"]
 
-        carrier = flight_df["Carrier"]
-        departTime = flight_df["Departure"]
-        arrivalTime = flight_df["Arrival"]
-        cost = flight_df["Cost"]
+            parameters = {
+                "DepartFrom": str(departure_airport),
+                "Destination_AP": str(destination_airport),
+                "Carrier": str(carrier),
+                "DepartTime": departTime,
+                "ArrivalTime": arrivalTime,
+                "Cost": cost
+            }
+            print(parameters)
 
-        parameters = {
-            "DepartFrom": str(departure_airport),
-            "Destination_AP": str(destination_airport),
-            "Carrier": str(carrier),
-            "DepartTime": departTime,
-            "ArrivalTime": arrivalTime,
-            "Cost": cost
-        }
-        print(parameters)
-
-        flight_cypher = """
-                        With $flt as flt
-                        MATCH (a1:Airport {Code: flt["DepartFrom"]})-[f:Flight]->(a2:Airport {Code: flt["Destination_AP"]})
-                        WHERE f.DepartTime = flt["DepartTime"] AND f.ArrivalTime = flt["ArrivalTime"]
-                        SET f.Cost = flt["Cost"] 
-                        """
-        gdb.run(flight_cypher, parameters={"flt": parameters})
+            flight_cypher = """
+                            With $flt as flt
+                            MATCH (a1:Airport {Code: flt["DepartFrom"]})-[f:Flight]->(a2:Airport {Code: flt["Destination_AP"]})
+                            WHERE f.DepartTime = flt["DepartTime"] AND f.ArrivalTime = flt["ArrivalTime"]
+                            SET f.Cost = flt["Cost"] 
+                            """
+            gdb.run(flight_cypher, parameters={"flt": parameters})
+    except:
+        print("oopsie")
     print("Finished added departing flights from", departure_airport)
 
 
@@ -251,7 +253,7 @@ def update_flight_data():
     update_departures()
     add_arrival_times()
     remove_flights_missing_arrival_times()
-    add_prices()
+    #add_prices()
 
     print("Finished updating flight data")
 
