@@ -311,7 +311,7 @@ def convert_paths_to_json(paths_df):
                 "airTime": path_df.loc[i, "AirTime"],
                 "airline":  path_df.loc[i, "Carrier"],
                 "flight number": path_df.loc[i, "FlightNum"],
-                "URL": path_df.loc[i, "Link"]
+                "URL": path_df.loc[i, "URL"]
             }
             flights.append(flight)
 

@@ -79,7 +79,7 @@ export default {
   },
   methods: {
     async getFlights (dep, des) {
-      
+      console.log("button pressed");
       //this.processResults(null);
       await axios
         .get(this.baseURL + '/flights', {
