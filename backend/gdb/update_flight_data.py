@@ -99,6 +99,17 @@ def update_departures():
         count+=1
         print(count,"/", numOfAirport)
 
+def remove_flights_missing_departure_times():
+    """removes flights in the gdb that do not have a departure time"""
+    gdb = conGDB.connect_gdb()
+
+    cypher = """
+             MATCH ()-[f:Flight]->(a:Airport)
+             WHERE NOT EXISTS(f.DepartTime)
+             DELETE f
+             """
+    
+    gdb.run(cypher)
 
 def add_airport_arrival_times(airport_code, gdb=None, airport_arvl_df=None):
     """Adds the arrival times of flights arriving at the given airport
@@ -301,6 +312,7 @@ def update_flight_data():
     """updates flight data in the gdb"""
 
     update_departures()
+    remove_flights_missing_departure_times()
     add_arrival_times()
     remove_flights_missing_arrival_times()
     add_flight_airtime()
