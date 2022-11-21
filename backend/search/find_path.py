@@ -148,7 +148,6 @@ def get_paths(departure, destination, number_of_paths=1, startTime=str(date.toda
         for path in paths:
             path_df = pathCheck_df[pathCheck_df["path"] == path]
             pathDepartureTime = path_df["DepartTime"].values[0]
-            print(pathDepartureTime, ">=", startTime)
             if pathDepartureTime >= startTime:
                 if path_is_valid(path_df):
                     validPaths_df = pd.concat([validPaths_df, path_df])
@@ -240,13 +239,8 @@ def get_flight_urls(paths_df):
 
     # get all unique combinations of departure code and arrival code
     combinations = paths_df.groupby(["departCode", "arriveCode"]).size().index.tolist()
-    print(combinations)
 
     for i in combinations:
-        # flight_df = paths_df.iloc[i, :]
-        # departCode = flight_df["departCode"]
-        # arrivalCode = flight_df["arriveCode"]
-
         departCode = i[0]
         arrivalCode = i[1]
 
@@ -267,8 +261,6 @@ def get_flight_urls(paths_df):
     
     if flightPrices_df.empty:
         return paths_df
-
-    flightPrices_df.to_csv(f"./__data/test_paths/{departCode}_to_{arrivalCode}_prices.csv", index=False)
 
     # merge prices into paths_df
     paths_df = paths_df.merge(flightPrices_df, left_on=["departCode", "arriveCode", "DepartTime", "ArrivalTime"], right_on=["departCode", "arriveCode", "Departure", "Arrival"], how="left")
@@ -292,11 +284,12 @@ def convert_paths_to_json(paths_df):
     if paths_df is None:
         return None
 
-    paths = paths_df["path"].unique().tolist()
+    paths_df = get_flight_urls(paths_df)
 
     path_jsons = []
 
     # formats each path
+    paths = paths_df["path"].unique().tolist()
     for path in paths:
         path_df = paths_df[paths_df["path"] == path]
 
@@ -328,8 +321,8 @@ def convert_paths_to_json(paths_df):
         }
         path_jsons.append(path_json)
 
-
     return path_jsons
+
 
 if __name__ == "__main__":
     
@@ -340,14 +333,14 @@ if __name__ == "__main__":
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
     paths = get_paths(departure, destination, 5, startTime=str(datetime.today()), weight="AirTime")
-    paths = get_flight_urls(paths)
-    paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
+    # paths = get_flight_urls(paths)
+    # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 
     # paths = get_all_valid_paths(departure, destination)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_all.csv", index=False)
 
-    # pathsJSON = convert_paths_to_json(paths)
-    # print(pathsJSON)
+    pathsJSON = convert_paths_to_json(paths)
+    print(pathsJSON)
     # paths = get_paths_json(departure, destination, 10)
     # print(paths)
     

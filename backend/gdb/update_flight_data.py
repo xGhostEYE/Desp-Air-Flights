@@ -109,6 +109,7 @@ def add_airport_arrival_times(airport_code, gdb=None, airport_arvl_df=None):
         gdb: py2neo Graph
             connection to the neo4j database
     """
+    # scrapes arrival time if a dataframe is not passed to the function
     if airport_arvl_df is None:
         try:
             airport_arvl_df = harv.harvest_data_arrivals(airport_code)
@@ -118,8 +119,9 @@ def add_airport_arrival_times(airport_code, gdb=None, airport_arvl_df=None):
 
     if gdb==None:
         gdb = conGDB.connect_gdb()
-    flight_Nums = airport_arvl_df["Flight"].unique().tolist()
 
+    # iterates through flights in airport_arvl_df adding their arrival time
+    flight_Nums = airport_arvl_df["Flight"].unique().tolist()
     for flight_Num in flight_Nums:
         flight_df = airport_arvl_df[airport_arvl_df["Flight"] == flight_Num]
         
@@ -308,16 +310,14 @@ def update_flight_data():
 
 
 if __name__ == "__main__":
-    dep_airport = "YVR"
-    arv_airport = "YYC"
+    # dep_airport = "YVR"
+    # arv_airport = "YYC"
     # update_airport_departures(dep_airport)
     # add_airport_arrival_times("YYC")
     # add_flight_price(dep_airport, arv_airport)
     # add_prices()
     # add_flight_airtime()
     # remove_negative_airTimes()
-
-
     # update_departures()
     update_flight_data()
     print("Finished")
