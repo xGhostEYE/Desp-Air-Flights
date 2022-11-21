@@ -286,6 +286,9 @@ def convert_paths_to_json(paths_df):
 
     paths_df = get_flight_urls(paths_df)
 
+    if "Link" not in paths_df:
+        paths_df["Link"] = None
+
     path_jsons = []
 
     # formats each path
@@ -326,8 +329,8 @@ def convert_paths_to_json(paths_df):
 
 if __name__ == "__main__":
     
-    departure = "YVR"
-    destination = "YYC"
+    departure = "YTZ"
+    destination = "YOW"
 
     # paths = get_paths_from_dijkstra(departure, destination, 500)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
