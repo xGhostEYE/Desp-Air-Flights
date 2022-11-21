@@ -37,6 +37,7 @@ import SearchComponent from './components/SearchComponent.vue';
 import ResultsComponent from './components/ResultsComponent.vue';
 import axios from 'axios';
 import TitleComponent from './components/TitleComponent.vue';
+import dummyData from './__tests__/DummyData'
 
 export default {
   name: "App",
@@ -47,16 +48,6 @@ export default {
 },
   data() {
     return {
-      path: {
-        flights: [],
-        totalCost: '$170',
-        totalTime: '2:44',
-        startTime:'19:00',
-        endTime: '21:44',
-        url: 'https://www.google.com/search?q=monkeys&rlz=1C1CHBF_enCA921CA921&source=lnms&tbm=isch&sa=X&ved=2ahUKEwiiiZDVgLv7AhWpIDQIHTibCLAQ_AUoAXoECAEQAw&biw=709&bih=903&dpr=1',
-        isVisible: false
-
-      },
       airports: [],
       results: [],
       baseURL: "http://127.0.0.1:5000",
@@ -80,7 +71,6 @@ export default {
   methods: {
     async getFlights (dep, des) {
       console.log("button pressed");
-      //this.processResults(null);
       await axios
         .get(this.baseURL + '/flights', {
           params: {
@@ -93,9 +83,11 @@ export default {
 
     },
     processResults(flightData) {
-      //this.results = flightData;
-      console.log(flightData);
-      let tempResults = flightData;
+      // dummy data for if the app is not
+      let tempResults = dummyData;
+      // for if the backend is actually working
+      //let tempResults = flightData;
+
       //loop through each path returned
       for (let pathI = 0;pathI<tempResults.length; pathI++) {
         let totalCost = 0;
