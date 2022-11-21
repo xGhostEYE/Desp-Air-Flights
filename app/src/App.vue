@@ -6,16 +6,26 @@ let airports = [];
  
 <template>    
 
-  <div class="container">   
-    <div class="row">
-      <div class="container-fluid">
+<div class="d-flex flex-column justify-content-center p-5">   
+    <div class="border rounded-2 p-3" style="background-color: rgb(177, 199, 204); width:400px">
         <SearchComponent @getFlights="getFlights" :airports="airports" />
-      </div>
+    </div>
 
-    <div class="col">
+    <div v-if="this.noFlights">
+      <br>
+        <div class="row gy-6" style="height:10px; width: 800px;">
+          <div class="card w-75">
+            <div class="card-body">
+              <BIconExclamationCircle/>
+              <h5 class="card-title">Sorry...</h5>
+              <p class="card-text">No flights are available for that path at this time.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-center" v-else>
       <ResultsComponent :class="{'invisible': !showFlights, 'col': true}" :results="results" />
     </div>
-  </div>
 </div>
 
 </template>
@@ -48,8 +58,9 @@ export default {
 
       },
       airports: [],
-      results: null,
+      results: [],
       baseURL: "http://127.0.0.1:5000",
+      noFlights: false,
     };
 
 
