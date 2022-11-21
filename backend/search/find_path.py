@@ -94,10 +94,6 @@ def path_is_valid(path):
     # returns false if any DepartTimes or ArrivalTimes are null
     if path["DepartTime"].isnull().values.any() or path["ArrivalTime"].isnull().values.any():
         return False
-    
-    # convert DepartTimes and ArrivalTimes to datetime object
-    # path["DepartTime"] = pd.to_datetime(path["DepartTime"], infer_datetime_format=True)
-    # path["ArrivalTime"] = pd.to_datetime(path["ArrivalTime"], infer_datetime_format=True)
 
     # valid if the arrival is before the departure of the next flight for all flights, else returns false
     departTimes = path["DepartTime"].tolist()
@@ -147,9 +143,6 @@ def get_paths(departure, destination, number_of_paths=1, startTime=str(date.toda
         # dataframe of paths that havent been checked
         pathCheck_df = paths_df[paths_df["path"] > num_paths_already_checked]
 
-        #
-        pathCheck_df
-
         # iterates through and checks paths for validity, if valid adds to validPaths_df
         paths = pathCheck_df["path"].unique().tolist()
         for path in paths:
@@ -177,6 +170,7 @@ def get_paths(departure, destination, number_of_paths=1, startTime=str(date.toda
         return None
 
     return validPaths_df
+
 
 def get_all_valid_paths(departure, destination):
     """gets all valid flight paths from departure to destination
@@ -226,35 +220,63 @@ def get_all_valid_paths(departure, destination):
 
     return validPaths_df
 
+
 def get_flight_urls(paths_df):
+    """gets the link to the flight page to buy ticket
+
+    Args:
+        path: dataframe
+            dataframe containing info on a paths
+    Returns:
+        paths_df with URL column with the link to the flight
+    """
+
+    # if no paths returns none
     if paths_df is None:
         return None
     
+    # intiliaze dataframe that will store prices
     flightPrices_df = pd.DataFrame()
-    for i in paths_df.index:
-        flight_df = paths_df.iloc[i, :]
 
-        departCode = flight_df["departCode"]
-        arrivalCode = flight_df["arriveCode"]
+    # get all unique combinations of departure code and arrival code
+    combinations = paths_df.groupby(["departCode", "arriveCode"]).size().index.tolist()
+    print(combinations)
 
+    for i in combinations:
+        # flight_df = paths_df.iloc[i, :]
+        # departCode = flight_df["departCode"]
+        # arrivalCode = flight_df["arriveCode"]
+
+        departCode = i[0]
+        arrivalCode = i[1]
+
+        # try scraping price data
         try:
             price_df = harv.price_link_scrape(departCode, arrivalCode, str(date.today()))
         except Exception as e:
             continue
         
-        if ~isinstance(price_df, pd.DataFrame):
+        # checks if returned object returned from price scrape is a dataframe
+        if not isinstance(price_df, pd.DataFrame):
             continue
-
-        print(price_df)
+        
+        # at airport codes to price dataframe and concat it to flightPrices_df
         price_df["departCode"] = departCode
         price_df["arriveCode"] = arrivalCode
-
         flightPrices_df = pd.concat([flightPrices_df, price_df])    
     
     if flightPrices_df.empty:
         return paths_df
 
-    paths_df = paths_df.merge(flightPrices_df, left_on=["departCode", "arriveCode", "DepartTime", "ArrivalTime"], right_on=["departCode", "arriveCode", "Departure", "Arrival"])
+    flightPrices_df.to_csv(f"./__data/test_paths/{departCode}_to_{arrivalCode}_prices.csv", index=False)
+
+    # merge prices into paths_df
+    paths_df = paths_df.merge(flightPrices_df, left_on=["departCode", "arriveCode", "DepartTime", "ArrivalTime"], right_on=["departCode", "arriveCode", "Departure", "Arrival"], how="left")
+
+    # format columns
+    paths_df = paths_df[["departFrom", "departCode", "FlightNum", "Carrier_x", "DepartTime", "ArrivalTime", "AirTime", "Cost_y", "arriveAt", "arriveCode", "path", "Link"]]
+    paths_df = paths_df.rename({"Carrier_x": "Carrier", "Cost_y": "Cost"}, axis=1)
+
     return paths_df
 
 
@@ -295,7 +317,8 @@ def convert_paths_to_json(paths_df):
                 "cost": path_df.loc[i, "Cost"],
                 "airTime": path_df.loc[i, "AirTime"],
                 "airline":  path_df.loc[i, "Carrier"],
-                "flight number": path_df.loc[i, "FlightNum"]
+                "flight number": path_df.loc[i, "FlightNum"],
+                "URL": path_df.loc[i, "Link"]
             }
             flights.append(flight)
 
@@ -313,13 +336,13 @@ if __name__ == "__main__":
     # departure = "Richmond"
     # destination = "Calgary"
 
-    departure = "YTZ"
-    destination = "YOW"
+    departure = "YVR"
+    destination = "YYC"
 
     # paths = get_paths_from_dijkstra(departure, destination, 500)
     # paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}_test.csv", index=False)
 
-    paths = get_paths(departure, destination, 3, weight="AirTime")
+    paths = get_paths(departure, destination, 5, startTime=str(datetime.today()), weight="AirTime")
     paths = get_flight_urls(paths)
     paths.to_csv(f"./__data/test_paths/{departure}_to_{destination}.csv", index=False)
 

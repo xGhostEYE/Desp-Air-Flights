@@ -30,7 +30,7 @@ def update_airport_departures(airport_code, gdb=None, airport_dept_df=None):
     airport_cypher = """MATCH (a:Airport {Code: $Code})-[f:Flight]->(:Airport)
                             DELETE f"""
     gdb.run(airport_cypher, parameters={"Code": airport_code})
-
+    
     if airport_dept_df is None:
         try:
             airport_dept_df = harv.harvest_data_departures(airport_code, None)
@@ -39,7 +39,8 @@ def update_airport_departures(airport_code, gdb=None, airport_dept_df=None):
             return
 
     flight_Nums = airport_dept_df["Flight"].unique().tolist()
-    
+
+    # iterates through flights and adds them to the gdb
     for flight_Num in flight_Nums:
         flight_df = airport_dept_df[airport_dept_df["Flight"] == flight_Num]
         
@@ -99,7 +100,7 @@ def update_departures():
         print(count,"/", numOfAirport)
 
 
-def add_airport_arrival_times(airport_code, gdb=None):
+def add_airport_arrival_times(airport_code, gdb=None, airport_arvl_df=None):
     """Adds the arrival times of flights arriving at the given airport
 
     Args:
@@ -108,11 +109,12 @@ def add_airport_arrival_times(airport_code, gdb=None):
         gdb: py2neo Graph
             connection to the neo4j database
     """
-    try:
-        airport_arvl_df = harv.harvest_data_arrivals(airport_code)
-    except Exception as e:
-        print("Failed to get arrival data for:", airport_code, "\nDue to the exception:", e)
-        return
+    if airport_arvl_df is None:
+        try:
+            airport_arvl_df = harv.harvest_data_arrivals(airport_code)
+        except Exception as e:
+            print("Failed to get arrival data for:", airport_code, "\nDue to the exception:", e)
+            return
 
     if gdb==None:
         gdb = conGDB.connect_gdb()
