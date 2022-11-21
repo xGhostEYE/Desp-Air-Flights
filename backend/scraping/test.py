@@ -18,7 +18,6 @@ def price_link_scrape(origin, destination, startdate):
     df = pd.DataFrame()
 
     url = "https://www.kayak.com/flights/" + origin + "-" + destination + "/" + startdate + "?sort=depart_a&fs=stops=0"
-    print("\n" + url)
 
     chrome_options = webdriver.ChromeOptions()
     agents = ["Firefox/66.0.3","Chrome/73.0.3683.68","Edge/16.16299"]
@@ -174,7 +173,7 @@ def harvest_data_arrivals(arrival_location):
         dataframe with arriving flights to airport
 
     """
-    url = "https://www.airports-worldwide.info/search/"+arrival_location+"/arrivals"
+    url = "https://www.airports-worldwide.info/airport/"+arrival_location+"/arrivals"
     reqs = requests.get(url)
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
@@ -237,7 +236,7 @@ def harvest_data_departures(departure_location,initial_search):
     
     """
 
-    url = "https://www.airports-worldwide.info/search/"+departure_location+"/departures"
+    url = "https://www.airports-worldwide.info/airport/"+departure_location+"/departures"
     reqs = requests.get(url)
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
@@ -299,7 +298,7 @@ if __name__ == "__main__":
     # forward scrape
     # get user location
     initial_search = True
-    user_location = "calgary"
+    user_location = "YYC"
     # need user requested destination
     user_airport_timetable_data = harvest_data_departures(user_location,initial_search)
     user_airport_timetable_data.to_csv(os.path.abspath("origin_airport_departures.csv"), index=False)
@@ -329,7 +328,7 @@ if __name__ == "__main__":
 
 
     #backward scrape
-    user_requested_destination = "los angeles"
+    user_requested_destination = "YVR"
     user_requested_airport_departures = harvest_data_arrivals(user_requested_destination)
     
     user_requested_airport_departures.to_csv(os.path.abspath("destination_airport_arrivals.csv"), index=False)

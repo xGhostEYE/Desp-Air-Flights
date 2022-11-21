@@ -5,18 +5,6 @@ defineProps({
     required: true
   }
 });
-let validStarting = true;
-let validDestination = true;
-
-const inputClasses = function(isValid) {
-  return [
-    'mb-3',
-    'alert',
-    isValid? 'alert-light':'',
-    isValid? '':'alert-danger'
-  ];
-};
-
 </script>
 <template>
   <div class="row gy-6 md-4">
@@ -25,16 +13,16 @@ const inputClasses = function(isValid) {
         <input class="form-control" list="startingList" name="starting" 
                 id="starting" v-model="starting" 
                 type="text" />
-        <span :class="{'invisible':this.validStarting}" class="form-text text-danger">Enter valid airport</span>
+        <span id="startingErr" v-show="!this.validStarting"  class="form-text text-danger">Enter valid airport</span>
         <datalist id="startingList">
           <option v-for="airport in this.airports">{{airport}}</option>
         </datalist>
         <br/>
       
-        <label for="destination" class="form-label">Destination</label>
+        <label id="destination label" for="destination" class="form-label">Destination</label>
         <input class="form-control" list="destinationList" name="destination" 
                 id="destination" v-model="destination" />
-        <span :class="{'invisible':this.validDestination}" class="form-text text-danger">Enter valid airport</span>
+        <span id="destinationErr" v-show="!this.validDestination" class="form-text text-danger">Enter valid airport</span>
         <datalist id="destinationList">
           <option v-for="airport in this.airports">{{airport}}</option>
         </datalist>
@@ -49,6 +37,9 @@ export default {
       return {
         starting: '',
         destination: '',
+        visible1: true,
+        validStarting: true,
+        validDestination: true
       }
     },
     methods: {
@@ -63,11 +54,12 @@ export default {
       validateinput(value, validString) {
         if (value.length) {
           for (let airport of this.airports) {
-            this[validString] = airport.toLowerCase().startsWith(value.toLowerCase());
+            this[validString] = airport.toLowerCase().includes(value.toLowerCase());
             if (this[validString]) break;
           }
           this.validEntries();
         }
+        else this[validString] = true;
       }
       
     },

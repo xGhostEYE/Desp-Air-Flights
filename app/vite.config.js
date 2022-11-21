@@ -1,11 +1,11 @@
 import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  // sets the server to usePolling so it sees any changes made to live reload the page
   server: {
     watch: {
       usePolling: true

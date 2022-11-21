@@ -1,3 +1,4 @@
+# build off of the node:lts-alpine image
 FROM node:lts-alpine
 
 # bind your app to the gateway IP
@@ -17,11 +18,11 @@ RUN npm install
 
 # copy project files and folders to the current working directory (i.e. 'app' folder)
 COPY . .
-# build app for production with minification
+# build app
 RUN npm run build
-#RUN npm run dev
-#CMD ["npm", "run", "serve"]
 
+# expose port for the server to communicate with the outside world
 EXPOSE 8080
-#CMD [ "http-server", "dist" ]
+
+# enables live reload funcitonality for the server
 ENTRYPOINT [ "npm", "run", "dev" ]

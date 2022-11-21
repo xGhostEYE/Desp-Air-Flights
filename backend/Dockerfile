@@ -1,12 +1,14 @@
 #Contents of Dockerfile
-#Dockerfile to build an image which supports testing our Qxf2 Page Object Model.
+#Dockerfile to build an image which supports webscraping that uses selenium and others
 FROM ubuntu:latest
-#MAINTAINER Qxf2 Services
 
+#set timezone
 RUN export TZ=America/Regina
 
-ENV DEBIAN_FRONTEND noninteractive 
-# Essential tools and xvfb
+# setting environment variable to set the dev frontend to noninteractive
+ENV DEBIAN_FRONTEND noninteractive
+
+# Essential tools installing
 RUN apt-get update && apt-get install -yqq \
     software-properties-common \
     unzip \
@@ -20,12 +22,7 @@ RUN apt-get update && apt-get install -yqq \
     python3-pip \
     python3-tk
 
-# python
-# RUN apt-get update && apt-get install -yqq \
-#     python3 \
-#     python3-setuptools \
-#     python3-pip \
-#     python3-tk
+
 
 # Chrome browser to run the tests
 RUN curl https://dl-ssl.google.com/linux/linux_signing_key.pub -o /tmp/google.pub \
@@ -58,7 +55,8 @@ RUN wget --no-verbose -O /tmp/geckodriver.tar.gz https://github.com/mozilla/geck
   && ln -fs /opt/geckodriver-$GECKODRIVER_VERSION /usr/bin/wires
 
 
-    
+#create symbolic link between python3 and python so you can use 
+# them interchangeably to run python files
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # display
@@ -67,23 +65,24 @@ RUN Xvfb :20 -screen 0 1366x768x16 &
 
 # Make dir app
 RUN mkdir /app
+#set working directory
 WORKDIR /app
+#copy requirements over
 COPY requirements.txt requirements.txt
+# make sure pip is up to date
+RUN pip3 install --upgrade pip
 
-RUN pip install --upgrade pip
-
+#install all python dependencies
 RUN pip3 install -U --extra-index-url https://alpine-wheels.github.io/index -r requirements.txt
-#RUN pip3 install -r requirements.txt
 
 # Copy the source from the current directory to the Working Directory inside the container
 COPY . .
 
-# ENV PATH="/usr/bin/chromedriver:${PATH}"
-# ENV PATH=”$PATH:/usr/local/bin/python”
 
-# Expose port 5000 to the outside world
+# Expose port 5000 to the outside world for flask to use
 EXPOSE 5000
-#CMD ["flask", "run", "--host", "0.0.0.0"]
 
-# Run the executable
-CMD ["python", "main.py"]
+
+# Run the main executable to start flask
+#CMD ["python", "main.py"]
+CMD ["./wait-for-it.sh", "bolt://cmpt370-db:7687","-t", "40", "--", "python", "main.py"]
