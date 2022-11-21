@@ -28,6 +28,7 @@ services:
     restart: "unless-stopped"
     depends_on:
     - neo4j
+    #command: ["./wait-for-it.sh", "bolt://cmpt370-db:7687","-t", "100", "--", "python", "main.py"]
     networks:
       - cmpt370
   neo4j:
@@ -44,6 +45,7 @@ services:
       - ./neo4j/imports:/imports
     restart: "unless-stopped"
     environment:
+      NEO4JLABS_PLUGINS: '["apoc"]'
       NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
       NEO4J_AUTH: none
       # NEO4J_dbms_default__advertised__address: 0.0.0.0
@@ -53,12 +55,13 @@ services:
       NEO4J_apoc_import_file_enabled: true
       NEO4J_apoc_export_file_enabled: true
       NEO4J_apoc_import_file_use__neo4j__config: true
-      NEO4J_dbms_default__database: testDB
-      NEO4JLABS_PLUGINS: '["apoc"]'
+      NEO4J_dbms_default__database: mainDB
+      
     healthcheck:
       test: [ "CMD-SHELL", "echo RETURN 1 | cypher-shell -a bolt://localhost:7687 -u admin -p password || exit 1" ]
     networks:
       - cmpt370
+    
 
 networks:
   cmpt370:

@@ -1,17 +1,105 @@
-from __future__ import print_function
-from cmath import nan
-# from asyncio.windows_events import NULL
-from bs4 import BeautifulSoup as BeautifulSoup
-import re
-from urllib.request import urlopen
-import pandas as pd
-from pandas import *
 import os
-import requests
+from bs4 import BeautifulSoup
+import pandas as pd
 from os.path import exists
+import requests
+import re
+import random
+from selenium import webdriver 
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
+import pandas as pd
+from datetime import date, datetime
 import time
+from os.path import exists
 
+def price_link_scrape(origin, destination, startdate):
 
+    df = pd.DataFrame()
+
+    url = "https://www.kayak.com/flights/" + origin + "-" + destination + "/" + startdate + "?sort=depart_a&fs=stops=0"
+
+    chrome_options = webdriver.ChromeOptions()
+    agents = ["Firefox/66.0.3","Chrome/73.0.3683.68","Edge/16.16299"]
+    print("User agent: " + agents[(0%len(agents))])
+    chrome_options.add_argument('--user-agent=' + agents[(0%len(agents))] + '"')
+    chrome_options.add_experimental_option('useAutomationExtension', False)
+
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
+    driver.implicitly_wait(20)
+    driver.get(url)
+
+    #Check if Kayak thinks that we're a bot
+    time.sleep(5) 
+    soup=BeautifulSoup(driver.page_source, 'lxml')
+
+    if soup.find_all('p')[0].getText() == "Please confirm that you are a real KAYAK user.":
+        print("Kayak thinks I'm a bot, which I am ... so let's wait a bit and try again")
+        driver.close()
+        time.sleep(20)
+        return "failure"
+
+    time.sleep(20) #wait 20sec for the page to load
+
+    soup=BeautifulSoup(driver.page_source, 'lxml')
+    data = soup.find_all('div', attrs={'class': 'inner-grid keel-grid'})
+    urls = []
+    for link in soup.find_all('a', href=True):
+        urls.append(link['href'])
+    data_seperated = []
+    for div in data:
+        data_seperated.append(str(div.getText().replace("\n",'')))
+    departure_time = []
+    arrival_time = []
+    airlines = []
+    prices = []
+    for i in range(len(data_seperated)):
+        booking_info = data_seperated[i].split('$')[0]
+        time_departure = booking_info.split('–')[0]
+        time_departure = time_departure.replace(' ','')
+        in_time = datetime.strptime(time_departure, "%I:%M%p")
+        out_time = datetime.strftime(in_time, "%H:%M")
+        departure_time.append(out_time)
+        time_arrival = booking_info.split(' ')[1]
+        time_arrival_remaining = booking_info.split(' ')[2]
+        timething = time_arrival[3:]+time_arrival_remaining[:2]
+        in_time = datetime.strptime(timething, "%I:%M%p")
+        out_time = datetime.strftime(in_time, "%H:%M")
+        arrival_time.append(out_time)
+        price = data_seperated[i].split('$')[1]
+        price = price.split(' ')[0]
+        prices.append('$'+price)
+        airline = booking_info.split('nonstop')[0]
+        airline_remaining = airline.split(":", 2)[2]
+        airlines.append(airline_remaining[5:])
+
+    urls = soup.select(".above-button")
+
+    urls_clean = []
+    urls_clean_no_duplicates = []
+    final_urls = []
+    final_urls = []
+    urls_clean = urls[::2]
+    urls_clean_no_duplicates = []
+    for i in range(len(urls_clean)):
+        for link in urls_clean[i].findAll('a'):
+            urls_clean_no_duplicates.append("https://www.kayak.com"+link.get('href'))
+
+    for i in range(len(urls_clean_no_duplicates)):
+        driver.execute_script("window.open()")
+        driver.switch_to.window(driver.window_handles[-1])
+        driver.get(urls_clean_no_duplicates[i])
+        driver.implicitly_wait(10)
+        time.sleep(random.randint(3,8))
+        final_urls.append(driver.current_url)
+
+        
+    df['Departure'] = departure_time
+    df['Arrival'] = arrival_time
+    df['Carrier'] = airlines
+    df['Cost'] = prices
+    df['Link'] = final_urls
+    return df
 
 def clean_data(df):
     """
@@ -85,12 +173,11 @@ def harvest_data_arrivals(arrival_location):
         dataframe with arriving flights to airport
 
     """
-    url = "https://www.airports-worldwide.info/search/"+arrival_location+"/arrivals"
+    url = "https://www.airports-worldwide.info/airport/"+arrival_location+"/arrivals"
     reqs = requests.get(url)
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
     list_of_dataframes = []
-    interval = soup.find_all("nav", {"id": "intervals"})
     interval = soup.find_all("nav", {"id": "intervals"})
     if (len(interval)<=0):
         url = url.encode('ascii', errors='ignore')
@@ -149,7 +236,7 @@ def harvest_data_departures(departure_location,initial_search):
     
     """
 
-    url = "https://www.airports-worldwide.info/search/"+departure_location+"/departures"
+    url = "https://www.airports-worldwide.info/airport/"+departure_location+"/departures"
     reqs = requests.get(url)
     soup = BeautifulSoup(reqs.text, 'html.parser')
     urls = []
@@ -211,7 +298,7 @@ if __name__ == "__main__":
     # forward scrape
     # get user location
     initial_search = True
-    user_location = "calgary"
+    user_location = "YYC"
     # need user requested destination
     user_airport_timetable_data = harvest_data_departures(user_location,initial_search)
     user_airport_timetable_data.to_csv(os.path.abspath("origin_airport_departures.csv"), index=False)
@@ -241,7 +328,7 @@ if __name__ == "__main__":
 
 
     #backward scrape
-    user_requested_destination = "los angeles"
+    user_requested_destination = "YVR"
     user_requested_airport_departures = harvest_data_arrivals(user_requested_destination)
     
     user_requested_airport_departures.to_csv(os.path.abspath("destination_airport_arrivals.csv"), index=False)

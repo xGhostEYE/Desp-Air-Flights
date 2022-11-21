@@ -1,10 +1,5 @@
-
 <template>
-  <div>
-    <div class="title display-1 fixed-top">
-      <h1 class="text-center">Desp-Air Flights</h1>
-    </div>
-  </div>
+  <h1 class="title fixed-top text-center">Desp-Air Flights</h1>
 </template>
   
 <script>

@@ -16,6 +16,7 @@
 */.coverage
 */.coverage.*
 */*,cover
+*/package-lock.json
 
 # local env files
 */.env.local
@@ -59,7 +60,8 @@
 __pycache__
 .idea
 
-neo4j
+neo4j/*
+neo4j-test/*
 backend/scraping/test.py
 backend/scraping/test.py
 backend/scraping/test.py
