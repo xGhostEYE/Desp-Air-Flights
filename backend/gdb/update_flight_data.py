@@ -30,7 +30,7 @@ def update_airport_departures(airport_code, gdb=None, airport_dept_df=None):
     airport_cypher = """MATCH (a:Airport {Code: $Code})-[f:Flight]->(:Airport)
                             DELETE f"""
     gdb.run(airport_cypher, parameters={"Code": airport_code})
-
+    
     if airport_dept_df is None:
         try:
             airport_dept_df = harv.harvest_data_departures(airport_code, None)
@@ -39,7 +39,8 @@ def update_airport_departures(airport_code, gdb=None, airport_dept_df=None):
             return
 
     flight_Nums = airport_dept_df["Flight"].unique().tolist()
-    
+
+    # iterates through flights and adds them to the gdb
     for flight_Num in flight_Nums:
         flight_df = airport_dept_df[airport_dept_df["Flight"] == flight_Num]
         
@@ -98,8 +99,19 @@ def update_departures():
         count+=1
         print(count,"/", numOfAirport)
 
+def remove_flights_missing_departure_times():
+    """removes flights in the gdb that do not have a departure time"""
+    gdb = conGDB.connect_gdb()
 
-def add_airport_arrival_times(airport_code, gdb=None):
+    cypher = """
+             MATCH ()-[f:Flight]->(a:Airport)
+             WHERE NOT EXISTS(f.DepartTime)
+             DELETE f
+             """
+    
+    gdb.run(cypher)
+
+def add_airport_arrival_times(airport_code, gdb=None, airport_arvl_df=None):
     """Adds the arrival times of flights arriving at the given airport
 
     Args:
@@ -108,16 +120,19 @@ def add_airport_arrival_times(airport_code, gdb=None):
         gdb: py2neo Graph
             connection to the neo4j database
     """
-    try:
-        airport_arvl_df = harv.harvest_data_arrivals(airport_code)
-    except Exception as e:
-        print("Failed to get arrival data for:", airport_code, "\nDue to the exception:", e)
-        return
+    # scrapes arrival time if a dataframe is not passed to the function
+    if airport_arvl_df is None:
+        try:
+            airport_arvl_df = harv.harvest_data_arrivals(airport_code)
+        except Exception as e:
+            print("Failed to get arrival data for:", airport_code, "\nDue to the exception:", e)
+            return
 
     if gdb==None:
         gdb = conGDB.connect_gdb()
-    flight_Nums = airport_arvl_df["Flight"].unique().tolist()
 
+    # iterates through flights in airport_arvl_df adding their arrival time
+    flight_Nums = airport_arvl_df["Flight"].unique().tolist()
     for flight_Num in flight_Nums:
         flight_df = airport_arvl_df[airport_arvl_df["Flight"] == flight_Num]
         
@@ -175,6 +190,54 @@ def remove_flights_missing_arrival_times():
     
     gdb.run(cypher)
 
+def add_flight_airtime(gdb=None):
+    """adds airtime to flights in the gdb"""
+    if gdb==None:
+        gdb = conGDB.connect_gdb()
+
+    cypher = """
+             MATCH ()-[f:Flight]->(a:Airport)
+             WHERE NOT EXISTS(f.AirTime)
+             RETURN f.FlightNum as FlightNum,
+                    f.DepartTime as DepartTime,
+                    f.ArrivalTime as ArrivalTime
+             """
+    
+    time_df = gdb.run(cypher).to_data_frame()
+    time_df["DepartTime"] = pd.to_datetime(time_df["DepartTime"], infer_datetime_format=True)
+    time_df["ArrivalTime"] = pd.to_datetime(time_df["ArrivalTime"], infer_datetime_format=True)
+
+    time_df["AirTime"] = (time_df.ArrivalTime - time_df.DepartTime) / pd.Timedelta(minutes=1)
+
+    for i in time_df.index:
+        flight_df = time_df.iloc[i, :]
+
+        flightNum = flight_df["FlightNum"]
+        airTime = flight_df["AirTime"]
+
+        params = {"flightNum": flightNum,
+                  "airTime": int(airTime)}
+
+        print(params)
+
+        set_cypher = """
+                     MATCH ()-[f:Flight {FlightNum: $flightNum}]->()
+                     SET f.AirTime = $airTime
+                     """
+
+        gdb.run(set_cypher, parameters=params)
+
+def remove_negative_airTimes(gdb=None):
+    """Removes flights with negative AirTime"""
+    if gdb==None:
+        gdb = conGDB.connect_gdb()
+
+    cypher = """
+                MATCH ()-[f:Flight]->(a:Airport)
+                WHERE f.AirTime <= 0
+                DELETE f
+             """
+    gdb.run(cypher)
 
 def add_flight_price(departure_airport, destination_airport, gdb=None):
     """Adds the prices of flights between the given airports
@@ -221,7 +284,7 @@ def add_flight_price(departure_airport, destination_airport, gdb=None):
                         SET f.Cost = flt["Cost"] 
                         """
         gdb.run(flight_cypher, parameters={"flt": parameters})
-    print("Finished added departing flights from", departure_airport)
+    print("Added prices for flights from", departure_airport, "to", destination_airport)
 
 
 def add_prices():
@@ -249,22 +312,24 @@ def update_flight_data():
     """updates flight data in the gdb"""
 
     update_departures()
+    remove_flights_missing_departure_times()
     add_arrival_times()
     remove_flights_missing_arrival_times()
-    add_prices()
+    add_flight_airtime()
+    remove_negative_airTimes()
 
     print("Finished updating flight data")
 
 
 if __name__ == "__main__":
-    dep_airport = "YVR"
-    arv_airport = "YYC"
+    # dep_airport = "YVR"
+    # arv_airport = "YYC"
     # update_airport_departures(dep_airport)
     # add_airport_arrival_times("YYC")
     # add_flight_price(dep_airport, arv_airport)
-    add_prices()
-
-
+    # add_prices()
+    # add_flight_airtime()
+    # remove_negative_airTimes()
     # update_departures()
-    # update_flight_data()
+    update_flight_data()
     print("Finished")

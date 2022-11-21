@@ -30,6 +30,7 @@ def price_link_scrape(origin, destination, startdate):
     print("\n" + url)
 
     chrome_options = webdriver.ChromeOptions()
+    
     # enable headless mode
     chrome_options.add_argument("--headless")
     # disable sandbox to get around dockers security policies
