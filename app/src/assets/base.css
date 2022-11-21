@@ -72,3 +72,19 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.x-accordion-heading .x-accordion-toggle,
+.x-accordion-heading .x-accordion-toggle:hover {
+    background-color: rgb(252, 252, 252);
+}
+
+.x-accordion-heading .x-accordion-toggle.collapsed, 
+.x-accordion-heading .x-accordion-toggle.collapsed:hover {
+    background-color: white;
+}
+
+/* space between headings */
+.x-accordion-heading .x-accordion-toggle {
+    line-height: normal;
+    padding: 5px 15px;
+}

@@ -257,7 +257,7 @@ def convert_paths_to_json(paths_df) -> list:
                     "time": path_df.loc[i, "ArrivalTime"],
                     "airport code": path_df.loc[i, "arriveCode"]
                 },
-                "cost": path_df.loc[i, "Code"],
+                "cost": path_df.loc[i, "Cost"],
                 "airline":  path_df.loc[i, "Carrier"],
                 "flight number": path_df.loc[i, "FlightNum"]
             }
